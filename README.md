@@ -8,7 +8,7 @@
 
 ## Installation
 1. Clone the repository
-- git clone https://github.com/dong-0404/be_nodejs.git
+- git clone https://github.com/dong-0404/be_nodejs.git](https://github.com/SE1868-NJ/SWP391_G3_SE1868.git
 2. Install dependencies
 - npm install or yarn install
 3. Set up environment variables
