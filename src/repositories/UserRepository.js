@@ -31,11 +31,11 @@ class UserRepository {
         }
     }
 
-    async updateUser(user) {
+    async updateUser(id, user) {
         try {
             const updatedUser = await db.User.update(user, {
                 where: {
-                    id: user.id,
+                    id: id,
                 },
             });
             return updatedUser;

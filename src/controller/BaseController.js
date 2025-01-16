@@ -21,7 +21,6 @@ class BaseController {
     }
 
     handleError(res, error) {
-        console.error(error); 
         return this.convertToJson(res, 500, { message: error.message || 'Internal Server Error' });
     }
 }
