@@ -4,7 +4,7 @@ class UserRepository {
     constructor() {
     }
     
-    async getAllUsers() {
+    async getAll() {
         try {
             const users = await db.User.findAll();
             return users;
@@ -22,7 +22,7 @@ class UserRepository {
         }
     }
 
-    async createUser(user) {
+    async create(user) {
         try {
             const newUser = await db.User.create(user);
             return newUser;
@@ -31,7 +31,7 @@ class UserRepository {
         }
     }
 
-    async updateUser(id, user) {
+    async update(id, user) {
         try {
             const updatedUser = await db.User.update(user, {
                 where: {

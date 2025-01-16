@@ -1,15 +1,18 @@
 const express = require('express');
-const userRouter = require('./routers/userRouter');
-const fileRouter = require('./routers/fileRouter');
+const cors = require('cors');
+const apiRouter = require('./routers/apiRouter');
 const scheduleTelegramJob = require('./jobs/telegramJob');
+
 const app = express();
 const port = 3000;
 
-app.use('/api', userRouter);
-app.use('/api/file', fileRouter);
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
+const corsOptions = {
+  origin: "*",
+};
+app.use(cors(corsOptions));
+app.use(express.json());
+
+app.use('/api', apiRouter);
 
 scheduleTelegramJob();
 
