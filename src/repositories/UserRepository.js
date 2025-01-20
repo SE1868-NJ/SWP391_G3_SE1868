@@ -3,7 +3,7 @@ const db = require('../models');
 class UserRepository {
     constructor() {
     }
-    
+
     async getAll() {
         try {
             const users = await db.User.findAll();
@@ -44,5 +44,12 @@ class UserRepository {
         }
     }
 
+    async findOrCreateUser(userData) {
+        return await User.findOrCreate({
+            where: { googleId: userData.googleId },
+            defaults: userData,
+        });
+    }
 }
+
 module.exports = new UserRepository();
