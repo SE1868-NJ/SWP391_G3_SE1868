@@ -1,23 +1,24 @@
 version: '3.8'
 
 services:
-  app:
-    build: 
-      context: .
-      dockerfile: Dockerfile
-    container_name: node-app
-    ports:
-      - "${PORT}:${PORT}"
-    env_file:
-      - .env
-    volumes:
-      - ./src:/usr/src/app/src
-      - /usr/src/app/node_modules
-    depends_on:
-      - minio
-    networks:
-      - app-network
-    command: npm run dev
+  # app:
+  #   build: 
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: node-app
+  #   ports:
+  #     - "${PORT}:${PORT}"
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - ./src:/usr/src/app/src
+  #     - /usr/src/app/node_modules
+  #   depends_on:
+  #     - minio
+  #     - mysql
+  #   networks:
+  #     - app-network
+  #   command: npm run dev
 
   minio:
     image: minio/minio
@@ -39,9 +40,30 @@ services:
       timeout: 20s
       retries: 3
 
+  # mysql:
+  #   image: mysql:8.0
+  #   container_name: mysql
+  #   ports:
+  #     - "3307:3306"
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${PASSWORD_DB} 
+  #     MYSQL_DATABASE: ${DB_NAME}          
+  #   volumes:
+  #     - mysql_data:/var/lib/mysql
+  #   networks:
+  #     - app-network
+  #   healthcheck:
+  #     test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "--password=${PASSWORD_DB}"]
+  #     interval: 30s
+  #     timeout: 20s
+  #     retries: 3
+  #     start_period: 10s
+
 volumes:
   minio_data:
     driver: local
+  # mysql_data:
+  #   driver: local
 
 networks:
   app-network:
