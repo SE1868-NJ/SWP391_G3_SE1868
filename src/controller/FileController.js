@@ -7,47 +7,39 @@ class FileController extends BaseController {
         super();
     }
 
-    async uploadFile(req, res) {
+    uploadFile = async (req, res) => {
+        const {shopName} = req.body;
         try {
-            if (!req.file) {
-                return super.convertToJson(res, 400, { message: 'No file uploaded' });
+            if (!req.file || !shopName) {
+                return this.convertToJson(res, 400, { message: 'No file uploaded' });
             }
-
-            const result = await fileService.uploadFile(req.file);
-
-            return super.convertToJson(res, 201, result);
+    
+            const result = await fileService.uploadFile(req.file, shopName);
+            return this.convertToJson(res, 200, result);
         } catch (error) {
-            return super.handleError(res, error);
+            return this.handleError(res, error);
         }
-    }
-
-    async getFileUrl(req, res) {
+    };
+    
+    getFileUrl = async (req, res) => {
         try {
             const { bucket, fileName } = req.params;
             const fileUrl = await fileService.getFileUrl(bucket, fileName);
-
-            return super.convertToJson(res, 200, fileUrl);
+            return this.convertToJson(res, 200, fileUrl);
         } catch (error) {
-            return super.handleError(res, error.message);
+            return this.handleError(res, error.message);
         }
-    }
-
-    // async listFiles(req, res) {
+    };
+    
+    // listFiles = async (req, res) => {
     //     try {
     //         const files = await fileService.listFiles();
-
-    //         res.json({
-    //             success: true,
-    //             data: files
-    //         });
+    //         return this.convertToJson(res, 200, { data: files });
     //     } catch (error) {
-    //         console.error('List files error:', error);
-    //         res.status(500).json({
-    //             success: false,
-    //             message: error.message
-    //         });
+    //         return this.handleError(res, error);
     //     }
-    // }
+    // };
+    
 }
 
 module.exports = new FileController();
