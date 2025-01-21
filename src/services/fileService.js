@@ -5,7 +5,7 @@ const minioClient = require('../config/minio');
 
 class FileService {
     constructor() {
-        this.bucketName = process.env.MINIO_BUCKET_NAME || null;
+        this.bucketName = 'data';
     }
 
     async uploadFile(file, shopName) {

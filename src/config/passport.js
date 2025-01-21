@@ -4,9 +4,9 @@ const AuthService = require('../services/authService');
 require('dotenv').config({ path: './.env' });
 
 passport.use(new GoogleStrategy({
-    clientID: '',
-    clientSecret:'',
-    callbackURL: 'http://localhost:3000/auth/google/callback'
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: process.env.GOOGLE_CALLBACK_URL
 },
     async (token, tokenSecret, profile, done) => {
         try {
