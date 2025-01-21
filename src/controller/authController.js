@@ -8,13 +8,10 @@ class AuthController {
         passport.authenticate('google', { scope: ['profile', 'email'] })(req, res, next);
       };
 
-    googleCallback = (req, res, next) => {
-        console.log("Google callback received");
-        passport.authenticate('google', { failureRedirect: '/' })(req, res, () => {
-          console.log("Authentication successful");
-          res.redirect('/');
-        });
-      };
+      googleCallback(req, res) {
+        const { token } = req.user;
+        res.redirect(`http://localhost:3000/auth/google/callback?token=${token}`);
+      }
 }
 
 module.exports = new AuthController();

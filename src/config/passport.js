@@ -6,27 +6,17 @@ require('dotenv').config({ path: './.env' });
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.GOOGLE_CALLBACK_URL
+    callbackURL: "http://localhost:5000/api/auth/google/callback"
 },
-    async (token, tokenSecret, profile, done) => {
+    async (accessToken, refreshToken, profile, done) => {
         try {
-            const user = await AuthService.loginWithGoogle(profile);
-            return done(null, user);
+            const token = await AuthService.handleGoogleAuth(profile);
+            done(null, { token });
         } catch (error) {
-            return done(error, null);
+            done(error, null);
         }
-    }
-));
+    }));
 
-passport.serializeUser((user, done) => {
-    done(null, user.id);
-});
-
-passport.deserializeUser(async (id, done) => {
-    try {
-        const user = await AuthService.findUserById(id);
-        done(null, user);  // Đảm bảo trả về đúng user
-    } catch (error) {
-        done(error, null);
-    }
-});
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((user, done) => done(null, user));
+;

@@ -1,20 +1,19 @@
 const UserRepository = require('../repositories/userRepository');
+const jwt = require('jsonwebtoken');
 
 class AuthService {
-    async loginWithGoogle(profile) {
-        console.log(profile);
 
-        const userData = {
-            // google_id : profile.id,
-            // name: profile.name.givenName,
-            // email: profile.emails[0].value
-        }
-        try {
-            const [user, create] = await UserRepository.findOrCreateUser(userData);
-            return user;
-        } catch (error) {
-            throw error;
-        }
+    async handleGoogleAuth(profile) {
+        const user = await UserRepository.findOrCreateGoogleUser(profile);
+        return this.generateToken(user);
+    }
+
+    generateToken(user) {
+        return jwt.sign(
+            { id: user.id, email: user.email },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+        );
     }
 
     async findUserById(id) {

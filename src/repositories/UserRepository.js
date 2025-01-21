@@ -44,12 +44,16 @@ class UserRepository {
         }
     }
 
-    async findOrCreateUser(userData) {
-        return await User.findOrCreate({
-            where: { googleId: userData.googleId },
-            defaults: userData,
+    async findOrCreateGoogleUser(profile) {
+        const [user, created] = await this.db.User.findOrCreate({
+          where: { googleId: profile.id },
+          defaults: {
+            email: profile.emails[0].value,
+            name: profile.displayName,
+          }
         });
-    }
+        return user;
+      }
 }
 
 module.exports = new UserRepository();
