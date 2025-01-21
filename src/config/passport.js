@@ -6,16 +6,22 @@ require('dotenv').config({ path: './.env' });
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.GOOGLE_CALLBACK_URL,
+    callbackURL: process.env.GOOGLE_CALLBACK_URL
 },
-    async (accessToken, refreshToken, profile, done) => {
+    function (accessToken, refreshToken, profile, cb) {  // Sử dụng function thay vì arrow function
         try {
-            const token = await AuthService.handleGoogleAuth(profile);
-            done(null, { token });
+            AuthService.handleGoogleAuth(profile)
+                .then(token => {
+                    return cb(null, { token });
+                })
+                .catch(error => {
+                    return cb(error, null);
+                });
         } catch (error) {
-            done(error, null);
+            return cb(error, null);
         }
-    }));
+    }
+));
 
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
