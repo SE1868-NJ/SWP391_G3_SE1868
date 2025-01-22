@@ -33,6 +33,7 @@ app.use(passport.session());
 
 //routes
 app.use('/api', apiRouter);
+app.use('/', authRoutes);
 
 scheduleTelegramJob();
 
