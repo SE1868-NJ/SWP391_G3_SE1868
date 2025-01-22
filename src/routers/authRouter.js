@@ -4,13 +4,7 @@ const passport = require('passport');
 
 const router = express.Router();
 
-router.get('/login',
-    passport.authenticate('google', {
-        scope: ['profile', 'email'],
-        accessType: 'offline',
-        prompt: 'consent'
-    })
-);
+router.get('/login', AuthController.login);
 router.get('/auth/google/callback', passport.authenticate('google', { session: false }), AuthController.googleCallback);
 
 module.exports = router;

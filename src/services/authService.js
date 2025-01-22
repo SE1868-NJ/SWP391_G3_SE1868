@@ -24,6 +24,32 @@ class AuthService {
             throw error;
         }
     }
+
+    handleGoogleCallback = async (token) => {
+        try {
+            if (!token) {
+                throw new Error('Authentication failed: No token provided');
+            }
+            let decodedToken;
+            try {
+                decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+            } catch (err) {
+                throw new Error('Invalid token: ' + err.message);
+            }
+
+            const user = await this.findUserById(decodedToken.id);
+            if (!user) {
+                throw new Error('User not found');
+            }
+
+            return {
+                token: token,
+                user: user
+            }
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 module.exports = new AuthService();

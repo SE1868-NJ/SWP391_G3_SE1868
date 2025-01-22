@@ -8,7 +8,7 @@ passport.use(new GoogleStrategy({
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: process.env.GOOGLE_CALLBACK_URL
 },
-    function (accessToken, refreshToken, profile, cb) {  // Sử dụng function thay vì arrow function
+    function (accessToken, refreshToken, profile, cb) { 
         try {
             AuthService.handleGoogleAuth(profile)
                 .then(token => {
