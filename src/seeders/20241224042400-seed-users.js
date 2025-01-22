@@ -16,6 +16,7 @@ module.exports = {
     const users = [];
     for (let i = 0; i < 10; i++) {
       users.push({
+        google_id: faker.internet.email(),
         name: faker.name.fullName(),
         email: faker.internet.email(),
         password: faker.internet.password(),

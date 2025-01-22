@@ -13,7 +13,7 @@ class FileController extends BaseController {
             if (!req.file || !shopName) {
                 return this.convertToJson(res, 400, { message: 'No file uploaded' });
             }
-    
+            
             const result = await fileService.uploadFile(req.file, shopName);
             return this.convertToJson(res, 200, result);
         } catch (error) {

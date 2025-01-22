@@ -3,7 +3,7 @@ const db = require('../models');
 class UserRepository {
     constructor() {
     }
-    
+
     async getAll() {
         try {
             const users = await db.User.findAll();
@@ -34,9 +34,7 @@ class UserRepository {
     async update(id, user) {
         try {
             const updatedUser = await db.User.update(user, {
-                where: {
-                    id: id,
-                },
+                where: { id }
             });
             return updatedUser;
         } catch (error) {
@@ -44,5 +42,41 @@ class UserRepository {
         }
     }
 
+    async findByGoogleId(googleId) {
+        try {
+            return await db.User.findOne({
+                where: { google_id: googleId }
+            });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async createWithGoogle(profile) {
+        try {
+            return await db.User.create({
+                google_id: profile.id,
+                email: profile.email,
+                name: profile.displayName,
+            });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async findOrCreateGoogleUser(profile) {
+        try {
+            let user = await this.findByGoogleId(profile.id);
+
+            if (!user) {
+                user = await this.createWithGoogle(profile);
+            }
+
+            return user;
+        } catch (error) {
+            throw new Error('Error handling Google user: ' + error.message);
+        }
+    }
 }
+
 module.exports = new UserRepository();

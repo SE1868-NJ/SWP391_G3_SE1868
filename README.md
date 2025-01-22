@@ -39,6 +39,6 @@
 
 ## Seeding
 1. Seed the database:
-- npx sequelize-cli db:seed:all
+- npx sequelize-cli db:seed
 
 
