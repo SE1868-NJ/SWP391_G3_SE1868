@@ -1,5 +1,6 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const FacebookStrategy = require('passport-facebook').Strategy;
 const AuthService = require('../services/authService');
 require('dotenv').config({ path: './.env' });
 
@@ -8,7 +9,7 @@ passport.use(new GoogleStrategy({
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: process.env.GOOGLE_CALLBACK_URL
 },
-    function (accessToken, refreshToken, profile, cb) { 
+    function (accessToken, refreshToken, profile, cb) {
         try {
             AuthService.handleGoogleAuth(profile)
                 .then(token => {
@@ -23,6 +24,23 @@ passport.use(new GoogleStrategy({
     }
 ));
 
+passport.use(new FacebookStrategy({
+    clientID: process.env.FACEBOOK_APP_ID,
+    clientSecret: process.env.FACEBOOK_APP_SECRET,
+    callbackURL: process.env.FACEBOOK_CALLBACK_URL,
+    profileFields: ['id', 'displayName', 'email']
+},
+    async function (accessToken, refreshToken, profile, cb) {
+        try {
+            // const user = await AuthService.handleFacebookLogin(profile);
+            return cb(null, user);
+        } catch (err) {
+            return cb(err);
+        }
+    }
+));
+
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
-;
+
+
