@@ -74,6 +74,16 @@ class UserRepository {
         }
     }
 
+    findByEmail(email) {
+        try {
+            return db.User.findOne({
+                where: { email: email }
+            });
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async findOrCreateGoogleUser(profile) {
         try {
             let user = await this.findByGoogleId(profile.id);

@@ -29,6 +29,28 @@ class AuthController extends BaseController {
       return this.handleError(res, error);
     }
   };
+
+  register = async (req, res) => {
+    try {
+      const userData = req.body;
+
+      const user = await AuthService.register(userData);
+      return this.convertToJson(res, 200, user);
+    } catch (error) {
+      return this.handleError(res, error);
+    }
+  };
+
+  login = async (req, res) => {
+    try {
+      const { email, password } = req.body;
+
+      const data = await AuthService.login(email, password);
+      return this.convertToJson(res, 200, data);
+    } catch (error) {
+      return this.handleError(res, error);
+    }
+  };
 }
 
 module.exports = new AuthController();

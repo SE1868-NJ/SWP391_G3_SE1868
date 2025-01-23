@@ -1,5 +1,6 @@
 const UserRepository = require('../repositories/userRepository');
 const jwt = require('jsonwebtoken');
+const PasswordUtil = require('../utils/passwordUtil');
 
 class AuthService {
 
@@ -61,6 +62,50 @@ class AuthService {
             });
         }
         return this.generateToken(user);
+    }
+
+    async register(userData) {
+        try {
+            const { password, email, ...otherData } = userData;
+            
+            const user = await UserRepository.findByEmail(email);
+            if (user) {
+                throw new Error('User already exists');
+            }
+            const passwordHash = await PasswordUtil.hashPassword(password);
+
+            const newUser = await UserRepository.create({
+                ...otherData,
+                email: email,
+                password: passwordHash
+            });
+
+            return newUser;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async login(email, password) {
+        try {
+            const user = await UserRepository.findByEmail(email);
+            if (!user) {
+                throw new Error('User not found');
+            }
+
+            const isPasswordMatch = await PasswordUtil.comparePassword(password, user.password);
+            if (!isPasswordMatch) {
+                throw new Error('Incorrect password');
+            }
+            const token = this.generateToken(user);
+
+            return {
+                token: token,
+                user: user
+            };
+        } catch (error) {
+            throw error;
+        }
     }
 }
 
