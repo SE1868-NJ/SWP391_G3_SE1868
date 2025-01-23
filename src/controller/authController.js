@@ -24,7 +24,7 @@ class AuthController extends BaseController {
     try {
       const token = req.user;
       const authData = await AuthService.handleAuthCallback(token);
-      this.convertToJson(res, 200, authData);
+      return this.convertToJson(res, 200, authData);
     } catch (error) {
       return this.handleError(res, error);
     }
