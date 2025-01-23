@@ -64,6 +64,16 @@ class UserRepository {
         }
     }
 
+    findByFacebookId(facebookId) {
+        try {
+            return db.User.findOne({
+                where: { facebook_id: facebookId }
+            });
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async findOrCreateGoogleUser(profile) {
         try {
             let user = await this.findByGoogleId(profile.id);

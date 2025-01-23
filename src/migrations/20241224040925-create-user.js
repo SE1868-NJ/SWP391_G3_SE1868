@@ -12,6 +12,9 @@ module.exports = {
       google_id: {
         type: Sequelize.STRING
       },
+      facebook_id: {
+        type: Sequelize.STRING
+      },
       name: {
         type: Sequelize.STRING
       },
