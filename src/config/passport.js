@@ -32,8 +32,13 @@ passport.use(new FacebookStrategy({
 },
     async function (accessToken, refreshToken, profile, cb) {
         try {
-            // const user = await AuthService.handleFacebookLogin(profile);
-            return cb(null, user);
+            AuthService.handleFacebookLogin(profile)
+                .then(token => {
+                    return cb(null, token);
+                })
+                .catch(error => {
+                    return cb(error, null);
+                });
         } catch (err) {
             return cb(err);
         }

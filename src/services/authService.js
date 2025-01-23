@@ -25,7 +25,7 @@ class AuthService {
         }
     }
 
-    handleGoogleCallback = async (token) => {
+    handleAuthCallback = async (token) => {
         try {
             if (!token) {
                 throw new Error('Authentication failed: No token provided');
@@ -49,6 +49,18 @@ class AuthService {
         } catch (error) {
             throw error;
         }
+    }
+
+    async handleFacebookLogin(profile) {
+        let user = await UserRepository.findByFacebookId(profile.id);
+        if (!user) {
+            user = await UserRepository.create({
+                facebook_id: profile.id,
+                name: profile.displayName,
+                email: profile.emails?.[0]?.value || null,
+            });
+        }
+        return this.generateToken(user);
     }
 }
 
