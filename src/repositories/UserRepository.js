@@ -56,7 +56,7 @@ class UserRepository {
         try {
             return await db.User.create({
                 google_id: profile.id,
-                email: profile.email,
+                email: profile.emails?.[0]?.value || null,
                 name: profile.displayName,
             });
         } catch (error) {
