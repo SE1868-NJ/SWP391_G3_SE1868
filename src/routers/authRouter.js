@@ -10,4 +10,7 @@ router.get('/auth/google/callback', passport.authenticate('google', { session: f
 router.get('/auth/facebook', AuthController.loginFacebook);
 router.get('/auth/facebook/callback',passport.authenticate('facebook', { session: false }),AuthController.facebookCallback);
 
+router.post('/auth/register', AuthController.register);
+router.post('/auth/login', AuthController.login);
+
 module.exports = router;
