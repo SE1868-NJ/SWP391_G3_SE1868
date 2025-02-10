@@ -11,7 +11,7 @@ class MessageController extends BaseController {
 
             return this.convertToJson(res, 200, result);
         } catch (error) {
-            console.error('Lỗi khi lấy tin nhắn:', error);
+            // console.error('Lỗi khi lấy tin nhắn:', error);
             return this.handleError(res, error);
         }
     }
