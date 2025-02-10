@@ -12,17 +12,17 @@ const setupChatSocket = (io) => {
             socket.on('send-message', async (data) => {
                 console.log(data)
                 try {
-                    const { conversationId, senderId, senderType, messageText } = data;
+                    const { conversation_id, sender_id, sender_type, message_text } = data;
                     const message = await messageService.sendMessage(
-                        conversationId,
-                        senderId,
-                        senderType,
-                        messageText
+                        conversation_id,
+                        sender_id,
+                        sender_type,
+                        message_text
                     );
                     console.log(1)
 
                     io.to(`conversation-${conversationId}`).emit('receive_message', {
-                        messageText: messageText,
+                        messageText: message_text,
                         senderId: "system"
                     });
                 } catch (error) {

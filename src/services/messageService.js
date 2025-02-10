@@ -4,6 +4,7 @@ const ConversationRepository = require('../repositories/conversationRepository')
 class MessageService {
     async fetchMessages(conversationId, limit, offset) {
         const messages = await MessageRepository.getMessagesByConversation(conversationId, limit, offset);
+        messages.reverse();
 
         const totalMessages = await MessageRepository.countMessagesByConversation(conversationId);
 
