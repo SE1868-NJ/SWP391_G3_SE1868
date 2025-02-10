@@ -4,7 +4,6 @@ const BaseController = require('./baseController');
 class MessageController extends BaseController {
     getMessages = async (req, res) => {
         try {
-            // console.log(req);
             const { conversationId } = req.params;
             const { limit, offset } = req.query;
 
