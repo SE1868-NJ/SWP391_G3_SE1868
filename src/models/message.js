@@ -32,7 +32,15 @@ module.exports = (sequelize, DataTypes) => {
     created_at: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW
-    }   
+    },
+    message_type: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    media_url: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    }
   }, {
     sequelize,
     modelName: 'Message',
