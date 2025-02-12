@@ -6,17 +6,21 @@ const setupChatSocket = (io) => {
             socket.join(`conversation-${conversationId}`);
             socket.on('send-message', async (data) => {
                 try {
-                    const { conversation_id, sender_id, sender_type, message_text } = data;
-                    await messageService.sendMessage(
+                    const { conversation_id, sender_id, sender_type, message_text, message_type, media_url } = data;
+                    const message = await messageService.sendMessage(
                         conversation_id,
                         sender_id,
                         sender_type,
-                        message_text
+                        message_text,
+                        message_type,
+                        media_url
                     );
 
                     io.to(`conversation-${conversationId}`).emit('receive_message', {
                         message_text: message_text,
-                        sender_id: sender_id
+                        sender_id: sender_id,
+                        message_type: message_type,
+                        media_url: media_url
                     });
                 } catch (error) {
                     socket.emit('error', { message: error.message });

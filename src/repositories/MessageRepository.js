@@ -23,8 +23,6 @@ class MessageRepository {
         return await db.Message.create(data);
     }
 
-    
-
 }
 
 module.exports = new MessageRepository();

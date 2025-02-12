@@ -15,7 +15,7 @@ class MessageService {
         };
     }
 
-    async sendMessage(conversationId, senderId, senderType, messageText) {
+    async sendMessage(conversationId, senderId, senderType, messageText,message_type, media_url) {
         const conversation = await ConversationRepository.findConversationById(conversationId);
         if (!conversation) {
             throw new Error('Conversation not found');
@@ -24,7 +24,9 @@ class MessageService {
             conversation_id: conversationId,
             sender_id: senderId,
             sender_type: senderType,
-            message_text: messageText
+            message_text: messageText,
+            message_type: message_type,
+            media_url: media_url
         });
     }
 };
