@@ -8,13 +8,13 @@ class FileController extends BaseController {
     }
 
     uploadFile = async (req, res) => {
-        const {shopName} = req.body;
+        const {prefix_name} = req.body;
         try {
-            if (!req.file || !shopName) {
+            if (!req.file || !prefix_name) {
                 return this.convertToJson(res, 400, { message: 'No file uploaded' });
             }
             
-            const result = await fileService.uploadFile(req.file, shopName);
+            const result = await fileService.uploadFile(req.file, prefix_name);
             return this.convertToJson(res, 200, result);
         } catch (error) {
             return this.handleError(res, error);

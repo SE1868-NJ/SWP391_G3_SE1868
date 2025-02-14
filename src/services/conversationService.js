@@ -1,6 +1,7 @@
 const { json } = require('sequelize');
 const conversationRepository = require('../repositories/conversationRepository');
 const shopRepository = require('../repositories/shopRepository');
+const userRepository = require('../repositories/userRepository');
 
 class ConversationService {
     constructor() {
@@ -21,11 +22,17 @@ class ConversationService {
     }
 
     async getShopConversations(shopId) {
+        let data = [];
         try {
-            return await conversationRepository.getConversationsByShop(shopId);
+            data = await conversationRepository.getConversationsByShop(shopId);
+            for (let conversation of data) {
+                const user = await userRepository.getUserById(conversation.user_id);
+                conversation.dataValues.user = user.dataValues;
+            }
         } catch (error) {
             throw new Error(`Error: ${error.message}`);
         }
+        return data;
     }
 }
 
