@@ -35,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
         shop_address: {
             type: DataTypes.STRING
         },
-        create_at: {
+        created_at: {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW
         },
@@ -46,6 +46,7 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         sequelize,
         modelName: 'Shop',
+        timestamps: false
     });
     return Shop;
 };
