@@ -8,9 +8,9 @@ class FileService {
         this.bucketName = 'data';
     }
 
-    async uploadFile(file, shopName) {
+    async uploadFile(file, prefix_name) {
         try {
-            const objectName = shopName + "/" + Date.now() + "_" + file.originalname;
+            const objectName = prefix_name + "/" + Date.now() + "_" + file.originalname;
 
             // Upload to MinIO
             await minioClient.putObject(this.bucketName, objectName, file.buffer);

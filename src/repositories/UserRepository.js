@@ -6,17 +6,19 @@ class UserRepository {
 
     async getAll() {
         try {
-            const users = await db.User.findAll();
+            const users = await db.User.findAll({
+                attributes: ['id', 'name', 'email'],
+            });
             return users;
         } catch (error) {
             throw error;
         }
     }
-
     async getUserById(id) {
         try {
-            const user = await db.User.findByPk(id);
-            return user;
+            return await db.User.findByPk(id, {
+                attributes: ['id', 'name', 'email'],
+            });
         } catch (error) {
             throw error;
         }
