@@ -1,4 +1,5 @@
 const conversationService = require('../services/conversationService');
+const categoryService = require('../services/categoryService');
 const BaseController = require('./baseController');
 
 class ConversationController extends BaseController {
@@ -17,6 +18,15 @@ class ConversationController extends BaseController {
             const { userId } = req.params;
             const conversations = await conversationService.getUserConversations(userId);
             return this.convertToJson(res, 200, conversations);
+        } catch (error) {
+            return this.handleError(res, error);
+        }
+    }
+
+    getCategory = async (req, res) => {
+        try {
+            const categories = await categoryService.getAllCategory();
+            return this.convertToJson(res, 200, categories);
         } catch (error) {
             return this.handleError(res, error);
         }

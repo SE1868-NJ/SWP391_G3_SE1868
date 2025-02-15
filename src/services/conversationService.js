@@ -1,4 +1,3 @@
-const { json } = require('sequelize');
 const conversationRepository = require('../repositories/conversationRepository');
 const shopRepository = require('../repositories/shopRepository');
 const userRepository = require('../repositories/userRepository');
