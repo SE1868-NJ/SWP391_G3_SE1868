@@ -17,6 +17,16 @@ class ProductService {
             throw new Error(`Error: ${error.message}`);
         }
     }
+
+    async getProducts(params) {
+        try {
+            const result = await productRepository.getProducts(params);
+            return result;
+        } catch (error) {
+            throw new Error(`Error: ${error.message}`);
+        }
+    }
+
 }
 
 module.exports = new ProductService();
