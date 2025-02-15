@@ -11,19 +11,19 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     Category.init({
-        category_id: {
+        id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
             allowNull: false,
         },
-        category_name: {
+        name: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        status: {
-            type: DataTypes.ENUM('active', 'inactive'),
-            defaultValue: 'active',
+        description: {
+            type: DataTypes.STRING,
+            allowNull: true,
         },
     },
         {
