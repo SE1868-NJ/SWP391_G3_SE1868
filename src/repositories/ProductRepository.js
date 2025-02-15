@@ -34,6 +34,15 @@ class ProductRepository {
             }
         };
     }
+
+    async getProductById(id) {
+        return await db.Product.findByPk(id, {
+            include: [{
+                model: db.Shop,
+                as: 'shop'
+            }]
+        });
+    }
 }
 
 module.exports = new ProductRepository();

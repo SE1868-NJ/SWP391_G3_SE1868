@@ -27,6 +27,15 @@ class ProductService {
         }
     }
 
+    async getProductById(id) {
+        try {
+            const result = await productRepository.getProductById(id);
+            return result;
+        } catch (error) {
+            throw new Error(`Error: ${error.message}`);
+        }
+    }
+
 }
 
 module.exports = new ProductService();

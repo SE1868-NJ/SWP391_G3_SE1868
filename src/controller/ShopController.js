@@ -32,6 +32,17 @@ class ShopController extends BaseController {
             this.handleError(res, error);
         }
     }
+
+    getProductById = async (req, res) => {
+        try {
+            const id = parseInt(req.params.id);
+
+            const result = await productService.getProductById(id);
+            this.convertToJson(res, 200, result);
+        } catch (error) {
+            this.handleError(res, error);
+        }
+    }
 }
 
 module.exports = new ShopController();
