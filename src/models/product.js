@@ -8,6 +8,8 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(models.Supplier, { foreignKey: 'supplier_id', as: 'supplier' });
       this.belongsTo(models.Category, { foreignKey: 'category_id', as: 'category' });
       this.belongsTo(models.Shop, { foreignKey: 'shop_id', as: 'shop' });
+      this.hasMany(models.Feedback, { foreignKey: 'product_id', as: 'feedbacks' });
+      this.hasMany(models.Cart, { foreignKey: 'product_id', as: 'carts' });
     }
   }
   Product.init({
