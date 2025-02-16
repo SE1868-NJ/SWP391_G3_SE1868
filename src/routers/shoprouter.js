@@ -13,6 +13,7 @@ router.get('/product/get_product_by_id/:id', shopController.getProductById);
 
 // cart
 router.get('/cart/get_cart_by_user/:id', shopController.getCartsByUserId);
-router.post('/cart/create_cart', shopController.createCart);
+router.post('/cart/add_to_cart', shopController.createCart);
+router.get('/cart/get_count_cart_by_user/:id', shopController.getCountCartByUserId);
 
 module.exports = router;

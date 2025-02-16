@@ -26,9 +26,10 @@ class CartRepository {
         return db.Cart.create(cart);
     }
 
-    async getCartById(productId) {
-        return db.Cart.findByPk(productId,{
+    async getCartByUserAndProduct(userId, productId) {
+        return db.Cart.findOne({
             where: {
+                user_id: userId,
                 product_id: productId,
                 is_ordered: false
             }
@@ -36,9 +37,19 @@ class CartRepository {
     }
 
     async updateCart(cart) {
-        return db.Cart.update(cart, {
+        return db.Cart.update(
+            { quantity: cart.quantity },
+            {
+                where: { id: cart.id },
+            }
+        );;
+    }
+
+    async getCountCartByUserId(userId) {
+        return db.Cart.count({
             where: {
-                id: cart.id
+                user_id: userId,
+                is_ordered: false
             }
         });
     }

@@ -65,6 +65,17 @@ class ShopController extends BaseController {
             this.handleError(res, error);
         }
     }
+
+    getCountCartByUserId = async (req, res) => {
+        try {
+            const userId = req.params.id;
+
+            const result = await productService.getCountCartByUserId(userId);
+            this.convertToJson(res, 200, result);
+        } catch (error) {
+            this.handleError(res, error);
+        }
+    }
 }
 
 module.exports = new ShopController();

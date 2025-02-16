@@ -89,13 +89,23 @@ class ProductService {
     }
     async createCart(cart) {
         try {
-            const cartExist = await cartRepository.getCartById(cart.product_id);
+            const cartExist = await cartRepository.getCartByUserAndProduct(cart.user_id, cart.product_id);
             if (cartExist) {
                 cartExist.quantity += 1;
                 const result = await cartRepository.updateCart(cartExist);
+                console.log(cartExist);
                 return result;
             }
             const result = await cartRepository.createCart(cart);
+            return result;
+        } catch (error) {
+            throw new Error(`Error: ${error.message}`);
+        }
+    }
+
+    async getCountCartByUserId(userId) {
+        try {
+            const result = await cartRepository.getCountCartByUserId(userId);
             return result;
         } catch (error) {
             throw new Error(`Error: ${error.message}`);
