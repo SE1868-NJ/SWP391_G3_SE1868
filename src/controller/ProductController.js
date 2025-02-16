@@ -1,32 +1,19 @@
-const categoryService = require('../services/categoryService');
+const BaseController = require("./baseController");
 const productService = require('../services/shopService');
-const BaseController = require('./baseController');
 
-class ShopController extends BaseController {
-
-    getCategory = async (req, res) => {
-        try {
-            const categories = await categoryService.getAllCategory();
-            return this.convertToJson(res, 200, categories);
-        } catch (error) {
-            return this.handleError(res, error);
-        }
+class  ProductController extends BaseController{
+    constructor(){
+        super();
     }
 
     getAllProduct = async (req, res) => {
         try {
-            const shopId = req.query.shop_id;
-            if (shopId) {
-                const products = await productService.getAllProductByShopId(shopId);
-                return this.convertToJson(res, 200, products);
-            }
             const products = await productService.getAllProduct();
             return this.convertToJson(res, 200, products);
         } catch (error) {
             return this.handleError(res, error);
         }
     }
-
     getProductById = async (req, res) => {
         try {
             const { id } = req.params;
@@ -68,7 +55,6 @@ class ShopController extends BaseController {
             return this.handleError(res, error);
         }
     }
-
 }
 
-module.exports = new ShopController();
+module.exports = new ProductController();

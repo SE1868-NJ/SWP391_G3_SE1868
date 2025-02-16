@@ -5,11 +5,11 @@ class CategoryRepository  {
     }
     
     async getAllCategory(){
-        return await db.Category.findAll();
+        return await db.category.findAll();
     }
 
     async getCategoryById(id){
-        return await db.Category.findByPk(id);
+        return await db.category.findByPk(id);
     }
 }
 
