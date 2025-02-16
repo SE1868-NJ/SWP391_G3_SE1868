@@ -1,5 +1,5 @@
 const categoryService = require('../services/categoryService');
-const productService = require('../services/shopService');
+const productService = require('../services/productService');
 const BaseController = require('./baseController');
 
 class ShopController extends BaseController {
@@ -38,6 +38,39 @@ class ShopController extends BaseController {
             const id = parseInt(req.params.id);
 
             const result = await productService.getProductById(id);
+            this.convertToJson(res, 200, result);
+        } catch (error) {
+            this.handleError(res, error);
+        }
+    }
+
+    getCartsByUserId = async (req, res) => {
+        try {
+            const userId = req.params.id;
+
+            const result = await productService.getCartsByUserId(userId);
+            this.convertToJson(res, 200, result);
+        } catch (error) {
+            this.handleError(res, error);
+        }
+    }
+
+    createCart = async (req, res) => {
+        try {
+            const cart = req.body;
+
+            const result = await productService.createCart(cart);
+            this.convertToJson(res, 200, result);
+        } catch (error) {
+            this.handleError(res, error);
+        }
+    }
+
+    getCountCartByUserId = async (req, res) => {
+        try {
+            const userId = req.params.id;
+
+            const result = await productService.getCountCartByUserId(userId);
             this.convertToJson(res, 200, result);
         } catch (error) {
             this.handleError(res, error);
