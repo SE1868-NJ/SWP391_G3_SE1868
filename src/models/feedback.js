@@ -5,6 +5,7 @@ module.exports = (sequelize, DataTypes) => {
         static associate(models) {
             Feedback.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
             Feedback.belongsTo(models.Product, { foreignKey: 'product_id', as: 'product' });
+            Feedback.hasMany(models.FeedbackMedia, { foreignKey: 'feedback_id', as: 'media' });
         }
     }
 
@@ -38,6 +39,14 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
                 defaultValue: false
+            },
+            created_at: {
+                type: DataTypes.DATE,
+                defaultValue: DataTypes.NOW
+            },
+            updated_at: {
+                type: DataTypes.DATE,
+                defaultValue: DataTypes.NOW
             }
         },
         {
