@@ -9,16 +9,19 @@ module.exports = (sequelize, DataTypes) => {
 	User.init(
 		{
 			userID: {
+				field: 'user_id',
 				type: DataTypes.INTEGER,
 				allowNull: false,
 				primaryKey: true,
 				autoIncrement: true,
 			},
 			googleID: {
+				field: 'google_id',
 				type: DataTypes.STRING,
 				unique: true,
 			},
 			facebookID: {
+				field: 'facebook_id',
 				type: DataTypes.STRING,
 				unique: true,
 			},
@@ -27,6 +30,7 @@ module.exports = (sequelize, DataTypes) => {
 				type: DataTypes.STRING,
 			},
 			fullName: {
+				field: 'full_name',
 				type: DataTypes.STRING,
 				allowNull: false,
 			},
@@ -35,6 +39,7 @@ module.exports = (sequelize, DataTypes) => {
 				allowNull: false,
 			},
 			dateOfBirth: {
+				field: 'date_of_birth',
 				type: DataTypes.DATEONLY,
 				allowNull: false,
 			},
@@ -57,10 +62,6 @@ module.exports = (sequelize, DataTypes) => {
 			timestamps: true,
 			modelName: 'User',
 			tableName: 'users',
-			userID: 'user_id',
-			googleID: 'google_id',
-			facebookID: 'facebook_id',
-			dateOfBirth: 'date_of_birth',
 			createdAt: 'created_at',
 			updatedAt: 'updated_at',
 		}
