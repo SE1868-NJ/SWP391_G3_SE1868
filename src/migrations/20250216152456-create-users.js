@@ -3,42 +3,47 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
 	async up(queryInterface, Sequelize) {
-		/**
-		 * Add altering commands here.
-		 *
-		 * Example:
-		 * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
-		 */
-		await queryInterface.createTable('Shops', {
-			shop_id: {
-				type: Sequelize.INTEGER,
-				primaryKey: true,
-				autoIncrement: true,
-				allowNull: false,
-			},
-			shop_name: {
-				type: Sequelize.STRING,
-				allowNull: false,
-			},
+		await queryInterface.createTable('users', {
 			user_id: {
 				type: Sequelize.INTEGER,
 				allowNull: false,
-				references: {
-					model: 'Users',
-					key: 'id',
-				},
-				onUpdate: 'CASCADE',
-				onDelete: 'CASCADE',
+				primaryKey: true,
+				autoIncrement: true,
 			},
-			shop_description: {
-				type: Sequelize.TEXT,
-				allowNull: true,
-			},
-			shop_logo: {
+			google_id: {
 				type: Sequelize.STRING,
-				allowNull: true,
+				unique: true,
 			},
-			shop_address: {
+			facebook_id: {
+				type: Sequelize.STRING,
+				unique: true,
+			},
+
+			avatar: {
+				type: Sequelize.STRING,
+			},
+			full_name: {
+				type: Sequelize.STRING,
+				allowNull: false,
+			},
+			gender: {
+				type: Sequelize.ENUM('male', 'female', 'other'),
+				allowNull: false,
+			},
+			date_of_birth: {
+				type: Sequelize.DATEONLY,
+				allowNull: false,
+			},
+
+			phone: {
+				type: Sequelize.STRING,
+				allowNull: false,
+			},
+			email: {
+				type: Sequelize.STRING,
+				allowNull: false,
+			},
+			password: {
 				type: Sequelize.STRING,
 				allowNull: true,
 			},
@@ -56,12 +61,6 @@ module.exports = {
 	},
 
 	async down(queryInterface, Sequelize) {
-		/**
-		 * Add reverting commands here.
-		 *
-		 * Example:
-		 * await queryInterface.dropTable('users');
-		 */
-		await queryInterface.dropTable('Shops');
+		await queryInterface.dropTable('users');
 	},
 };
