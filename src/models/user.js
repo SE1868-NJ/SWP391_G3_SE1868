@@ -3,13 +3,17 @@ const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
 	class User extends Model {
-		static associate(models) {}
+		static associate(models) {
+			// User.hasMany(models.Feedback, { foreignKey: 'user_id', as: 'feedbacks' });
+			// User.hasMany(models.Order, { foreignKey: 'user_id', as: 'orders' });
+			// User.hasMany(models.Address, { foreignKey: 'user_id', as: 'addresses' });
+		}
 	}
 
 	User.init(
 		{
 			userID: {
-				field: 'user_id',
+				field: 'id',
 				type: DataTypes.INTEGER,
 				allowNull: false,
 				primaryKey: true,
@@ -29,23 +33,23 @@ module.exports = (sequelize, DataTypes) => {
 				type: DataTypes.STRING,
 			},
 			fullName: {
-				field: 'full_name',
+				field: 'name',
 				type: DataTypes.STRING,
 				allowNull: false,
 			},
-			gender: {
-				type: DataTypes.ENUM('male', 'female', 'other'),
-				allowNull: false,
-			},
-			dateOfBirth: {
-				field: 'date_of_birth',
-				type: DataTypes.DATEONLY,
-				allowNull: false,
-			},
-			phone: {
-				type: DataTypes.STRING,
-				allowNull: false,
-			},
+			// gender: {
+			// 	type: DataTypes.ENUM('male', 'female', 'other'),
+			// 	allowNull: false,
+			// },
+			// dateOfBirth: {
+			// 	field: 'date_of_birth',
+			// 	type: DataTypes.DATEONLY,
+			// 	allowNull: false,
+			// },
+			// phone: {
+			// 	type: DataTypes.STRING,
+			// 	allowNull: false,
+			// },
 			email: {
 				type: DataTypes.STRING,
 				allowNull: false,
@@ -60,8 +64,8 @@ module.exports = (sequelize, DataTypes) => {
 			timestamps: true,
 			modelName: 'User',
 			tableName: 'users',
-			createdAt: 'created_at',
-			updatedAt: 'updated_at',
+			createdAt: 'createdAt',
+			updatedAt: 'updatedAt',
 		}
 	);
 	return User;

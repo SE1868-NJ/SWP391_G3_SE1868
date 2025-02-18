@@ -6,7 +6,9 @@ class FeedbackRepository {
     }
 
     async getFeedBacksByProductId(params) {
-        const { page = 1, limit = 4, product_id } = params;
+        const page = 1;
+        const limit = 4;
+        const product_id = params;
 
         const { count, rows } = await db.Feedback.findAndCountAll({
             where: {

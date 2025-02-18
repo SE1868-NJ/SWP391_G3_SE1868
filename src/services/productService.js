@@ -93,7 +93,6 @@ class ProductService {
             if (cartExist) {
                 cartExist.quantity += 1;
                 const result = await cartRepository.updateCart(cartExist);
-                console.log(cartExist);
                 return result;
             }
             const result = await cartRepository.createCart(cart);
