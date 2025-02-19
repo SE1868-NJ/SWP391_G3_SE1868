@@ -4,25 +4,28 @@
 module.exports = {
 	async up(queryInterface, Sequelize) {
 		await queryInterface.createTable('users', {
-			user_id: {
+			userID: {
+				field: 'user_id',
 				type: Sequelize.INTEGER,
 				allowNull: false,
 				primaryKey: true,
 				autoIncrement: true,
 			},
-			google_id: {
+			googleID: {
+				field: 'google_id',
 				type: Sequelize.STRING,
 				unique: true,
 			},
-			facebook_id: {
+			facebookID: {
+				field: 'facebook_id',
 				type: Sequelize.STRING,
 				unique: true,
 			},
-
 			avatar: {
 				type: Sequelize.STRING,
 			},
-			full_name: {
+			fullName: {
+				field: 'full_name',
 				type: Sequelize.STRING,
 				allowNull: false,
 			},
@@ -30,11 +33,11 @@ module.exports = {
 				type: Sequelize.ENUM('male', 'female', 'other'),
 				allowNull: false,
 			},
-			date_of_birth: {
+			dateOfBirth: {
+				field: 'date_of_birth',
 				type: Sequelize.DATEONLY,
 				allowNull: false,
 			},
-
 			phone: {
 				type: Sequelize.STRING,
 				allowNull: false,
