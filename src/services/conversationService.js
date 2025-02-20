@@ -33,6 +33,19 @@ class ConversationService {
         }
         return data;
     }
+
+    async getConversByUserAndShop(userId, shopId) {
+        let data = [];
+        try {
+            data = await conversationRepository.findConversationByUserAndShop(userId, shopId);
+            if (!data) {
+                data = await conversationRepository.createConversation(userId, shopId);
+            }
+        } catch (error) {
+            throw new Error(`Error: ${error.message}`);
+        }
+        return data;
+    }
 }
 
 module.exports = new ConversationService();

@@ -26,7 +26,7 @@ class ConversationRepository {
     }
 
     async findConversationByUserAndShop(userId, shopId) {
-        return await this.Conversation.findOne({
+        return await db.Conversation.findOne({
             where: {
                 user_id: userId,
                 shop_id: shopId,

@@ -31,6 +31,15 @@ class ConversationController extends BaseController {
             return this.handleError(res, error);
         }
     }
+    getConservation = async (req, res) => {
+        try {
+            const { userId, shopId } = req.params;
+            const conversation = await conversationService.getConversByUserAndShop(userId, shopId);
+            return this.convertToJson(res, 200, conversation);
+        } catch (error) {
+            return this.handleError(res, error);
+        }
+    }
 }
 
 module.exports = new ConversationController();
