@@ -9,7 +9,7 @@ class FeedbackRepository {
         const page = 1;
         const limit = 4;
         const product_id = params;
-
+    
         const { count, rows } = await db.Feedback.findAndCountAll({
             where: {
                 product_id: product_id
@@ -27,7 +27,7 @@ class FeedbackRepository {
             limit: parseInt(limit),
             offset: (page - 1) * limit,
         });
-
+    
         return {
             items: rows,
             metadata: {
