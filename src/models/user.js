@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
 	User.init(
 		{
 			userID: {
-				field: 'user_id',
+				field: 'id',
 				type: DataTypes.INTEGER,
 				allowNull: false,
 				primaryKey: true,
@@ -60,8 +60,8 @@ module.exports = (sequelize, DataTypes) => {
 			timestamps: true,
 			modelName: 'User',
 			tableName: 'users',
-			createdAt: 'created_at',
-			updatedAt: 'updated_at',
+			createdAt: 'createdAt',
+			updatedAt: 'updatedAt',
 		}
 	);
 	return User;
