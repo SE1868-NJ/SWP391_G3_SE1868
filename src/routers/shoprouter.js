@@ -16,4 +16,7 @@ router.get('/cart/get_cart_by_user/:id', shopController.getCartsByUserId);
 router.post('/cart/add_to_cart', shopController.createCart);
 router.get('/cart/get_count_cart_by_user/:id', shopController.getCountCartByUserId);
 
+// Shop || seller
+router.get('/get_shop_by_user/:id', shopController.getShopByUserId);
+
 module.exports = router;
