@@ -38,6 +38,16 @@ class FeedbackRepository {
             }
         };
     }
+
+    async countFeedbacksByProductId(product_id) {
+        const count = await db.Feedback.count({
+            where: {
+                product_id: product_id
+            }
+        });
+
+        return count;
+    }
 }
 
 module.exports = new FeedbackRepository();
