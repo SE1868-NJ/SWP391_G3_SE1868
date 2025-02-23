@@ -42,7 +42,7 @@ class SupplierController extends BaseController {
             const supplierData = req.body;
 
             const result = await supplierService.createSupplier(supplierData);
-            return this.convertToJson(res, 201, result);
+            return this.convertToJson(res, 200, result);
         } catch (error) {
             return this.handleError(res, error);
         }

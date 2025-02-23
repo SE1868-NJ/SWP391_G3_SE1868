@@ -19,10 +19,17 @@ module.exports = (sequelize, DataTypes) => {
       supplier_name: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          notEmpty: { msg: 'Tên nhà cung cấp không được để trống' },
+        },
       },
       delivery_time: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        validate: {
+          isInt: { msg: 'Thời gian giao hàng phải là số nguyên' },
+          min: { args: [1], msg: 'Thời gian giao hàng phải lớn hơn 0' },
+        },
       },
       bank_name: {
         type: DataTypes.STRING,
@@ -36,14 +43,27 @@ module.exports = (sequelize, DataTypes) => {
       address: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          notEmpty: { msg: 'Địa chỉ không được để trống' },
+        },
       },
       contact_name: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          notEmpty: { msg: 'Họ và tên không được để trống' },
+        },
       },
       phone_number: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          notEmpty: { msg: 'Số điện thoại không được để trống' },
+          is: {
+            args: [/^\d{10,11}$/],
+            msg: 'Số điện thoại không hợp lệ',
+          },
+        },
       },
       facebook: {
         type: DataTypes.STRING,
