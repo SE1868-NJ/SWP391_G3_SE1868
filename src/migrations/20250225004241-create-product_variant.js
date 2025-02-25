@@ -3,12 +3,12 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
 	async up(queryInterface, Sequelize) {
-		queryInterface.createTable('product_options', {
+		queryInterface.createTable('product_variants', {
 			id: {
 				type: Sequelize.INTEGER,
 				allowNull: false,
-				autoIncrement: true,
 				primaryKey: true,
+				autoIncrement: true,
 			},
 			product_id: {
 				type: Sequelize.INTEGER,
@@ -17,12 +17,22 @@ module.exports = {
 					model: 'products',
 					key: 'id',
 				},
-				onDelete: 'CASCADE',
 				onUpdate: 'CASCADE',
+				onDelete: 'CASCADE',
 			},
-			option_name: {
-				type: Sequelize.STRING,
+			price: {
+				type: Sequelize.DECIMAL,
 				allowNull: false,
+			},
+			quantity: {
+				type: Sequelize.BIGINT,
+				allowNull: false,
+			},
+			sku: {
+				type: Sequelize.STRING,
+			},
+			expiry_date: {
+				type: Sequelize.DATE,
 			},
 			createdAt: {
 				allowNull: false,
@@ -45,6 +55,6 @@ module.exports = {
 	},
 
 	async down(queryInterface, Sequelize) {
-		queryInterface.dropTable('product_options');
+		queryInterface.dropTable('product_variants');
 	},
 };

@@ -3,24 +3,24 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
 	async up(queryInterface, Sequelize) {
-		queryInterface.createTable('product_options', {
+		queryInterface.createTable('option_values', {
 			id: {
 				type: Sequelize.INTEGER,
 				allowNull: false,
-				autoIncrement: true,
 				primaryKey: true,
+				autoIncrement: true,
 			},
-			product_id: {
+			option_id: {
 				type: Sequelize.INTEGER,
 				allowNull: false,
 				references: {
-					model: 'products',
+					model: 'product_options',
 					key: 'id',
 				},
-				onDelete: 'CASCADE',
 				onUpdate: 'CASCADE',
+				onDelete: 'CASCADE',
 			},
-			option_name: {
+			value: {
 				type: Sequelize.STRING,
 				allowNull: false,
 			},
@@ -45,6 +45,6 @@ module.exports = {
 	},
 
 	async down(queryInterface, Sequelize) {
-		queryInterface.dropTable('product_options');
+		queryInterface.dropTable('option_values');
 	},
 };

@@ -1,7 +1,7 @@
 'use strict';
 const { Model } = require('DataTypes');
 
-module.exports = (DataTypes, DataTypes) => {
+module.exports = (sequelize, DataTypes) => {
 	class Order extends Model {
 		static associate(models) {
 			Order.belongsTo(models.User, { foreignKey: 'user_id' });
@@ -42,7 +42,7 @@ module.exports = (DataTypes, DataTypes) => {
 					'shipped',
 					'delivered',
 					'canceled',
-					'returned'
+					'returned',
 				),
 				allowNull: false,
 				defaultValue: 'pending',
@@ -55,7 +55,7 @@ module.exports = (DataTypes, DataTypes) => {
 			tableName: 'orders',
 			createdAt: 'created_at',
 			updatedAt: 'updated_at',
-		}
+		},
 	);
 	return Order;
 };
