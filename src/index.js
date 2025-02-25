@@ -59,3 +59,5 @@ app.listen(port, () => {
 server.listen(3001, () => {
 	console.log('Server is running on http://localhost:3001');
 });
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
