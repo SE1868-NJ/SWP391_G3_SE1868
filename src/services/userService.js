@@ -52,6 +52,20 @@ class UserService {
         }
         return updatedUser;
     }
+    
+    async updateAvatar(id, avatarUrl) {
+        try {
+            const user = await UserRepository.getUserById(id);
+            if (!user) {
+                throw new Error('User not found');
+            }
+            return await UserRepository.update(id, { avatar: avatarUrl });
+        } catch (error) {
+            console.error('Error updating avatar:', error);
+            throw new Error('User avatar could not be updated');
+        }
+    }
+    
 
 }
 module.exports = new UserService();

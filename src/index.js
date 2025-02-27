@@ -11,6 +11,8 @@ const passport = require('passport');
 const chatSocket = require('./socket/chatSocket');
 require('./config/passport');
 
+const fileUpload = require('express-fileupload');
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -49,6 +51,11 @@ app.use(passport.session());
 //routes
 app.use('/api', apiRouter);
 app.use('/', authRoutes);
+
+//file upload
+app.use(fileUpload());
+app.use('/uploads', express.static('uploads'));
+
 
 scheduleTelegramJob();
 

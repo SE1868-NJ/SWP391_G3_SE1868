@@ -28,8 +28,8 @@ module.exports = (sequelize, DataTypes) => {
 			avatar: {
 				type: DataTypes.STRING,
 			},
-			fullName: {
-				field: 'full_name',
+			name: {
+				field: 'name',
 				type: DataTypes.STRING,
 				allowNull: false,
 			},
@@ -60,8 +60,8 @@ module.exports = (sequelize, DataTypes) => {
 			timestamps: true,
 			modelName: 'User',
 			tableName: 'users',
-			createdAt: 'createdAt',
-			updatedAt: 'updatedAt',
+			createdAt: 'created_at',
+			updatedAt: 'updated_at',
 		}
 	);
 	return User;
