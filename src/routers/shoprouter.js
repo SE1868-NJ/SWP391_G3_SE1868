@@ -11,6 +11,8 @@ router.post('/product/get_list_product', shopController.getProducts);
 router.get('/product/get_feedbacks_by_product/:id', feedBackController.getFeedBacksByProductId);
 router.get('/product/get_product_by_id/:id', shopController.getProductById);
 router.get('/product/get_product_by_name/:name', shopController.getProductByName);
+//router.get('/product/get_most_searched_products', shopController.getTopSearchedProducts);
+//router.get('/product/increase_search_count/:id', shopController.increaseSearchCount);
 
 // cart
 router.get('/cart/get_cart_by_user/:id', shopController.getCartsByUserId);

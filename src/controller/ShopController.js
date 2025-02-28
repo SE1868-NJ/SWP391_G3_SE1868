@@ -2,6 +2,7 @@ const categoryService = require("../services/categoryService");
 const productService = require("../services/productService");
 const BaseController = require("./baseController");
 
+
 class ShopController extends BaseController {
   getCategory = async (req, res) => {
     try {
@@ -23,7 +24,12 @@ class ShopController extends BaseController {
 
   getProducts = async (req, res) => {
     try {
-      const params = { page: parseInt(req.body.page) };
+      const params = {
+        page: parseInt(req.body.page),
+        limit: parseInt(req.body.limit) || 4, // Giữ nguyên mặc định nếu không có limit
+        search: req.body.search || "", // Lấy thêm search từ body
+        sortPrice: req.body.sortPrice || "asc", // Lấy thêm sortPrice từ body
+      };
 
       const result = await productService.getProducts(params);
       this.convertToJson(res, 200, result);
@@ -31,6 +37,25 @@ class ShopController extends BaseController {
       this.handleError(res, error);
     }
   };
+
+//   getTopSearchedProducts = async (req, res) => {
+//     try {
+//       const limit = parseInt(req.query.limit) || 5; // Lấy limit từ query hoặc mặc định là 5
+//       const result = await productService.getMostSearchedProducts(limit);
+//       this.convertToJson(res, 200, result);
+//     } catch (error) {
+//       this.handleError(res, error);
+//     }
+//   };
+//   increaseSearchCount = async (req, res) => {
+//     try {
+//         const productId = parseInt(req.params.id);
+//         await productService.increaseSearchCount(productId);
+//         this.convertToJson(res, 200, { message: "Search count updated" });
+//     } catch (error) {
+//         this.handleError(res, error);
+//     }
+// };
 
   getProductById = async (req, res) => {
     try {
@@ -51,7 +76,7 @@ class ShopController extends BaseController {
     } catch (error) {
       this.handleError(res, error);
     }
-  }; 
+  };
 
   getCartsByUserId = async (req, res) => {
     try {

@@ -1,7 +1,11 @@
 const productRepository = require("../repositories/ProductRepository");
 const categoryRepository = require("../repositories/CategoryRepository");
 const cartRepository = require("../repositories/CartRepository");
-const shopRepository = require("../repositories/ShopRepository");
+const shopRepository = require("../repositories/shopRepository");
+
+// const increaseSearchCount = async (productId) => {
+//     await productRepository.updateSearchCount(productId);
+// };
 
 class ProductService {
   constructor() {}
@@ -28,6 +32,15 @@ class ProductService {
       throw new Error(`Error: ${error.message}`);
     }
   }
+
+  // async getMostSearchedProducts(limit=5) {
+  //   try {
+  //     const result = await productRepository.getMostSearchedProducts(limit);
+  //     return result;
+  //   } catch (error) {
+  //     throw new Error(`Error: ${error.message}`);
+  //   }
+  // }
 
   async getProductById(id) {
     try {
@@ -125,3 +138,6 @@ class ProductService {
 }
 
 module.exports = new ProductService();
+// module.exports = {
+//   increaseSearchCount,
+// };

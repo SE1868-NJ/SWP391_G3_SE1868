@@ -1,4 +1,13 @@
 const db = require("../models");
+const { Product } = require("../models");
+
+// const updateSearchCount = async (productId) => {
+//     return await Product.increment('search_count', { where: { id: productId } });
+// };
+
+// module.exports = {
+//     updateSearchCount,
+// };
 
 class ProductRepository {
   constructor() {}
@@ -8,11 +17,23 @@ class ProductRepository {
   }
 
   async getProducts(params) {
-    const { page = 1, limit = 4 } = params;
+    const { page = 1, limit = 4, search, sortPrice } = params;
 
     const whereClause = {
       status: "active",
     };
+
+    if (search && search.trim() !== "") {
+      whereClause.product_name = { [db.Sequelize.Op.like]: `%${search}%` };
+    }
+
+    const order = [];
+    if (sortPrice) {
+      order.push(["sale_price", sortPrice === "desc" ? "DESC" : "ASC"]);
+    } else {
+      order.push(["createdAt", "DESC"]);
+    }
+
     const { count, rows } = await db.Product.findAndCountAll({
       where: whereClause,
       include: [
@@ -23,6 +44,7 @@ class ProductRepository {
       ],
       limit: parseInt(limit),
       offset: (page - 1) * limit,
+      order: order,
     });
 
     return {
@@ -54,13 +76,13 @@ class ProductRepository {
       },
     });
   }
+
   // async getMostSearchedProducts(limit = 5) {
   //   return await db.Product.findAll({
   //     order: [["search_count", "DESC"]],
   //     limit: parseInt(limit),
   //   });
   // }
-  
 }
 
 module.exports = new ProductRepository();
