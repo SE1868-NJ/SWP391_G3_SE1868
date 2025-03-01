@@ -76,13 +76,36 @@ class ProductRepository {
       },
     });
   }
+  async updateSearchCount(productId) {
+    // Xác định sản phẩm trước
+    const product = await Product.findByPk(productId);
+    if (!product) {
+      throw new Error("Product not found");
+    }
 
-  // async getMostSearchedProducts(limit = 5) {
-  //   return await db.Product.findAll({
-  //     order: [["search_count", "DESC"]],
-  //     limit: parseInt(limit),
-  //   });
-  // }
+    // Cập nhật search_count một cách rõ ràng với giá trị cụ thể
+    product.search_count = product.search_count + 1;
+    await product.save();
+
+    return product;
+  }
+
+  async getMostSearchedProducts(limit = 4) {
+    return await Product.findAll({
+      where: {
+        status: "active", // Thêm điều kiện nếu cần
+      },
+      order: [["search_count", "DESC"]],
+      limit: parseInt(limit),
+      attributes: [
+        "id",
+        "product_name",
+        "search_count",
+        "image_url",
+        "sale_price",
+      ],
+    });
+  }
 }
 
 module.exports = new ProductRepository();

@@ -2,7 +2,6 @@ const categoryService = require("../services/categoryService");
 const productService = require("../services/productService");
 const BaseController = require("./baseController");
 
-
 class ShopController extends BaseController {
   getCategory = async (req, res) => {
     try {
@@ -38,35 +37,43 @@ class ShopController extends BaseController {
     }
   };
 
-//   getTopSearchedProducts = async (req, res) => {
-//     try {
-//       const limit = parseInt(req.query.limit) || 5; // Lấy limit từ query hoặc mặc định là 5
-//       const result = await productService.getMostSearchedProducts(limit);
-//       this.convertToJson(res, 200, result);
-//     } catch (error) {
-//       this.handleError(res, error);
-//     }
-//   };
-//   increaseSearchCount = async (req, res) => {
-//     try {
-//         const productId = parseInt(req.params.id);
-//         await productService.increaseSearchCount(productId);
-//         this.convertToJson(res, 200, { message: "Search count updated" });
-//     } catch (error) {
-//         this.handleError(res, error);
-//     }
-// };
+  //   getTopSearchedProducts = async (req, res) => {
+  //     try {
+  //       const limit = parseInt(req.query.limit) || 5; // Lấy limit từ query hoặc mặc định là 5
+  //       const result = await productService.getMostSearchedProducts(limit);
+  //       this.convertToJson(res, 200, result);
+  //     } catch (error) {
+  //       this.handleError(res, error);
+  //     }
+  //   };
+  //   increaseSearchCount = async (req, res) => {
+  //     try {
+  //         const productId = parseInt(req.params.id);
+  //         await productService.increaseSearchCount(productId);
+  //         this.convertToJson(res, 200, { message: "Search count updated" });
+  //     } catch (error) {
+  //         this.handleError(res, error);
+  //     }
+  // };
 
   getProductById = async (req, res) => {
     try {
       const id = parseInt(req.params.id);
 
+      // Tăng search_count và lấy dữ liệu sản phẩm
+      await productService.increaseSearchCount(id);
       const result = await productService.getProductById(id);
+
+      if (!result) {
+        return this.convertToJson(res, 404, { message: "Product not found" });
+      }
+
       this.convertToJson(res, 200, result);
     } catch (error) {
       this.handleError(res, error);
     }
   };
+
   getProductByName = async (req, res) => {
     try {
       const productName = req.params.name;
@@ -108,6 +115,26 @@ class ShopController extends BaseController {
       this.convertToJson(res, 200, result);
     } catch (error) {
       this.handleError(res, error);
+    }
+  };
+  getTopSearchedProducts = async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit) || 4; // Mặc định là 4 sản phẩm
+
+      const result = await productService.getMostSearchedProducts(limit);
+      return this.convertToJson(res, 200, result);
+    } catch (error) {
+      return this.handleError(res, error);
+    }
+  };
+
+  increaseSearchCount = async (req, res) => {
+    try {
+      const productId = parseInt(req.params.id);
+      await productService.increaseSearchCount(productId);
+      return this.convertToJson(res, 200, { message: "Search count updated" });
+    } catch (error) {
+      return this.handleError(res, error);
     }
   };
 }

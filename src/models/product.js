@@ -70,6 +70,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ENUM("active", "inactive"),
         defaultValue: "active",
       },
+      search_count: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+      },
     },
     {
       sequelize,

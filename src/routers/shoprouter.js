@@ -13,6 +13,7 @@ router.get('/product/get_product_by_id/:id', shopController.getProductById);
 router.get('/product/get_product_by_name/:name', shopController.getProductByName);
 //router.get('/product/get_most_searched_products', shopController.getTopSearchedProducts);
 //router.get('/product/increase_search_count/:id', shopController.increaseSearchCount);
+router.get('/product/get_top_searched_products', shopController.getTopSearchedProducts);
 
 // cart
 router.get('/cart/get_cart_by_user/:id', shopController.getCartsByUserId);
