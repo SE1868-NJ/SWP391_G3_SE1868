@@ -10,7 +10,7 @@ class VoucherRepository {
                 shop_id: storeId,
                 expiration_date: { [db.Sequelize.Op.gte]: new Date() }, // Kiểm tra voucher còn hạn
             },
-            attributes: ['voucher_id', 'code', 'discount_rate', 'shop_id', 'expiration_date'] // Đảm bảo lấy voucher_id
+            attributes: ['voucher_id', 'code', 'discount_rate', 'shop_id', 'expiration_date']
         });
     }
 

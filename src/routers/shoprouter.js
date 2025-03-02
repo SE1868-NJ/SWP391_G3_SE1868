@@ -13,7 +13,7 @@ router.get('/product/get_product_by_id/:id', shopController.getProductById);
 
 // Cart
 router.get('/cart/get_cart_by_user/:id', shopController.getCartsByUserId);
-// router.post('/cart/add_to_cart', shopController.addToCart);
+router.post('/cart/add_to_cart', shopController.addToCart);
 router.post('/cart/update_quantity/:cartId', shopController.updateCartQuantity);
 router.post('/cart/remove_item/:cartId', shopController.removeCartItem);
 router.post('/cart/remove_multiple', shopController.removeMultipleCartItems);

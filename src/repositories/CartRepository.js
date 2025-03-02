@@ -67,13 +67,12 @@ class CartRepository {
                 {
                     model: db.Voucher,
                     as: 'vouchers',
-                    attributes: ['voucher_id', 'code', 'discount_rate', 'expiration_date'], // Đảm bảo lấy thuộc tính 'code'
-                    through: { attributes: [] } // Không lấy dữ liệu từ bảng trung gian CartVoucher
+                    attributes: ['voucher_id', 'code', 'discount_rate', 'expiration_date'],
+                    through: { attributes: [] }
                 }
             ]
         });
-        console.log('CartItem with vouchers:', JSON.stringify(cart, null, 2)); // Log chi tiết để debug
-        return cart || { vouchers: [] }; // Trả về giỏ hàng hoặc mảng rỗng nếu không tìm thấy
+        return cart || { vouchers: [] };
     }
 }
 

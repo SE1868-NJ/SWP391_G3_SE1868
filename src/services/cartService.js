@@ -10,7 +10,6 @@ class CartService {
             const carts = await cartRepository.getCartsByUserId(userId);
             const shopGroupedCarts = carts.reduce((acc, cartItem) => {
                 const shopId = cartItem.product.shop_id;
-
                 if (!acc[shopId]) {
                     acc[shopId] = {
                         shop_info: {
@@ -22,7 +21,6 @@ class CartService {
                         items: [],
                     };
                 }
-
                 acc[shopId].items.push({
                     cart_id: cartItem.cart_id,
                     product_id: cartItem.product_id,
@@ -135,20 +133,15 @@ class CartService {
 
     async applyVoucher(userId, storeId, voucherCode) {
         try {
-            // Lấy danh sách giỏ hàng của người dùng
             const carts = await cartRepository.getCartsByUserId(userId);
             const storeCarts = carts.filter(cart => cart.product.shop_id === storeId);
             if (!storeCarts.length) {
                 throw new Error('Không có sản phẩm nào trong cửa hàng này.');
             }
-
-            // Lấy thông tin voucher với kiểm tra phân biệt chữ hoa/thường
             const voucher = await voucherRepository.getVoucherByCode(voucherCode, storeId);
             if (!voucher || voucher.code !== voucherCode) {
                 throw new Error('Mã voucher không hợp lệ hoặc đã hết hạn.');
             }
-
-            // Kiểm tra xem voucher đã được áp dụng cho bất kỳ mục nào trong cửa hàng này chưa
             let isVoucherApplied = false;
             for (const cart of storeCarts) {
                 const cartItem = await cartRepository.getCartItemWithVouchers(cart.cart_id);
@@ -159,8 +152,6 @@ class CartService {
                     }
                 }
             }
-
-            // Tính tổng mức giảm giá hiện tại của cửa hàng để đảm bảo không vượt quá 100%
             let totalDiscount = 0;
             for (const cart of storeCarts) {
                 const cartItem = await cartRepository.getCartItemWithVouchers(cart.cart_id);
@@ -168,17 +159,11 @@ class CartService {
                     totalDiscount += cartItem.vouchers.reduce((sum, v) => sum + (Number(v.discount_rate) || 0), 0);
                 }
             }
-
-            // Thêm mức giảm giá của voucher mới
             const newDiscount = Number(voucher.discount_rate) || 0;
             totalDiscount += newDiscount;
-
-            // Kiểm tra nếu tổng mức giảm giá vượt quá 100%
             if (totalDiscount > 1) {
                 throw new Error('Tổng mức giảm giá không thể vượt quá 100%.');
             }
-
-            // Áp dụng voucher cho từng mục trong giỏ hàng của cửa hàng
             for (const cart of storeCarts) {
                 const existingCartVoucher = await db.CartVoucher.findOne({
                     where: {
@@ -190,8 +175,6 @@ class CartService {
                     await voucherRepository.applyVoucherToCart(cart.cart_id, voucher.voucher_id);
                 }
             }
-
-            // Fetch lại dữ liệu để đồng bộ
             const updatedCarts = await cartRepository.getCartsByUserId(userId);
             const updatedStoreCarts = updatedCarts.filter(cart => cart.product.shop_id === storeId);
             const appliedVouchers = [];
@@ -202,13 +185,12 @@ class CartService {
                         if (!appliedVouchers.some(av => av.code === v.code)) {
                             appliedVouchers.push({
                                 code: v.code,
-                                rate: Number(v.discount_rate) || 0 // Đổi discount_rate thành rate để đồng bộ với FE
+                                rate: Number(v.discount_rate) || 0
                             });
                         }
                     });
                 }
             }
-
             return {
                 status: 'success',
                 data: {
@@ -221,7 +203,6 @@ class CartService {
                 }
             };
         } catch (error) {
-            console.error('Lỗi khi áp dụng voucher:', error);
             return {
                 status: 'error',
                 data: { message: error.message }
@@ -232,32 +213,18 @@ class CartService {
     async removeVoucher(cartId, voucherCode) {
         try {
             const cartItem = await cartRepository.getCartItemWithVouchers(cartId);
-            console.log('CartItem trước khi xóa:', JSON.stringify(cartItem, null, 2));
-
             if (!cartItem) {
                 throw new Error('Mục giỏ hàng không tồn tại.');
             }
-
             if (!cartItem.vouchers || cartItem.vouchers.length === 0) {
                 throw new Error('Không có voucher nào được áp dụng cho mục này.');
             }
-
-            // Log danh sách voucher để kiểm tra
-            console.log('Danh sách voucher:', cartItem.vouchers.map(v => v.code));
-            console.log('Mã voucher cần xóa:', voucherCode);
-
-            // So sánh mã voucher chính xác, phân biệt hoa/thường
             const voucher = cartItem.vouchers.find(v => v.code === voucherCode);
             if (!voucher) {
                 throw new Error('Voucher không được áp dụng cho mục này.');
             }
-
             await voucherRepository.removeVoucherFromCart(cartId, voucher.voucher_id);
-
-            // Log trạng thái sau khi xóa
             const updatedCartItem = await cartRepository.getCartItemWithVouchers(cartId);
-            console.log('CartItem sau khi xóa:', JSON.stringify(updatedCartItem, null, 2));
-
             return {
                 status: 'success',
                 data: {
@@ -266,7 +233,6 @@ class CartService {
                 }
             };
         } catch (error) {
-            console.error('Lỗi trong removeVoucher:', error.message);
             throw new Error(error.message || 'Không thể xóa voucher.');
         }
     }
