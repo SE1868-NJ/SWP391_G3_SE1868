@@ -14,24 +14,40 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      delivery_name: {
+      delivery_time: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+      },
+      bank_name: {
+        type: Sequelize.STRING
+      },
+      account_number: {
+        type: Sequelize.STRING
+      },
+      payment_term: {
         type: Sequelize.STRING
       },
       address: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       contact_name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       phone_number: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
-      status: {
-        type: Sequelize.ENUM('active', 'inactive'),
-        defaultValue: 'active'
+      facebook: {
+        type: Sequelize.STRING
       },
       note: {
         type: Sequelize.TEXT
+      },
+      status: {
+        type: Sequelize.ENUM('Hoạt động', 'Không hoạt động'),
+        defaultValue: 'Hoạt động'
       },
       createdAt: {
         type: Sequelize.DATE,
