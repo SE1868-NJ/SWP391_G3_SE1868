@@ -1,14 +1,6 @@
 const db = require("../models");
 const { Product } = require("../models");
 
-// const updateSearchCount = async (productId) => {
-//     return await Product.increment('search_count', { where: { id: productId } });
-// };
-
-// module.exports = {
-//     updateSearchCount,
-// };
-
 class ProductRepository {
   constructor() {}
 
@@ -59,14 +51,29 @@ class ProductRepository {
   }
 
   async getProductById(id) {
-    return await db.Product.findByPk(id, {
-      include: [
-        {
-          model: db.Shop,
-          as: "shop",
-        },
-      ],
-    });
+    try {
+      const result = await productRepository.getProductById(id);
+      if (result) {
+        let ratingSum = 0;
+        let rating = 0;
+        const count_feedback =
+          await feedbackRepository.countFeedbacksByProductId(id);
+        const feedbacks = await feedbackRepository.getFeedBacksByProductId(id);
+
+        feedbacks.items.forEach((feedback) => {
+          ratingSum += feedback.rating;
+        });
+        if (feedbacks.items.length > 0) {
+          rating = Number((ratingSum / feedbacks.items.length).toFixed(1));
+        }
+
+        result.dataValues.rating = rating;
+        result.dataValues.count_feedback = count_feedback;
+      }
+      return result;
+    } catch (error) {
+      throw new Error(`Error: ${error.message}`);
+    }
   }
 
   async getProductByName(productName) {
@@ -107,5 +114,4 @@ class ProductRepository {
     });
   }
 }
-
 module.exports = new ProductRepository();

@@ -1,7 +1,13 @@
-const productRepository = require("../repositories/ProductRepository");
-const categoryRepository = require("../repositories/CategoryRepository");
+// const productRepository = require("../repositories/ProductRepository");
+// const categoryRepository = require("../repositories/CategoryRepository");
+// const cartRepository = require("../repositories/CartRepository");
+// const shopRepository = require("../repositories/shopRepository");
+const productRepository = require('../repositories/ProductRepository');
+const categoryRepository = require('../repositories/CategoryRepository');
+const cartRepository = require('../repositories/CartRepository');
+const shopRepository = require('../repositories/ShopRepository');
+const feedbackRepository = require('../repositories/FeedbackRepository');
 const cartRepository = require("../repositories/CartRepository");
-const shopRepository = require("../repositories/shopRepository");
 
 class ProductService {
   constructor() {}
