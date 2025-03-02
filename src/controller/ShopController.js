@@ -1,5 +1,6 @@
 const categoryService = require("../services/categoryService");
 const productService = require("../services/productService");
+const shopService = require("../services/shopService");
 const BaseController = require("./baseController");
 
 class ShopController extends BaseController {
@@ -135,6 +136,16 @@ class ShopController extends BaseController {
       return this.convertToJson(res, 200, { message: "Search count updated" });
     } catch (error) {
       return this.handleError(res, error);
+    }
+  };
+  getShopByUserId = async (req, res) => {
+    try {
+      const userId = req.params.id;
+
+      const result = await shopService.getShopsByUserId(userId);
+      this.convertToJson(res, 200, result);
+    } catch (error) {
+      this.handleError(res, error);
     }
   };
 }
