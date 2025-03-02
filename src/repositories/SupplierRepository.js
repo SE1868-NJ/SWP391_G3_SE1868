@@ -7,30 +7,30 @@ class SupplierRepository {
         return await db.Supplier.findAll();
     }
 
-    // async getSuppliers(params) {
-    //     const { page = 1, limit = 4, status } = params;
+    async getSuppliers(params) {
+        const { page = 1, limit = 10, status } = params;
 
-    //     const whereClause = {};
-    //     if (status) {
-    //         whereClause.status = status;
-    //     }
+        const whereClause = {};
+        if (status) {
+            whereClause.status = status; // Lọc theo trạng thái nếu có
+        }
 
-    //     const { count, rows } = await db.Supplier.findAndCountAll({
-    //         where: whereClause,
-    //         limit: parseInt(limit),
-    //         offset: (page - 1) * limit,
-    //     });
+        const { count, rows } = await db.Supplier.findAndCountAll({
+            where: whereClause,
+            limit: parseInt(limit),
+            offset: (page - 1) * limit,
+        });
 
-    //     return {
-    //         items: rows,
-    //         metadata: {
-    //             total: count,
-    //             page: parseInt(page),
-    //             limit: parseInt(limit),
-    //             totalPages: Math.ceil(count / limit)
-    //         }
-    //     };
-    // }
+        return {
+            items: rows,
+            metadata: {
+                total: count,
+                page: parseInt(page),
+                limit: parseInt(limit),
+                totalPages: Math.ceil(count / limit),
+            },
+        };
+    }
 
     async getSupplierById(id) {
         return await db.Supplier.findByPk(id);

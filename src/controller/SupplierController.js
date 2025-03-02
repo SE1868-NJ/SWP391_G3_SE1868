@@ -12,19 +12,19 @@ class SupplierController extends BaseController {
         }
     }
 
-    // getSuppliers = async (req, res) => {
-    //     try {
-    //         const params = {
-    //             page: parseInt(req.query.page) || 1,
-    //             limit: parseInt(req.query.limit) || 10
-    //         };
+    getSuppliers = async (req, res) => {
+        try {
+            const params = {
+                page: parseInt(req.query.page) || 1, // Lấy từ query thay vì body
+                limit: parseInt(req.query.limit) || 10, // Mặc định 10 bản ghi
+            };
 
-    //         const result = await supplierService.getSuppliers(params);
-    //         return this.convertToJson(res, 200, result);
-    //     } catch (error) {
-    //         return this.handleError(res, error);
-    //     }
-    // }
+            const result = await supplierService.getSuppliers(params);
+            return this.convertToJson(res, 200, result);
+        } catch (error) {
+            return this.handleError(res, error);
+        }
+    };
 
     getSupplierById = async (req, res) => {
         try {

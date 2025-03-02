@@ -12,14 +12,14 @@ class SupplierService {
         }
     }
 
-    // async getSuppliers(params) {
-    //     try {
-    //         const result = await supplierRepository.getSuppliers(params);
-    //         return result;
-    //     } catch (error) {
-    //         throw new Error(`Error: ${error.message}`);
-    //     }
-    // }
+    async getSuppliers(params) {
+        try {
+            const result = await supplierRepository.getSuppliers(params);
+            return result;
+        } catch (error) {
+            throw new Error(`Error: ${error.message}`);
+        }
+    }
 
     async getSupplierById(id) {
         try {
