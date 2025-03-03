@@ -27,7 +27,9 @@ class ShopController extends BaseController {
         page: parseInt(req.body.page),
         limit: parseInt(req.body.limit) || 4, // Giữ nguyên mặc định nếu không có limit
         search: req.body.search || "", // Lấy thêm search từ body
-        sortPrice: req.body.sortPrice || "asc", // Lấy thêm sortPrice từ body
+        sortPrice: req.body.sortPrice || "asc", // Lấy thêm sortPrice từ body\ categories: req.body.categories || ""
+        minPrice: req.body.minPrice || 0, // Giá thấp nhất
+        maxPrice: req.body.maxPrice || 10000000, // Giá cao nhất (default rất lớn)
       };
 
       const result = await productService.getProducts(params);

@@ -23,7 +23,18 @@ class ProductService {
 
   async getProducts(params) {
     try {
-      const result = await productRepository.getProducts(params);
+      const { page, limit, search, sortPrice, categories, minPrice, maxPrice } = params;
+
+        // Truyền đầy đủ các tham số xuống Repository
+        const result = await productRepository.getProducts({
+            page,
+            limit,
+            search,
+            sortPrice,
+            categories: categories ? categories.split(',') : [],  // tách categories từ chuỗi thành mảng
+            minPrice: minPrice ? parseFloat(minPrice) : undefined,
+            maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
+        });
       return result;
     } catch (error) {
       throw new Error(`Error: ${error.message}`);

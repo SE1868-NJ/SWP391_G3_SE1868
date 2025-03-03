@@ -12,7 +12,7 @@ class ProductRepository {
   }
 
   async getProducts(params) {
-    const { page = 1, limit = 4, search, sortPrice } = params;
+    const { page = 1, limit = 4, search, sortPrice, categories=[], minPrice, maxPrice } = params;
 
     const whereClause = {
       status: 'active'
@@ -21,6 +21,20 @@ class ProductRepository {
     if (search && search.trim() !== "") {
       whereClause.product_name = { [db.Sequelize.Op.like]: `%${search}%` };
     }
+    
+    // Lọc theo khoảng giá
+    if (minPrice && maxPrice) {
+      whereClause.sale_price = { [db.Sequelize.Op.between]: [minPrice, maxPrice] };
+  } else if (minPrice) {
+      whereClause.sale_price = { [db.Sequelize.Op.gte]: minPrice };
+  } else if (maxPrice) {
+      whereClause.sale_price = { [db.Sequelize.Op.lte]: maxPrice };
+  }
+
+  // Lọc theo danh mục
+  if (categories.length > 0) {
+      whereClause['$category.category_name$'] = { [db.Sequelize.Op.in]: categories };
+  }
 
     const order = [];
     if (sortPrice) {
