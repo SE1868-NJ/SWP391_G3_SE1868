@@ -1,9 +1,7 @@
-const { where } = require('sequelize');
 const db = require('../models');
 
 class CartRepository {
-    constructor() {
-    }
+    constructor() { }
 
     async getCartsByUserId(userId) {
         return db.Cart.findAll({
@@ -18,6 +16,16 @@ class CartRepository {
                     model: db.Category,
                     as: 'category'
                 }
+            }
+        });
+    }
+
+    async getCartByUserAndProduct(userId, productId) {
+        return db.Cart.findOne({
+            where: {
+                user_id: userId,
+                product_id: productId,
+                is_ordered: false
             }
         });
     }
@@ -42,7 +50,7 @@ class CartRepository {
             {
                 where: { id: cart.id },
             }
-        );;
+        );
     }
 
     async getCountCartByUserId(userId) {
@@ -53,7 +61,18 @@ class CartRepository {
             }
         });
     }
-}
 
+    async removeCartItem(cartId) {
+        return db.Cart.destroy({
+            where: { id: cartId },
+        });
+    }
+
+    async removeMultipleCartItems(cartIds) {
+        return db.Cart.destroy({
+            where: { id: cartIds },
+        });
+    }
+}
 
 module.exports = new CartRepository();

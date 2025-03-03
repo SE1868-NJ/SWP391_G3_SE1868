@@ -1,6 +1,7 @@
 const categoryService = require('../services/categoryService');
 const productService = require('../services/productService');
 const shopService = require('../services/shopService');
+const cartService = require('../services/cartService');
 const BaseController = require('./baseController');
 
 class ShopController extends BaseController {
@@ -45,22 +46,53 @@ class ShopController extends BaseController {
         }
     }
 
-    getCartsByUserId = async (req, res) => {
+    createCart = async (req, res) => {
         try {
-            const userId = req.params.id;
+            const cart = req.body;
 
-            const result = await productService.getCartsByUserId(userId);
+            const result = await productService.createCart(cart);
             this.convertToJson(res, 200, result);
         } catch (error) {
             this.handleError(res, error);
         }
     }
 
-    createCart = async (req, res) => {
+    getCartsByUserId = async (req, res) => {
         try {
-            const cart = req.body;
+            const userId = req.params.id;
 
-            const result = await productService.createCart(cart);
+            const result = await cartService.getCartsByUserId(userId);
+            this.convertToJson(res, 200, result);
+        } catch (error) {
+            this.handleError(res, error);
+        }
+    }
+
+    updateCartQuantity = async (req, res) => {
+        try {
+            const cartId = req.params.cartId;
+            const { quantity } = req.body;
+            const result = await cartService.updateCartQuantity(cartId, quantity);
+            this.convertToJson(res, 200, result);
+        } catch (error) {
+            this.handleError(res, error);
+        }
+    }
+
+    removeCartItem = async (req, res) => {
+        try {
+            const cartId = req.params.cartId;
+            const result = await cartService.removeCartItem(cartId);
+            this.convertToJson(res, 200, result);
+        } catch (error) {
+            this.handleError(res, error);
+        }
+    }
+
+    removeMultipleCartItems = async (req, res) => {
+        try {
+            const { cartIds } = req.body;
+            const result = await cartService.removeMultipleCartItems(cartIds);
             this.convertToJson(res, 200, result);
         } catch (error) {
             this.handleError(res, error);
