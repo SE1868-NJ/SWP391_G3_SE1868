@@ -1,6 +1,9 @@
 // const User = require('../models/user');
 const UserService = require('../services/userService');
 const BaseController = require('./baseController');
+const path = require('path');
+const fs = require('fs');
+const UserRepository = require('../repositories/UserRepository');
 
 class UserController extends BaseController {
     constructor() {
@@ -45,28 +48,37 @@ class UserController extends BaseController {
     };
 
     uploadAvatar = async (req, res) => {
-        const id = req.params.id;
-        if (!req.files || !req.files.avatar) {
-            return this.convertToJson(res, 400, { message: 'No file uploaded' });
-        }
-    
-        const avatarFile = req.files.avatar;
-        const fileName = `${id}_avatar_${avatarFile.name}`;
-        const uploadPath = `uploads/${fileName}`;
-    
         try {
-            // Lưu file lên server
+            const userId = req.params.id;
+    
+            // Kiểm tra xem file có được gửi lên không
+            if (!req.files || !req.files.avatar) {
+                return res.status(400).json({ message: "No file uploaded" });
+            }
+    
+            const avatarFile = req.files.avatar;
+            const fileName = `${userId}_${Date.now()}_${avatarFile.name}`;
+            const uploadPath = path.join(__dirname, '../uploads/', fileName);
+    
+            // Dùng Promise để đảm bảo file lưu thành công trước khi cập nhật DB
             await avatarFile.mv(uploadPath);
     
-            // Cập nhật URL ảnh trong database
-            const avatarUrl = `/uploads/${fileName}`;
-            const updatedUser = await UserService.updateAvatar(id, avatarUrl);
+            // Tạo URL trả về
+            const avatarUrl = `http://localhost:4000/uploads/${fileName}`;
     
-            return this.convertToJson(res, 200, updatedUser);
+            // Cập nhật đường dẫn avatar vào database
+            await UserRepository.update(userId, { avatar: avatarUrl });
+    
+            console.log("📤 API response:", { message: "Avatar updated successfully", avatar: avatarUrl });
+    
+            return res.json({ message: "Avatar updated successfully", avatar: avatarUrl });
         } catch (error) {
-            return this.handleError(res, error);
+            console.error("Lỗi upload avatar:", error);
+            return res.status(500).json({ message: "Server error", error: error.message });
         }
     };
+    
+    
     
 }
 
