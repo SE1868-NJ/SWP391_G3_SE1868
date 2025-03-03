@@ -4,7 +4,7 @@
 module.exports = {
 	async up(queryInterface, Sequelize) {
 		await queryInterface.createTable('users', {
-			user_id: {
+			id: {
 				type: Sequelize.INTEGER,
 				allowNull: false,
 				primaryKey: true,
@@ -22,7 +22,7 @@ module.exports = {
 			avatar: {
 				type: Sequelize.STRING,
 			},
-			full_name: {
+			name: {
 				type: Sequelize.STRING,
 				allowNull: false,
 			},
