@@ -5,6 +5,7 @@ const conversationRouter = require('./conversationRouter');
 const messageRouter = require('./messageRouter');
 const shopRouter = require('./shopRouter');
 const supplierRouter = require('./supplierRouter');
+const orderRouter = require('./orderRouter');
 const apiRouter = express.Router();
 
 apiRouter.use('/user', userRouter);
@@ -13,6 +14,7 @@ apiRouter.use('/conversation', conversationRouter);
 apiRouter.use('/message', messageRouter);
 apiRouter.use('/shop', shopRouter);
 apiRouter.use('/supplier', supplierRouter);
+apiRouter.use('/order', orderRouter);
 
 
 module.exports = apiRouter;
