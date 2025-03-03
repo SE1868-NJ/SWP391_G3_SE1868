@@ -4,19 +4,13 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
 	class Shop extends Model {
 		static associate(models) {
-			Shop.hasMany(models.Product, {
-				foreignKey: 'shop_id',
-				as: 'products',
-				onDelete: 'CASCADE'
-			});
+			// Shop.hasMany(models.Product, { foreignKey: 'shop_id', onDelete: 'CASCADE' });
 			Shop.belongsTo(models.User, {
 				foreignKey: 'user_id',
-				as: 'user',
-				onDelete: 'CASCADE'
+				onDelete: 'CASCADE',
 			});
 		}
 	}
-
 	Shop.init(
 		{
 			shop_id: {
@@ -31,36 +25,19 @@ module.exports = (sequelize, DataTypes) => {
 					model: 'User',
 					key: 'user_id',
 				},
-				validate: {
-					notEmpty: true,
-					isInt: true,
-				},
 			},
 			shop_name: {
 				type: DataTypes.STRING,
 				allowNull: false,
-				validate: {
-					notEmpty: true,
-					len: [1, 255],
-				},
 			},
 			shop_description: {
 				type: DataTypes.STRING,
-				validate: {
-					len: [0, 1000],
-				},
 			},
 			shop_logo: {
 				type: DataTypes.STRING,
-				validate: {
-					isUrl: true,
-				},
 			},
 			shop_address: {
 				type: DataTypes.STRING,
-				validate: {
-					len: [0, 500],
-				},
 			},
 			created_at: {
 				type: DataTypes.DATE,
@@ -74,12 +51,8 @@ module.exports = (sequelize, DataTypes) => {
 		{
 			sequelize,
 			modelName: 'Shop',
-			tableName: 'shops',
-			createdAt: 'created_at',
-			updatedAt: 'updated_at',
-			timestamps: true,
+			timestamps: false,
 		}
 	);
-
 	return Shop;
 };

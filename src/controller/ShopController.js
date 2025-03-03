@@ -2,7 +2,7 @@ const categoryService = require('../services/categoryService');
 const productService = require('../services/productService');
 const shopService = require('../services/shopService');
 const cartService = require('../services/cartService');
-const BaseController = require('./BaseController');
+const BaseController = require('./baseController');
 
 class ShopController extends BaseController {
 
@@ -46,16 +46,6 @@ class ShopController extends BaseController {
         }
     }
 
-    getCartsByUserId = async (req, res) => {
-        try {
-            const userId = req.params.id;
-            const result = await cartService.getCartsByUserId(userId);
-            this.convertToJson(res, 200, result);
-        } catch (error) {
-            this.handleError(res, error);
-        }
-    }
-
     createCart = async (req, res) => {
         try {
             const cart = req.body;
@@ -67,14 +57,11 @@ class ShopController extends BaseController {
         }
     }
 
-
-    addToCart = async (req, res) => {
+    getCartsByUserId = async (req, res) => {
         try {
-            const cart = req.body;
-            if (!cart || Object.keys(cart).length === 0) {
-                throw new Error('Request body is empty.');
-            }
-            const result = await cartService.addToCart(cart);
+            const userId = req.params.id;
+
+            const result = await cartService.getCartsByUserId(userId);
             this.convertToJson(res, 200, result);
         } catch (error) {
             this.handleError(res, error);
@@ -111,30 +98,6 @@ class ShopController extends BaseController {
             this.handleError(res, error);
         }
     }
-
-    applyVoucher = async (req, res) => {
-        try {
-            const { userId, storeId, voucherCode } = req.body;
-            const result = await cartService.applyVoucher(userId, storeId, voucherCode);
-            this.convertToJson(res, 200, result);
-        } catch (error) {
-            this.handleError(res, error);
-        }
-    }
-
-    removeVoucher = async (req, res) => {
-        try {
-            const { cartId, voucherCode } = req.body;
-            if (!cartId || !voucherCode) {
-                return res.status(400).json({ status: 'error', message: 'Thiếu cartId hoặc voucherCode.' });
-            }
-            const result = await cartService.removeVoucher(cartId, voucherCode);
-            res.status(200).json({ status: 'success', data: result });
-        } catch (error) {
-            console.error('Lỗi trong removeVoucher controller:', error.message);
-            res.status(500).json({ status: 'error', message: error.message || 'Lỗi server nội bộ.' });
-        }
-    };
 
     getCountCartByUserId = async (req, res) => {
         try {

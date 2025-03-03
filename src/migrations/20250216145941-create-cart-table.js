@@ -15,7 +15,7 @@ module.exports = {
         allowNull: false,
         references: {
           model: 'Users',
-          key: 'id',
+          key: 'user_id',
         },
         onDelete: 'CASCADE',
       },
@@ -37,7 +37,7 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false,
-      },  
+      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,

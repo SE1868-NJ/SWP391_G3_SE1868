@@ -7,13 +7,26 @@ class CartRepository {
         return db.Cart.findAll({
             where: {
                 user_id: userId,
-                is_ordered: false,
+                is_ordered: false
             },
             include: {
                 model: db.Product,
                 as: 'product',
-                include: [{ model: db.Shop, as: 'shop' }, { model: db.Category, as: 'category', }],
-            },
+                include: {
+                    model: db.Category,
+                    as: 'category'
+                }
+            }
+        });
+    }
+
+    async getCartByUserAndProduct(userId, productId) {
+        return db.Cart.findOne({
+            where: {
+                user_id: userId,
+                product_id: productId,
+                is_ordered: false
+            }
         });
     }
 
@@ -26,8 +39,8 @@ class CartRepository {
             where: {
                 user_id: userId,
                 product_id: productId,
-                is_ordered: false,
-            },
+                is_ordered: false
+            }
         });
     }
 
@@ -35,7 +48,7 @@ class CartRepository {
         return db.Cart.update(
             { quantity: cart.quantity },
             {
-                where: { cart_id: cart.cart_id },
+                where: { id: cart.id },
             }
         );
     }
@@ -44,35 +57,21 @@ class CartRepository {
         return db.Cart.count({
             where: {
                 user_id: userId,
-                is_ordered: false,
-            },
+                is_ordered: false
+            }
         });
     }
 
     async removeCartItem(cartId) {
         return db.Cart.destroy({
-            where: { cart_id: cartId },
+            where: { id: cartId },
         });
     }
 
     async removeMultipleCartItems(cartIds) {
         return db.Cart.destroy({
-            where: { cart_id: cartIds },
+            where: { id: cartIds },
         });
-    }
-
-    async getCartItemWithVouchers(cartId) {
-        const cart = await db.Cart.findByPk(cartId, {
-            include: [
-                {
-                    model: db.Voucher,
-                    as: 'vouchers',
-                    attributes: ['voucher_id', 'code', 'discount_rate', 'expiration_date'],
-                    through: { attributes: [] }
-                }
-            ]
-        });
-        return cart || { vouchers: [] };
     }
 }
 

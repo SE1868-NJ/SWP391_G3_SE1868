@@ -1,5 +1,6 @@
 'use strict';
 
+/** @type {import('sequelize-cli').Migration} */
 module.exports = {
 	async up(queryInterface, Sequelize) {
 		await queryInterface.createTable('users', {
@@ -10,46 +11,56 @@ module.exports = {
 				autoIncrement: true,
 			},
 			google_id: {
-				type: Sequelize.STRING(255),
+				type: Sequelize.STRING,
 				unique: true,
-				allowNull: true,
 			},
 			facebook_id: {
-				type: Sequelize.STRING(255),
+				type: Sequelize.STRING,
 				unique: true,
-				allowNull: true,
 			},
-			user_name: {
-				type: Sequelize.STRING(255),
+
+			avatar: {
+				type: Sequelize.STRING,
+			},
+			full_name: {
+				type: Sequelize.STRING,
 				allowNull: false,
 			},
-			user_avatar: {
+			gender: {
+				type: Sequelize.ENUM('male', 'female', 'other'),
+				allowNull: false,
+			},
+			date_of_birth: {
+				type: Sequelize.DATEONLY,
+				allowNull: false,
+			},
+
+			phone: {
 				type: Sequelize.STRING,
-				allowNull: true,
+				allowNull: false,
 			},
 			email: {
 				type: Sequelize.STRING,
 				allowNull: false,
-				unique: true,
 			},
 			password: {
-				type: Sequelize.STRING(255),
+				type: Sequelize.STRING,
 				allowNull: true,
 			},
 			created_at: {
 				type: Sequelize.DATE,
 				allowNull: false,
-				defaultValue: Sequelize.fn('NOW'),
+				defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
 			},
 			updated_at: {
 				type: Sequelize.DATE,
 				allowNull: false,
-				defaultValue: Sequelize.fn('NOW'),
+				defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
 			},
 		});
 	},
 
-	async down(queryInterface) {
+	async down(queryInterface, Sequelize) {
 		await queryInterface.dropTable('users');
 	},
 };

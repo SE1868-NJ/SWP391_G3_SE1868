@@ -55,55 +55,6 @@ class ProductService {
         }
     }
 
-    async getCartsByUserId(userId) {
-        try {
-            const result = await cartRepository.getCartsByUserId(userId);
-
-            const shopGroupedCarts = result.reduce((acc, cartItem) => {
-                const shopId = cartItem.product.shop_id;
-
-                if (!acc[shopId]) {
-                    acc[shopId] = {
-                        shop_info: null,
-                        items: []
-                    };
-                }
-
-                acc[shopId].items.push({
-                    cart_id: cartItem.id,
-                    product_id: cartItem.product_id,
-                    quantity: cartItem.quantity,
-                    product: {
-                        id: cartItem.product.id,
-                        product_name: cartItem.product.product_name,
-                        product_description: cartItem.product.product_description,
-                        image_url: cartItem.product.image_url,
-                        sale_price: cartItem.product.sale_price,
-                        stock_quantity: cartItem.product.stock_quantity,
-                        category: cartItem.product.category
-                    }
-                });
-
-                return acc;
-            }, {});
-
-            for (const shopId in shopGroupedCarts) {
-                const shop = await shopRepository.getShopById(parseInt(shopId));
-                shopGroupedCarts[shopId].shop_info = {
-                    shop_id: shop.shop_id,
-                    shop_name: shop.shop_name,
-                    shop_logo: shop.shop_logo,
-                    shop_address: shop.shop_address
-                };
-            }
-
-            const formattedResult = Object.values(shopGroupedCarts);
-
-            return formattedResult;
-        } catch (error) {
-            throw new Error(`Error: ${error.message}`);
-        }
-    }
     async createCart(cart) {
         try {
             const cartExist = await cartRepository.getCartByUserAndProduct(cart.user_id, cart.product_id);

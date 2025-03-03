@@ -5,37 +5,34 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
     class Category extends Model {
         static associate(models) {
-            Category.hasMany(models.Product, {
-                foreignKey: 'category_id',
-                as: 'products',
-                onDelete: 'SET NULL' // Hoặc 'CASCADE' tùy theo yêu cầu
-            });
+            // Nếu có quan hệ với Supplier, có thể thêm tại đây
+            // Example: this.hasMany(models.Supplier);
         }
     }
 
     Category.init({
-        category_id: {
+        id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
             allowNull: false,
         },
-        category_name: {
+        name: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        category_description: {
+        description: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-    }, {
-        sequelize,
-        modelName: 'Category',
-        tableName: 'categories',
-        createdAt: 'created_at',
-        updatedAt: 'updated_at',
-        timestamps: true,
-    });
+    },
+        {
+            sequelize,
+            modelName: 'Category',
+            tableName: 'Categories',
+            timestamps: true,
+        }
+    );
 
     return Category;
 };
