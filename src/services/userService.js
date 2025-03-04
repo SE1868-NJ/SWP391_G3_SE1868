@@ -28,19 +28,6 @@ class UserService {
         }
     }
 
-    async createUser(user) {
-        try {
-            const user = await UserRepository.create(user);
-            if (!user) {
-                throw new Error('User could not be created');
-            }
-            return user;
-        }
-        catch (error) {
-            throw new Error(error.message);
-        }
-    }
-
     async updateUser(id, userData) {
         const user = await UserRepository.getUserById(id);
         if (!user) {
@@ -51,6 +38,20 @@ class UserService {
             throw new Error('User could not be updated');
         }
         return updatedUser;
+    }
+
+    async updateAvatar(id, avatarUrl) {
+        try {
+            const updatedUser = await UserRepository.update(id, { avatar: avatarUrl });
+
+            if (!updatedUser || updatedUser[0] === 0) { 
+                // updatedUser[0] === số hàng bị ảnh hưởng, nếu = 0 tức là không có user nào được cập nhật
+                throw new Error('User not found or avatar not updated');
+            }
+            return { id, avatar: avatarUrl };
+        } catch (error) {
+            throw new Error(error.message);
+        }
     }
 
 }
