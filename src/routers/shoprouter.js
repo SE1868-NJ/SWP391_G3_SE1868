@@ -10,8 +10,9 @@ router.get('/category/get_list_category', shopController.getCategory);
 router.post('/product/get_list_product', shopController.getProducts);
 router.get('/product/get_feedbacks_by_product/:id', feedBackController.getFeedBacksByProductId);
 router.get('/product/get_product_by_id/:id', shopController.getProductById);
-
-// Cart
+router.get('/product/get_product_by_name/:name', shopController.getProductByName);
+router.get('/product/get_top_searched_products', shopController.getTopSearchedProducts);
+// cart
 router.get('/cart/get_cart_by_user/:id', shopController.getCartsByUserId);
 router.post('/cart/add_to_cart', shopController.createCart);
 router.post('/cart/update_quantity/:cartId', shopController.updateCartQuantity);
