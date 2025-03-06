@@ -34,6 +34,28 @@ class OrderRepository {
             where: { order_id: orderId }
         });
     }
+    async getCancelledOrders(userId) {
+        return await db.Order.findAll({
+            where: {
+                user_id: userId,
+                status: 'cancelled'
+            },
+            order: [['created_at', 'DESC']],
+            include: [
+                {
+                    model: db.OrderDetail,
+                    required: false,
+                    attributes: ['id', 'product_id', 'price', 'quantity', 'subtotal'],
+                    include: [
+                        {
+                            model: db.Product,
+                            attributes: ['product_name', 'image_url', 'import_price', 'sale_price']
+                        }
+                    ]
+                }
+            ]
+        });
+    }
 }
 
 module.exports = new OrderRepository();
