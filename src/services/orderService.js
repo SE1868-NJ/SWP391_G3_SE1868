@@ -10,19 +10,29 @@ class OrderService {
     async createOrder(data) {
         try {
             const ItemProducts = data.items;
-            //console.log(ItemProducts);
+            const order = await orderRepository.createOrder(data);
+
             for (let i = 0; i < ItemProducts.length; i++) {
                 //update is_ordered in cart
-                const dataUpdate = await cartRepository.updateIsOrdered(data.user_id, ItemProducts[i].product_id);
-                //update stock_quantity in product
+                await cartRepository.updateIsOrdered(data.user_id, ItemProducts[i].product_id);
+                // update stock
                 const product = await productRepository.getProductById(ItemProducts[i].product_id);
                 if (!product) {
                     throw new Error("Product not found");
                 }
                 product.stock_quantity = product.stock_quantity - ItemProducts[i].quantity;
                 await productRepository.updateStockQuantity(product);
+                //create order detail
+                const orderDetail = {
+                    order_id: order.order_id,
+                    product_id: ItemProducts[i].product_id,
+                    quantity: ItemProducts[i].quantity,
+                    price: ItemProducts[i].price,
+                    subtotal: 0
+                }
+                await orderDetailRepository.createOrderDetail(orderDetail);
             }
-            return await orderRepository.createOrder(data);
+            return order;
         } catch (error) {
             throw new Error(`Error creating order: ${error.message}`);
         }
