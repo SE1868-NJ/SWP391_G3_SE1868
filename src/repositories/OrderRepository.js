@@ -49,7 +49,19 @@ class OrderRepository {
                     include: [
                         {
                             model: db.Product,
-                            attributes: ['product_name', 'image_url', 'import_price', 'sale_price']
+                            attributes: ['product_name', 'image_url', 'import_price', 'sale_price'],
+                            include: [
+                                {
+                                    model: db.Category, // Thêm relationship với Category
+                                    attributes: [ 'name'], // Các trường bạn muốn lấy từ category
+                                    as: 'category' // Đặt alias cho relationship
+                                },
+                                {
+                                    model: db.Shop, // Thêm relationship với Brand
+                                    attributes: ['shop_name'], // Các trường bạn muốn lấy từ brand
+                                    as: 'shop' // Đặt alias cho relationship
+                                }
+                            ]
                         }
                     ]
                 }
