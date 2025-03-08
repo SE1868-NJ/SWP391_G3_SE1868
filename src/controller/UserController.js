@@ -32,11 +32,11 @@ class UserController extends BaseController {
     updateUser = async (req, res) => {
         const id = req.params.id;
         const user = req.body;
-        if (user.hasOwnProperty("0")) {
-            delete user["0"];
-        }
-        console.log("ID nhận được:", id);
-        console.log("Dữ liệu cập nhật:", req.body);
+        // if (user.hasOwnProperty("0")) {
+        //     delete user["0"];
+        // }
+        // console.log("ID nhận được:", id);
+        // console.log("Dữ liệu cập nhật:", req.body);
 
         try {
             const updatedUser = await UserService.updateUser(id, user);
