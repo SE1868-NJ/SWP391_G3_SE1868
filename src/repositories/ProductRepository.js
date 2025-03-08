@@ -16,19 +16,15 @@ class ProductRepository {
     });
   }
 
-  async getProductsByShopAndCategory(params) {
-    const {
-      shopId,
-      categoryId,
-      page = 1,
-      limit = 12,
-      sort = 'newest'
-    } = params;
+  async countShopProducts(shopId) {
+    return await db.Product.count({ where: { shop_id: shopId } });
+  }
 
+  async getProductsByShopAndCategory(shopId, categoryId, sort = 'newest') {
     const whereClause = { shop_id: shopId };
     if (categoryId) whereClause.category_id = categoryId;
 
-    let order = [['id', 'DESC']];  // Mặc định sắp xếp theo ID giảm dần
+    let order = [['id', 'DESC']];
 
     switch (sort) {
       case 'newest':
@@ -41,42 +37,13 @@ class ProductRepository {
         order = [['sale_price', 'DESC']];
         break;
     }
-
-    const { count, rows } = await db.Product.findAndCountAll({
+    return await db.Product.findAll({
       where: whereClause,
       include: [
         { model: db.Category, as: 'category' }
       ],
-      order,
-      limit: parseInt(limit),
-      offset: (page - 1) * limit
+      order
     });
-
-    // Thêm một số thông tin giả để hiển thị UI
-    const productsWithDetails = rows.map(product => {
-      // Tính phần trăm giảm giá nếu có import_price
-      let discountPercent = 0;
-      if (product.import_price && product.import_price > product.sale_price) {
-        discountPercent = Math.round(((product.import_price - product.sale_price) / product.import_price) * 100);
-      }
-
-      return {
-        ...product.toJSON(),
-        average_rating: Math.random() * 1.5 + 3.5,  // Random từ 3.5-5.0
-        sold_count: Math.floor(Math.random() * 100000),  // Random số lượng đã bán
-        discount_percent: discountPercent
-      };
-    });
-
-    return {
-      products: productsWithDetails,
-      pagination: {
-        total: count,
-        page: parseInt(page),
-        limit: parseInt(limit),
-        totalPages: Math.ceil(count / limit)
-      }
-    };
   }
 }
 

@@ -180,12 +180,9 @@ class ShopController extends BaseController {
       const params = {
         shopId: parseInt(req.params.shopId),
         categoryId: req.query.categoryId ? parseInt(req.query.categoryId) : null,
-        page: parseInt(req.query.page) || 1,
-        limit: parseInt(req.query.limit) || 12,
         sort: req.query.sort || 'newest'
       };
-
-      const result = await shopService.getProductsByShopAndCategory(params);
+      const result = await productService.getProductsByShopAndCategory(params);
       return this.convertToJson(res, 200, result);
     } catch (error) {
       return this.handleError(res, error);
@@ -196,7 +193,6 @@ class ShopController extends BaseController {
   //   try {
   //     const userId = parseInt(req.params.userId);
   //     const shopId = parseInt(req.params.shopId);
-
   //     const isFollowing = await shopService.checkFollowStatus(userId, shopId);
   //     return this.convertToJson(res, 200, { isFollowing });
   //   } catch (error) {
@@ -207,7 +203,6 @@ class ShopController extends BaseController {
   // toggleFollowShop = async (req, res) => {
   //   try {
   //     const { userId, shopId } = req.body;
-
   //     const result = await shopService.toggleFollowShop(userId, shopId);
   //     return this.convertToJson(res, 200, result);
   //   } catch (error) {

@@ -38,7 +38,6 @@ module.exports = {
       }
     });
 
-    // Add unique constraint to prevent duplicate follows
     await queryInterface.addIndex('Follows', ['user_id', 'shop_id'], {
       unique: true,
       name: 'follows_user_shop_unique'
