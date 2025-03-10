@@ -24,22 +24,26 @@ class OrderController extends BaseController {
     }
   }
 
-  // ✅ Lấy danh sách các đơn hàng đã hoàn thành của user
   getCompletedOrders = async (req, res) => {
     try {
       const userId = req.params.id;
-      const result = await orderService.getCompletedOrders(userId); // 🛠️ Sửa lại hàm gọi đúng
-      this.convertToJson(res, 200, result);
+      const result = await orderService.getCompletedOrders(userId);
+  
+      if (!result) {
+        return this.convertToJson(res, 404, { message: "No completed order found for this user" });
+      }
+  
+      this.convertToJson(res, 200, result); 
     } catch (error) {
       this.handleError(res, error);
     }
   };
 
-  // ✅ Lấy thông tin chi tiết của 1 đơn hàng đã hoàn thành
+
   getCompletedOrder = async (req, res) => {
     try {
       const orderId = req.params.id;
-      const result = await orderService.getCompletedOrder(orderId); // 🛠️ Sửa lại hàm gọi đúng
+      const result = await orderService.getCompletedOrder(orderId); 
       this.convertToJson(res, 200, result);
     } catch (error) {
       this.handleError(res, error);

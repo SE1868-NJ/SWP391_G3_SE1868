@@ -36,7 +36,7 @@ class OrderRepository {
     });
   }
   async getCompletedOrders(userId) {
-    return await db.Order.findAll({
+    return await db.Order.findOne({
       where: {
         user_id: userId,
         status: "COMPLETED",
