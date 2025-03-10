@@ -6,8 +6,6 @@ module.exports = (sequelize, DataTypes) => {
 		static associate(models) {
 			Shop.belongsTo(models.User, { foreignKey: 'user_id', onDelete: 'CASCADE', });
 			Shop.hasMany(models.Product, { foreignKey: 'shop_id', as: 'products' });
-			Shop.hasMany(models.Banner, { foreignKey: 'shop_id', as: 'banners' });
-			Shop.hasMany(models.Follow, { foreignKey: 'shop_id', as: 'followers' });
 		}
 	}
 	Shop.init(

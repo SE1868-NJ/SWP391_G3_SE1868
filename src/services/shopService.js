@@ -1,6 +1,4 @@
 const shopRepository = require('../repositories/ShopRepository');
-const bannersRepository = require('../repositories/BannerRepository');
-const followRepository = require('../repositories/FollowRepository');
 const productRepository = require('../repositories/ProductRepository');
 const categoryRepository = require('../repositories/CategoryRepository');
 
@@ -19,23 +17,17 @@ class ShopService {
         try {
             const shop = await shopRepository.getShopById(shopId);
             if (!shop) return null;
-
-            // Lấy thông tin bổ sung song song để tối ưu hiệu suất
-            const [followerCount, productCount, banners, categories] = await Promise.all([
-                followRepository.countShopFollowers(shopId),
+            const [productCount, categories] = await Promise.all([
                 productRepository.countShopProducts(shopId),
-                bannersRepository.getActiveShopBanners(shopId),
-                categoryRepository.getAllCategory()
+                categoryRepository.getCategoriesWithProductCount(shopId)
             ]);
             return {
                 shopInfo: {
                     ...shop.toJSON(),
-                    follower_count: followerCount,
                     product_count: productCount,
-                    average_rating: 4.4,  // Giá trị cứng tạm thời 
-                    rating_count: 52700   // Giá trị cứng tạm thời
+                    average_rating: 4.4,
+                    rating_count: 52700
                 },
-                banners,
                 categories
             };
         } catch (error) {
@@ -51,36 +43,6 @@ class ShopService {
         }
     }
 
-    // async checkFollowStatus(userId, shopId) {
-    //     try {
-    //         const follow = await shopRepository.findFollowRelation(userId, shopId);
-    //         return !!follow;
-    //     } catch (error) {
-    //         throw new Error(`Error checking follow status: ${error.message}`);
-    //     }
-    // }
-
-    // async toggleFollowShop(userId, shopId) {
-    //     try {
-    //         const existingFollow = await shopRepository.findFollowRelation(userId, shopId);
-
-    //         if (existingFollow) {
-    //             await shopRepository.deleteFollowRelation(existingFollow);
-    //             return {
-    //                 action: 'unfollow',
-    //                 message: 'Đã hủy theo dõi shop'
-    //             };
-    //         } else {
-    //             await shopRepository.createFollowRelation(userId, shopId);
-    //             return {
-    //                 action: 'follow',
-    //                 message: 'Đã theo dõi shop'
-    //             };
-    //         }
-    //     } catch (error) {
-    //         throw new Error(`Error toggling shop follow: ${error.message}`);
-    //     }
-    // }
 }
 
 module.exports = new ShopService();

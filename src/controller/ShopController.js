@@ -189,25 +189,5 @@ class ShopController extends BaseController {
     }
   };
 
-  // checkFollowStatus = async (req, res) => {
-  //   try {
-  //     const userId = parseInt(req.params.userId);
-  //     const shopId = parseInt(req.params.shopId);
-  //     const isFollowing = await shopService.checkFollowStatus(userId, shopId);
-  //     return this.convertToJson(res, 200, { isFollowing });
-  //   } catch (error) {
-  //     return this.handleError(res, error);
-  //   }
-  // };
-
-  // toggleFollowShop = async (req, res) => {
-  //   try {
-  //     const { userId, shopId } = req.body;
-  //     const result = await shopService.toggleFollowShop(userId, shopId);
-  //     return this.convertToJson(res, 200, result);
-  //   } catch (error) {
-  //     return this.handleError(res, error);
-  //   }
-  // };
 }
 module.exports = new ShopController();
