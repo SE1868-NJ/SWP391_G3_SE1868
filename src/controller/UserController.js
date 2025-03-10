@@ -30,38 +30,32 @@ class UserController extends BaseController {
     };
 
     updateUser = async (req, res) => {
-        const id = req.params.id;
-        const user = req.body;
-
         try {
-            const updatedUser = await UserService.updateUser(id, user);
-            return this.convertToJson(res, 200, { message: 'Cập nhật thành công!', updatedUser});
-        } catch (error) {
-            return this.handleError(res, error);
-        }
-    };
+          const userId = req.params.id;
+          const userData = req.body;
+          let avatarUrl = null;
 
-    uploadAvatar = async (req, res) => {
-        try {
-            const userId = req.params.id;
-
-            if (!req.files || !req.files.avatar) {
-                return res.status(400).json({ message: "No file uploaded" });
-            }
-    
+          if (req.files && req.files.avatar) {
             const avatarFile = req.files.avatar;
             const fileName = `${userId}_${Date.now()}_${avatarFile.name}`;
             const uploadPath = path.join(__dirname, '../uploads/', fileName);
-    
-            await avatarFile.mv(uploadPath);
-            const avatarUrl = `http://localhost:4000/uploads/${fileName}`;
             
-            await UserService.updateAvatar(userId, avatarUrl);
-            return this.convertToJson(res, 200, { message: "Avatar updated successfully", avatar: avatarUrl });
+            await avatarFile.mv(uploadPath);
+            avatarUrl = `http://localhost:4000/uploads/${fileName}`;
+
+            userData.avatar = avatarUrl;
+          }
+
+          const updatedUser = await UserService.updateUser(userId, userData);
+          
+          return this.convertToJson(res, 200, { 
+            message: 'Cập nhật thành công!', 
+            updatedUser 
+          });
         } catch (error) {
-            return this.handleError(res, error);
+          return this.handleError(res, error);
         }
-    };
+      };
 }
 
 module.exports = new UserController();

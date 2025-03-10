@@ -30,27 +30,15 @@ class UserService {
 
     async updateUser(id, userData) {
         try {
-            const updatedUser = await UserRepository.update(id, userData);
-            if (!updatedUser) {
-                throw new Error('User not found or could not be updated');
-            }
-            return updatedUser;
+          const updatedUser = await UserRepository.update(id, userData);
+          if (!updatedUser) {
+            throw new Error('User not found or could not be updated');
+          }
+          return updatedUser;
         } catch (error) {
-            throw new Error(`Error: ${error.message}`);
+          throw new Error(`Error: ${error.message}`);
         }
-    }
-
-    async updateAvatar(id, avatarUrl) {
-        try {
-            const updatedUser = await UserRepository.update(id, { avatar: avatarUrl });
-            if (!updatedUser) {
-                throw new Error('User not found or avatar not updated');
-            }
-            return { id, avatar: avatarUrl };
-        } catch (error) {
-            throw new Error(`Error: ${error.message}`);
-        }
-    }
+      }
 
 }
 module.exports = new UserService();
