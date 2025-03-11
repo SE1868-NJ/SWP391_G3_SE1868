@@ -40,6 +40,16 @@ module.exports = {
         // onUpdate: 'CASCADE',
         // onDelete: 'SET NULL'
       },
+      shop_id:{
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'shops',
+          key: 'shop_id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'RESTRICT'
+      },
       payment_method: {
         type: Sequelize.STRING,
         allowNull: false
