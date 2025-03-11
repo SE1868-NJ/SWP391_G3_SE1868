@@ -24,4 +24,10 @@ router.get('/cart/get_count_cart_by_user/:id', shopController.getCountCartByUser
 // Shop || seller
 router.get('/get_shop_by_user/:id', shopController.getShopByUserId);
 
+// Shop Homepage
+router.get('/:id/homepage', shopController.getShopHomepage);
+
+// Shop Products
+router.get('/:shopId/products', shopController.getProductsByShopAndCategory);
+
 module.exports = router;

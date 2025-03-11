@@ -5,7 +5,7 @@ const shopRepository = require("../repositories/ShopRepository");
 const feedbackRepository = require("../repositories/FeedbackRepository");
 
 class ProductService {
-  constructor() {}
+  constructor() { }
   async getAllProduct() {
     try {
       const dataProduct = await productRepository.getAllProduct();
@@ -25,16 +25,16 @@ class ProductService {
     try {
       const { page, limit, search, sortPrice, categories, minPrice, maxPrice } = params;
 
-        // Truyền đầy đủ các tham số xuống Repository
-        const result = await productRepository.getProducts({
-            page,
-            limit,
-            search,
-            sortPrice,
-            categories: categories ? categories.split(',') : [],  // tách categories từ chuỗi thành mảng
-            minPrice: minPrice ? parseFloat(minPrice) : undefined,
-            maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
-        });
+      // Truyền đầy đủ các tham số xuống Repository
+      const result = await productRepository.getProducts({
+        page,
+        limit,
+        search,
+        sortPrice,
+        categories: categories ? categories.split(',') : [],  // tách categories từ chuỗi thành mảng
+        minPrice: minPrice ? parseFloat(minPrice) : undefined,
+        maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
+      });
       return result;
     } catch (error) {
       throw new Error(`Error: ${error.message}`);
@@ -168,6 +168,34 @@ class ProductService {
       throw new Error(`Error: ${error.message}`);
     }
   }
-}
 
+  async getProductsByShopAndCategory(params) {
+    try {
+      const { shopId, categoryId, sort } = params;
+
+      const products = await productRepository.getProductsByShopAndCategory(
+        shopId, categoryId, sort
+      );
+
+      const productsWithDetails = products.map(product => {
+        let discountPercent = 0;
+        if (product.import_price && product.import_price > product.sale_price) {
+          discountPercent = Math.round(((product.import_price - product.sale_price) / product.import_price) * 100);
+        }
+
+        return {
+          ...product.toJSON(),
+          average_rating: Math.random() * 1.5 + 3.5,  // Random từ 3.5-5.0
+          sold_count: Math.floor(Math.random() * 100000),  // Random số lượng đã bán
+          discount_percent: discountPercent
+        };
+      });
+      return {
+        products: productsWithDetails
+      };
+    } catch (error) {
+      throw new Error(`Error getting products by shop and category: ${error.message}`);
+    }
+  }
+}
 module.exports = new ProductService();

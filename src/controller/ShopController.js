@@ -69,59 +69,59 @@ class ShopController extends BaseController {
       this.handleError(res, error);
     }
   };
-  
-    createCart = async (req, res) => {
-        try {
-            const cart = req.body;
 
-            const result = await productService.createCart(cart);
-            this.convertToJson(res, 200, result);
-        } catch (error) {
-            this.handleError(res, error);
-        }
+  createCart = async (req, res) => {
+    try {
+      const cart = req.body;
+
+      const result = await productService.createCart(cart);
+      this.convertToJson(res, 200, result);
+    } catch (error) {
+      this.handleError(res, error);
     }
+  }
 
-    getCartsByUserId = async (req, res) => {
-        try {
-            const userId = req.params.id;
+  getCartsByUserId = async (req, res) => {
+    try {
+      const userId = req.params.id;
 
-            const result = await cartService.getCartsByUserId(userId);
-            this.convertToJson(res, 200, result);
-        } catch (error) {
-            this.handleError(res, error);
-        }
+      const result = await cartService.getCartsByUserId(userId);
+      this.convertToJson(res, 200, result);
+    } catch (error) {
+      this.handleError(res, error);
     }
+  }
 
-    updateCartQuantity = async (req, res) => {
-        try {
-            const cartId = req.params.cartId;
-            const { quantity } = req.body;
-            const result = await cartService.updateCartQuantity(cartId, quantity);
-            this.convertToJson(res, 200, result);
-        } catch (error) {
-            this.handleError(res, error);
-        }
+  updateCartQuantity = async (req, res) => {
+    try {
+      const cartId = req.params.cartId;
+      const { quantity } = req.body;
+      const result = await cartService.updateCartQuantity(cartId, quantity);
+      this.convertToJson(res, 200, result);
+    } catch (error) {
+      this.handleError(res, error);
     }
+  }
 
-    removeCartItem = async (req, res) => {
-        try {
-            const cartId = req.params.cartId;
-            const result = await cartService.removeCartItem(cartId);
-            this.convertToJson(res, 200, result);
-        } catch (error) {
-            this.handleError(res, error);
-        }
+  removeCartItem = async (req, res) => {
+    try {
+      const cartId = req.params.cartId;
+      const result = await cartService.removeCartItem(cartId);
+      this.convertToJson(res, 200, result);
+    } catch (error) {
+      this.handleError(res, error);
     }
+  }
 
-    removeMultipleCartItems = async (req, res) => {
-        try {
-            const { cartIds } = req.body;
-            const result = await cartService.removeMultipleCartItems(cartIds);
-            this.convertToJson(res, 200, result);
-        } catch (error) {
-            this.handleError(res, error);
-        }
+  removeMultipleCartItems = async (req, res) => {
+    try {
+      const { cartIds } = req.body;
+      const result = await cartService.removeMultipleCartItems(cartIds);
+      this.convertToJson(res, 200, result);
+    } catch (error) {
+      this.handleError(res, error);
     }
+  }
 
   getCountCartByUserId = async (req, res) => {
     try {
@@ -164,6 +164,30 @@ class ShopController extends BaseController {
       return this.handleError(res, error);
     }
   };
-}
 
+  getShopHomepage = async (req, res) => {
+    try {
+      const shopId = parseInt(req.params.id);
+      const result = await shopService.getShopHomepage(shopId);
+      return this.convertToJson(res, 200, result);
+    } catch (error) {
+      return this.handleError(res, error);
+    }
+  };
+
+  getProductsByShopAndCategory = async (req, res) => {
+    try {
+      const params = {
+        shopId: parseInt(req.params.shopId),
+        categoryId: req.query.categoryId ? parseInt(req.query.categoryId) : null,
+        sort: req.query.sort || 'newest'
+      };
+      const result = await productService.getProductsByShopAndCategory(params);
+      return this.convertToJson(res, 200, result);
+    } catch (error) {
+      return this.handleError(res, error);
+    }
+  };
+
+}
 module.exports = new ShopController();
