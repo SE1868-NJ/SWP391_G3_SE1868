@@ -1,6 +1,5 @@
 const cartRepository = require('../repositories/CartRepository');
 const shopRepository = require('../repositories/ShopRepository');
-const db = require('../models');
 
 class CartService {
     constructor() { }
