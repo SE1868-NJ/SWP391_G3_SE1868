@@ -5,8 +5,9 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
     class Category extends Model {
         static associate(models) {
-            // Nếu có quan hệ với Supplier, có thể thêm tại đây
-            // Example: this.hasMany(models.Supplier);
+            Category.hasMany(models.Product, { foreignKey: 'category_id', as: 'products' });
+            // Category.belongsTo(models.Category, { foreignKey: 'parent_id', as: 'parent' });
+            // Category.hasMany(models.Category, { foreignKey: 'parent_id', as: 'children' });
         }
     }
 
