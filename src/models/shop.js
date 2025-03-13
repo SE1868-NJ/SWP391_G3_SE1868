@@ -4,11 +4,8 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
 	class Shop extends Model {
 		static associate(models) {
-			// Shop.hasMany(models.Product, { foreignKey: 'shop_id', onDelete: 'CASCADE' });
-			Shop.belongsTo(models.User, {
-				foreignKey: 'user_id',
-				onDelete: 'CASCADE',
-			});
+			Shop.belongsTo(models.User, { foreignKey: 'user_id', onDelete: 'CASCADE', });
+			Shop.hasMany(models.Product, { foreignKey: 'shop_id', as: 'products' });
 		}
 	}
 	Shop.init(
@@ -37,6 +34,12 @@ module.exports = (sequelize, DataTypes) => {
 				type: DataTypes.STRING,
 			},
 			shop_address: {
+				type: DataTypes.STRING,
+			},
+			shop_phone: {
+				type: DataTypes.STRING,
+			},
+			shop_email: {
 				type: DataTypes.STRING,
 			},
 			created_at: {
