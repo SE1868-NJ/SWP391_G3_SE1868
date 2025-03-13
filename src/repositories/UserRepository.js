@@ -7,7 +7,7 @@ class UserRepository {
     async getAll() {
         try {
             const users = await db.User.findAll({
-                attributes: ['id', 'name', 'email'],
+                attributes: ['user_id', 'full_name', 'email'],
             });
             return users;
         } catch (error) {
@@ -17,7 +17,7 @@ class UserRepository {
     async getUserById(id) {
         try {
             return await db.User.findByPk(id, {
-                attributes: ['id', 'name', 'email'],
+                attributes: ['user_id', 'full_name', 'email', 'avatar', 'gender', 'phone'],
             });
         } catch (error) {
             throw error;
@@ -36,7 +36,7 @@ class UserRepository {
     async update(id, user) {
         try {
             const updatedUser = await db.User.update(user, {
-                where: { id }
+                where: { user_id:id }
             });
             return updatedUser;
         } catch (error) {

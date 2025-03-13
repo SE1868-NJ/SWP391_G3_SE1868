@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
 	User.init(
 		{
 			userID: {
-				field: 'id',
+				field: 'user_id',
 				type: DataTypes.INTEGER,
 				allowNull: false,
 				primaryKey: true,
@@ -33,24 +33,24 @@ module.exports = (sequelize, DataTypes) => {
 			avatar: {
 				type: DataTypes.STRING,
 			},
-			fullName: {
-				field: 'name',
+			full_name: {
+				field: 'full_name',
 				type: DataTypes.STRING,
 				allowNull: false,
 			},
-			// gender: {
-			// 	type: DataTypes.ENUM('male', 'female', 'other'),
-			// 	allowNull: false,
-			// },
-			// dateOfBirth: {
-			// 	field: 'date_of_birth',
-			// 	type: DataTypes.DATEONLY,
-			// 	allowNull: false,
-			// },
-			// phone: {
-			// 	type: DataTypes.STRING,
-			// 	allowNull: false,
-			// },
+			gender: {
+				type: DataTypes.ENUM('male', 'female', 'other'),
+				allowNull: false,
+			},
+			dateOfBirth: {
+				field: 'date_of_birth',
+				type: DataTypes.DATEONLY,
+				allowNull: false,
+			},
+			phone: {
+				type: DataTypes.STRING,
+				allowNull: false,
+			},
 			email: {
 				type: DataTypes.STRING,
 				allowNull: false,
@@ -65,8 +65,8 @@ module.exports = (sequelize, DataTypes) => {
 			timestamps: true,
 			modelName: 'User',
 			tableName: 'users',
-			createdAt: 'createdAt',
-			updatedAt: 'updatedAt',
+			createdAt: 'created_at',
+			updatedAt: 'updated_at',
 		}
 	);
 	return User;

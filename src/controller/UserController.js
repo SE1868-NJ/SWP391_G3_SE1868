@@ -1,6 +1,9 @@
 // const User = require('../models/user');
 const UserService = require('../services/userService');
 const BaseController = require('./baseController');
+const path = require('path');
+const fs = require('fs');
+const UserRepository = require('../repositories/UserRepository'); 
 
 class UserController extends BaseController {
     constructor() {
@@ -27,16 +30,32 @@ class UserController extends BaseController {
     };
 
     updateUser = async (req, res) => {
-        const id = req.params.id;
-        const user = req.body;
-
         try {
-            const updatedUser = await UserService.updateUser(id, user);
-            return this.convertToJson(res, 200, updatedUser);
+          const userId = req.params.id;
+          const userData = req.body;
+          let avatarUrl = null;
+
+          if (req.files && req.files.avatar) {
+            const avatarFile = req.files.avatar;
+            const fileName = `${userId}_${Date.now()}_${avatarFile.name}`;
+            const uploadPath = path.join(__dirname, '../uploads/', fileName);
+            
+            await avatarFile.mv(uploadPath);
+            avatarUrl = `http://localhost:4000/uploads/${fileName}`;
+
+            userData.avatar = avatarUrl;
+          }
+
+          const updatedUser = await UserService.updateUser(userId, userData);
+          
+          return this.convertToJson(res, 200, { 
+            message: 'Cập nhật thành công!', 
+            updatedUser 
+          });
         } catch (error) {
-            return this.handleError(res, error);
+          return this.handleError(res, error);
         }
-    };
+      };
 }
 
 module.exports = new UserController();
