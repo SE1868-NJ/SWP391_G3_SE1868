@@ -4,8 +4,7 @@ const productRepository = require('../repositories/ProductRepository');
 const orderDetailRepository = require('../repositories/OrderDetailRepository');
 
 class OrderService {
-    constructor() {
-    }
+  constructor() {}
 
     async createOrder(data) {
         try {
@@ -38,9 +37,21 @@ class OrderService {
         }
     }
 
-    async getOrdersByUserId(userId, limit, offset) {
-        return await orderRepository.getOrdersByUserId(userId, limit, offset);
+  async getOrdersByUserId(userId, limit, offset) {
+    return await orderRepository.getOrdersByUserId(userId, limit, offset);
+  }
+  async getCompletedOrders(userId) {
+    try {
+      const order = await orderRepository.getCompletedOrders(userId);
+      if (!order) {
+        throw new Error("No completed orders found for this user");
+      }
+      return order;
+    } catch (error) {
+      console.error("Error fetching completed orders:", error.message);
+      throw error;
     }
+  }
 }
 
 module.exports = new OrderService();
