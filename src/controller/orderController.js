@@ -1,8 +1,8 @@
-const orderService = require('../services/orderService');
-const BaseController = require('./baseController');
+const orderService = require("../services/orderService");
+const BaseController = require("./baseController");
 
 class OrderController extends BaseController {
-    createOrder = async (req, res) => {
+  createOrder = async (req, res) => {
     try {
       const order = req.body;
 
@@ -11,7 +11,7 @@ class OrderController extends BaseController {
     } catch (error) {
       this.handleError(res, error);
     }
-  }
+  };
 
   getOrdersByUserId = async (req, res) => {
     try {
@@ -22,28 +22,19 @@ class OrderController extends BaseController {
     } catch (error) {
       this.handleError(res, error);
     }
-  }
+  };
 
   getCompletedOrders = async (req, res) => {
     try {
       const userId = req.params.id;
       const result = await orderService.getCompletedOrders(userId);
-  
+
       if (!result) {
-        return this.convertToJson(res, 404, { message: "No completed order found for this user" });
+        return this.convertToJson(res, 404, {
+          message: "No completed order found for this user",
+        });
       }
-  
-      this.convertToJson(res, 200, result); 
-    } catch (error) {
-      this.handleError(res, error);
-    }
-  };
 
-
-  getCompletedOrder = async (req, res) => {
-    try {
-      const orderId = req.params.id;
-      const result = await orderService.getCompletedOrder(orderId); 
       this.convertToJson(res, 200, result);
     } catch (error) {
       this.handleError(res, error);
