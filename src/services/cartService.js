@@ -54,30 +54,6 @@ class CartService {
         }
     }
 
-    // async createCart(cart) {
-    //     try {
-    //         const cartExist = await cartRepository.getCartByUserAndProduct(cart.user_id, cart.product_id);
-    //         if (cartExist) {
-    //             cartExist.quantity += 1;
-    //             const result = await cartRepository.updateCart(cartExist);
-    //             return result;
-    //         }
-    //         const result = await cartRepository.createCart(cart);
-    //         return result;
-    //     } catch (error) {
-    //         throw new Error(`Error: ${error.message}`);
-    //     }
-    // }
-
-    // async getCountCartByUserId(userId) {
-    //     try {
-    //         const result = await cartRepository.getCountCartByUserId(userId);
-    //         return result;
-    //     } catch (error) {
-    //         throw new Error(`Error: ${error.message}`);
-    //     }
-    // }
-
     async createCart(cart) {
         try {
             const cartExist = await cartRepository.getCartByUserAndProduct(cart.user_id, cart.product_id);
@@ -104,17 +80,7 @@ class CartService {
 
     async updateCartQuantity(cartId, quantity) {
         try {
-            const cart = await db.Cart.findByPk(cartId, {
-                include: [{ model: db.Product, as: 'product' }]
-            });
-            if (!cart) throw new Error('Mục giỏ hàng không tồn tại.');
-            if (cart.is_ordered) throw new Error('Không thể cập nhật giỏ hàng đã đặt.');
-            const product = cart.product;
-            if (!product) throw new Error('Product not found.');
-            if (quantity < 1) throw new Error('Số lượng phải lớn hơn 0.');
-            if (quantity > product.stock_quantity) {
-                throw new Error(`Số lượng vượt quá kho (${product.stock_quantity} sản phẩm).`);
-            }
+            const cart = await cartRepository.getCartWithProductById(cartId);
             return cartRepository.updateCart({ id: cart.id, quantity });
         } catch (error) {
             throw new Error(`Error: ${error.message}`);
