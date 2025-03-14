@@ -1,8 +1,7 @@
 const db = require('../models');
 
 class ShopRepository {
-    constructor() {
-    }
+    constructor() { }
 
     async getShopById(shopId) {
         return await db.Shop.findByPk(shopId);
@@ -10,11 +9,10 @@ class ShopRepository {
 
     async getShopsByUserId(userId) {
         return await db.Shop.findAll({
-            where: {
-                user_id: userId
-            }
+            where: { user_id: userId }
         });
     }
+
 }
 
 module.exports = new ShopRepository();

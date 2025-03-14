@@ -4,6 +4,10 @@ const router = express.Router();
 
 router.post('/create_order', orderController.createOrder);
 router.get('/:id', orderController.getOrdersByUserId);
+
 router.get('/cancelled/:id', orderController.getCancelledOrders);
 router.put('/cancelled/:id', orderController.cancelOrder);
+
+router.get('/completed/:id', orderController.getCompletedOrders);
+
 module.exports = router;

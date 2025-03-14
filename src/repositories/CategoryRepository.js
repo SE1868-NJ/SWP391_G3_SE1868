@@ -1,15 +1,36 @@
 const db = require('../models');
 
-class CategoryRepository  {
+class CategoryRepository {
     constructor() {
     }
-    
-    async getAllCategory(){
+
+    async getAllCategory() {
         return await db.Category.findAll();
     }
 
-    async getCategoryById(id){
+    async getCategoryById(id) {
         return await db.Category.findByPk(id);
+    }
+    async getCategoriesWithProductCount(shopId) {
+        return await db.Category.findAll({
+            attributes: [
+                'id',
+                'name',
+                'description',
+                [db.sequelize.fn('COUNT', db.sequelize.col('products.id')), 'product_count']
+            ],
+            include: [
+                {
+                    model: db.Product,
+                    as: 'products',
+                    attributes: [],
+                    where: { shop_id: shopId },
+                    required: false
+                }
+            ],
+            group: ['Category.id'],
+            having: db.sequelize.literal('product_count > 0')
+        });
     }
 }
 

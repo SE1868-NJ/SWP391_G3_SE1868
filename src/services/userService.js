@@ -28,30 +28,17 @@ class UserService {
         }
     }
 
-    async createUser(user) {
-        try {
-            const user = await UserRepository.create(user);
-            if (!user) {
-                throw new Error('User could not be created');
-            }
-            return user;
-        }
-        catch (error) {
-            throw new Error(error.message);
-        }
-    }
-
     async updateUser(id, userData) {
-        const user = await UserRepository.getUserById(id);
-        if (!user) {
-            throw new Error('User not found');
+        try {
+          const updatedUser = await UserRepository.update(id, userData);
+          if (!updatedUser) {
+            throw new Error('User not found or could not be updated');
+          }
+          return updatedUser;
+        } catch (error) {
+          throw new Error(`Error: ${error.message}`);
         }
-        const updatedUser = await UserRepository.update(id, userData);
-        if (!updatedUser) {
-            throw new Error('User could not be updated');
-        }
-        return updatedUser;
-    }
+      }
 
 }
 module.exports = new UserService();

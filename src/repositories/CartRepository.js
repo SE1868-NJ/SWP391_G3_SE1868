@@ -34,16 +34,6 @@ class CartRepository {
         return db.Cart.create(cart);
     }
 
-    async getCartByUserAndProduct(userId, productId) {
-        return db.Cart.findOne({
-            where: {
-                user_id: userId,
-                product_id: productId,
-                is_ordered: false
-            }
-        });
-    }
-
     async updateCart(cart) {
         return db.Cart.update(
             { quantity: cart.quantity },
@@ -62,6 +52,12 @@ class CartRepository {
         });
     }
 
+    async getCartWithProductById(cartId) {
+        return db.Cart.findByPk(cartId, {
+            include: [{ model: db.Product, as: 'product' }]
+        });
+    }
+
     async removeCartItem(cartId) {
         return db.Cart.destroy({
             where: { id: cartId },
@@ -72,6 +68,15 @@ class CartRepository {
         return db.Cart.destroy({
             where: { id: cartIds },
         });
+    }
+
+    async updateIsOrdered(user_id, product_id) {
+        return db.Cart.update(
+            { is_ordered: true },
+            {
+                where: { user_id: user_id, product_id: product_id },
+            }
+        );
     }
 }
 

@@ -42,6 +42,12 @@ module.exports = {
 				type: Sequelize.STRING,
 				allowNull: true,
 			},
+			shop_phone: {
+				type: Sequelize.STRING
+			},
+			shop_email: {
+				type: Sequelize.STRING
+			},
 			created_at: {
 				type: Sequelize.DATE,
 				allowNull: false,
