@@ -39,7 +39,26 @@ class OrderController extends BaseController {
     } catch (error) {
       this.handleError(res, error);
     }
-  };
+
+    getCancelledOrders = async (req, res) => {
+        try {
+            const userId = req.params.id;
+            const result = await orderService.getCancelledOrders(userId);
+            this.convertToJson(res, 200, result);
+        } catch (error) {
+            this.handleError(res, error);
+        }
+    }
+
+    cancelOrder = async (req, res) => {
+        try {
+            const orderId = req.params.id;
+            const result = await orderService.cancelOrder(orderId);
+            this.convertToJson(res, 200, { message: 'Order cancelled successfully', data: result });
+        } catch (error) {
+            this.handleError(res, error);
+        }
+    }
 }
 
 module.exports = new OrderController();
