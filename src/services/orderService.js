@@ -72,17 +72,6 @@ class OrderService {
     return await orderRepository.getPendingPaymentOrders(userId, 'pending');
 }
 
-async updateOrderToPendingPayment(orderId) {
-    const order = await orderRepository.getOrderById(orderId);
-    if (!order) {
-        throw new Error('Order not found');
-    }
-    if (order.status !== 'pending') {
-        throw new Error('Only pending orders can be moved to pending payment');
-    }
-    return await orderRepository.updateOrder(orderId, { status: 'pending' });
-}
-
 }
 
 module.exports = new OrderService();

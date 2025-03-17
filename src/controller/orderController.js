@@ -71,15 +71,7 @@ class OrderController extends BaseController {
     }
 };
 
-updateOrderToPendingPayment = async (req, res) => {
-    try {
-        const orderId = req.params.id;
-        const result = await orderService.updateOrderToPendingPayment(orderId);
-        this.convertToJson(res, 200, { message: 'Order updated to pending payment', data: result });
-    } catch (error) {
-        this.handleError(res, error);
-    }
-};
+
 
 }
 
