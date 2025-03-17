@@ -60,6 +60,15 @@ class OrderController extends BaseController {
       this.handleError(res, error);
     }
   }
+  getAllOrders = async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const result = await orderService.getAllOrders(userId);
+      this.convertToJson(res, 200, result);
+    } catch (error) {
+      this.handleError(res, error);
+    }
+  }
 }
 
 module.exports = new OrderController();

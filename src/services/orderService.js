@@ -67,6 +67,18 @@ class OrderService {
     }
     return await orderRepository.updateOrder(orderId, { status: 'cancelled' });
   }
+  async getAllOrders(userId){
+    try {
+      const order = await orderRepository.getAllOrders(userId);
+      if (!order) {
+        throw new Error("No orders found for this user");
+      }
+      return order;
+    } catch (error) {
+      console.error("Error fetching orders:", error.message);
+      throw error;
+    }
+  }
 }
 
 module.exports = new OrderService();

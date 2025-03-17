@@ -107,6 +107,44 @@ class OrderRepository {
       ],
     });
   }
+  async getAllOrders(userId) {
+    return await db.Order.findAll({
+      where: {
+        user_id: userId,
+      },
+      order: [["created_at", "DESC"]],
+      include: [
+        {
+          model: db.OrderDetail,
+          required: false,
+          attributes: ["id", "product_id", "price", "quantity", "subtotal"],
+          include: [
+            {
+              model: db.Product,
+              attributes: [
+                "product_name",
+                "image_url",
+                "import_price",
+                "sale_price",
+              ],
+              include: [
+                {
+                  model: db.Category,
+                  attributes: ["name"],
+                  as: "category",
+                },
+                {
+                  model: db.Shop,
+                  attributes: ["shop_name", "shop_id"],
+                  as: "shop",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+  }
 }
 
 module.exports = new OrderRepository();
