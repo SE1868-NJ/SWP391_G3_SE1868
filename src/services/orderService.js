@@ -1,10 +1,10 @@
-const orderRepository = require('../repositories/OrderRepository');
-const cartRepository = require('../repositories/CartRepository');
-const productRepository = require('../repositories/ProductRepository');
-const orderDetailRepository = require('../repositories/OrderDetailRepository');
+const orderRepository = require("../repositories/OrderRepository");
+const cartRepository = require("../repositories/CartRepository");
+const productRepository = require("../repositories/ProductRepository");
+const orderDetailRepository = require("../repositories/OrderDetailRepository");
 
 class OrderService {
-  constructor() { }
+  constructor() {}
 
   async createOrder(data) {
     try {
@@ -13,13 +13,19 @@ class OrderService {
 
       for (let i = 0; i < ItemProducts.length; i++) {
         //update is_ordered in cart
-        await cartRepository.updateIsOrdered(data.user_id, ItemProducts[i].product_id);
+        await cartRepository.updateIsOrdered(
+          data.user_id,
+          ItemProducts[i].product_id
+        );
         // update stock
-        const product = await productRepository.getProductById(ItemProducts[i].product_id);
+        const product = await productRepository.getProductById(
+          ItemProducts[i].product_id
+        );
         if (!product) {
           throw new Error("Product not found");
         }
-        product.stock_quantity = product.stock_quantity - ItemProducts[i].quantity;
+        product.stock_quantity =
+          product.stock_quantity - ItemProducts[i].quantity;
         await productRepository.updateStockQuantity(product);
         //create order detail
         const orderDetail = {
@@ -27,8 +33,8 @@ class OrderService {
           product_id: ItemProducts[i].product_id,
           quantity: ItemProducts[i].quantity,
           price: ItemProducts[i].price,
-          subtotal: 0
-        }
+          subtotal: 0,
+        };
         await orderDetailRepository.createOrderDetail(orderDetail);
       }
       return order;
@@ -48,7 +54,6 @@ class OrderService {
       }
       return order;
     } catch (error) {
-      console.error("Error fetching completed orders:", error.message);
       throw error;
     }
   }
@@ -60,14 +65,14 @@ class OrderService {
   async cancelOrder(orderId) {
     const order = await orderRepository.getOrderById(orderId);
     if (!order) {
-      throw new Error('Order not found');
+      throw new Error("Order not found");
     }
-    if (order.status.toLowerCase() === 'cancelled') {
-      throw new Error('Order is already cancelled');
+    if (order.status.toLowerCase() === "cancelled") {
+      throw new Error("Order is already cancelled");
     }
-    return await orderRepository.updateOrder(orderId, { status: 'cancelled' });
+    return await orderRepository.updateOrder(orderId, { status: "cancelled" });
   }
-  async getAllOrders(userId){
+  async getAllOrders(userId) {
     try {
       const order = await orderRepository.getAllOrders(userId);
       if (!order) {
@@ -75,7 +80,6 @@ class OrderService {
       }
       return order;
     } catch (error) {
-      console.error("Error fetching orders:", error.message);
       throw error;
     }
   }
