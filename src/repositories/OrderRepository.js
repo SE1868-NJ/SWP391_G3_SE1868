@@ -113,7 +113,7 @@ class OrderRepository {
     return await db.Order.findAll({
         where: {
             user_id: userId,
-            status: 'pending_payment'
+            status: 'pending'
         },
         order: [['created_at', 'DESC']],
         include: [
@@ -127,14 +127,14 @@ class OrderRepository {
                       attributes: ['product_name', 'image_url', 'import_price', 'sale_price'],
                       include: [
                           {
-                              model: db.Category, // Thêm relationship với Category
-                              attributes: [ 'name'], // Các trường bạn muốn lấy từ category
-                              as: 'category' // Đặt alias cho relationship
+                              model: db.Category,
+                              attributes: [ 'name'], 
+                              as: 'category' 
                           },
                           {
-                              model: db.Shop, // Thêm relationship với Brand
-                              attributes: ['shop_name'], // Các trường bạn muốn lấy từ brand
-                              as: 'shop' // Đặt alias cho relationship
+                              model: db.Shop, 
+                              attributes: ['shop_name'], 
+                              as: 'shop' 
                           }
                       ]
                   }

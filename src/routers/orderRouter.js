@@ -10,7 +10,7 @@ router.put('/cancelled/:id', orderController.cancelOrder);
 
 router.get('/completed/:id', orderController.getCompletedOrders);
 
-router.get('/pending_payment/:id', orderController.getPendingPaymentOrders);
-router.put('/pending_payment/:id', orderController.updateOrderToPendingPayment);
+router.get('/pending/:id', orderController.getPendingPaymentOrders);
+router.put('/pending/:id', orderController.updateOrderToPendingPayment);
 
 module.exports = router;

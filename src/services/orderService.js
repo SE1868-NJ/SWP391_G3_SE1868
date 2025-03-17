@@ -69,7 +69,7 @@ class OrderService {
   }
 
   async getPendingPaymentOrders(userId) {
-    return await orderRepository.getOrdersByStatus(userId, 'pending_payment');
+    return await orderRepository.getPendingPaymentOrders(userId, 'pending');
 }
 
 async updateOrderToPendingPayment(orderId) {
@@ -80,7 +80,7 @@ async updateOrderToPendingPayment(orderId) {
     if (order.status !== 'pending') {
         throw new Error('Only pending orders can be moved to pending payment');
     }
-    return await orderRepository.updateOrder(orderId, { status: 'pending_payment' });
+    return await orderRepository.updateOrder(orderId, { status: 'pending' });
 }
 
 }
