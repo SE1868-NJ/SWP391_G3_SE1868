@@ -1,16 +1,15 @@
-const orderRepository = require('../repositories/OrderRepository');
-const cartRepository = require('../repositories/CartRepository');
-const productRepository = require('../repositories/ProductRepository');
-const orderDetailRepository = require('../repositories/OrderDetailRepository');
+const orderRepository = require("../repositories/OrderRepository");
+const cartRepository = require("../repositories/CartRepository");
+const productRepository = require("../repositories/ProductRepository");
+const orderDetailRepository = require("../repositories/OrderDetailRepository");
 
 class OrderService {
-	constructor() { }
+  constructor() {}
 
 	async createOrder(data) {
 		try {
 			const ItemProducts = data.items;
 			const order = await orderRepository.createOrder(data);
-
 			for (let i = 0; i < ItemProducts.length; i++) {
 				//update is_ordered in cart
 				await cartRepository.updateIsOrdered(data.user_id, ItemProducts[i].product_id);
@@ -72,6 +71,17 @@ class OrderService {
 		return await orderRepository.getPendingPaymentOrders(userId, 'pending');
 	}
 
+  async getAllOrders(userId) {
+    try {
+      const order = await orderRepository.getAllOrders(userId);
+      if (!order) {
+        throw new Error("No orders found for this user");
+      }
+      return order;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = new OrderService();
