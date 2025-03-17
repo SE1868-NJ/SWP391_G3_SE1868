@@ -16,6 +16,14 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         allowNull: false,
       },
+      supplier_code: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+        validate: {
+          notEmpty: { msg: 'Mã nhà cung cấp không được để trống' },
+        },
+      },
       supplier_name: {
         type: DataTypes.STRING,
         allowNull: false,

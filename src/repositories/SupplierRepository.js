@@ -9,18 +9,15 @@ class SupplierRepository {
 
     async getSuppliers(params) {
         const { page = 1, limit = 10, status } = params;
-
         const whereClause = {};
         if (status) {
-            whereClause.status = status; // Lọc theo trạng thái nếu có
+            whereClause.status = status;
         }
-
         const { count, rows } = await db.Supplier.findAndCountAll({
             where: whereClause,
             limit: parseInt(limit),
             offset: (page - 1) * limit,
         });
-
         return {
             items: rows,
             metadata: {
@@ -40,6 +37,7 @@ class SupplierRepository {
         try {
             return await db.Supplier.create({
                 supplier_id: data.supplier_id,
+                supplier_code: data.supplier_code,
                 supplier_name: data.supplier_name,
                 delivery_time: data.delivery_time,
                 bank_name: data.bank_name,
