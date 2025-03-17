@@ -60,6 +60,27 @@ class OrderController extends BaseController {
       this.handleError(res, error);
     }
   }
+
+  getPendingPaymentOrders = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const result = await orderService.getPendingPaymentOrders(userId);
+        this.convertToJson(res, 200, result);
+    } catch (error) {
+        this.handleError(res, error);
+    }
+};
+
+updateOrderToPendingPayment = async (req, res) => {
+    try {
+        const orderId = req.params.id;
+        const result = await orderService.updateOrderToPendingPayment(orderId);
+        this.convertToJson(res, 200, { message: 'Order updated to pending payment', data: result });
+    } catch (error) {
+        this.handleError(res, error);
+    }
+};
+
 }
 
 module.exports = new OrderController();

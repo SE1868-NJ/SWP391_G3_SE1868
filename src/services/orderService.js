@@ -67,6 +67,22 @@ class OrderService {
     }
     return await orderRepository.updateOrder(orderId, { status: 'cancelled' });
   }
+
+  async getPendingPaymentOrders(userId) {
+    return await orderRepository.getOrdersByStatus(userId, 'pending_payment');
+}
+
+async updateOrderToPendingPayment(orderId) {
+    const order = await orderRepository.getOrderById(orderId);
+    if (!order) {
+        throw new Error('Order not found');
+    }
+    if (order.status !== 'pending') {
+        throw new Error('Only pending orders can be moved to pending payment');
+    }
+    return await orderRepository.updateOrder(orderId, { status: 'pending_payment' });
+}
+
 }
 
 module.exports = new OrderService();

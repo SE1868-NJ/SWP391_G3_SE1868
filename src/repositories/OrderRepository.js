@@ -65,7 +65,8 @@ class OrderRepository {
                     ]
                 }
             ]
-        });
+        }
+      );
     }
 
   async getCompletedOrders(userId) {
@@ -107,6 +108,44 @@ class OrderRepository {
       ],
     });
   }
+
+  async getPendingPaymentOrders(userId) {
+    return await db.Order.findAll({
+        where: {
+            user_id: userId,
+            status: 'pending_payment'
+        },
+        order: [['created_at', 'DESC']],
+        include: [
+          {
+              model: db.OrderDetail,
+              required: false,
+              attributes: ['id', 'product_id', 'price', 'quantity', 'subtotal'],
+              include: [
+                  {
+                      model: db.Product,
+                      attributes: ['product_name', 'image_url', 'import_price', 'sale_price'],
+                      include: [
+                          {
+                              model: db.Category, // Thêm relationship với Category
+                              attributes: [ 'name'], // Các trường bạn muốn lấy từ category
+                              as: 'category' // Đặt alias cho relationship
+                          },
+                          {
+                              model: db.Shop, // Thêm relationship với Brand
+                              attributes: ['shop_name'], // Các trường bạn muốn lấy từ brand
+                              as: 'shop' // Đặt alias cho relationship
+                          }
+                      ]
+                  }
+              ]
+          }
+      ]
+    }
+  );
+}
+
+  
 }
 
 module.exports = new OrderRepository();
