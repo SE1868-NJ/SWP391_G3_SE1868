@@ -43,6 +43,13 @@ class ShopService {
         }
     }
 
+    async getFeedbacksByShop(shopId) {
+        try {
+            return await shopRepository.getFeedbacksByShop(shopId);
+        } catch (error) {
+            throw new Error(`Lỗi khi lấy danh sách đánh giá: ${error.message}`);
+        }
+    }
 }
 
 module.exports = new ShopService();
