@@ -13,8 +13,8 @@ module.exports = (sequelize, DataTypes) => {
 
 	User.init(
 		{
-			userID: {
-				field: 'user_id',
+			user_id: {
+				field: 'id',
 				type: DataTypes.INTEGER,
 				allowNull: false,
 				primaryKey: true,
@@ -34,23 +34,23 @@ module.exports = (sequelize, DataTypes) => {
 				type: DataTypes.STRING,
 			},
 			full_name: {
-				field: 'full_name',
+				field: 'name',
 				type: DataTypes.STRING,
 				allowNull: false,
 			},
-			gender: {
-				type: DataTypes.ENUM('male', 'female', 'other'),
-				allowNull: false,
-			},
-			dateOfBirth: {
-				field: 'date_of_birth',
-				type: DataTypes.DATEONLY,
-				allowNull: false,
-			},
-			phone: {
-				type: DataTypes.STRING,
-				allowNull: false,
-			},
+			// gender: {
+			// 	type: DataTypes.ENUM('male', 'female', 'other'),
+			// 	allowNull: false,
+			// },
+			// dateOfBirth: {
+			// 	field: 'date_of_birth',
+			// 	type: DataTypes.DATEONLY,
+			// 	allowNull: false,
+			// },
+			// phone: {
+			// 	type: DataTypes.STRING,
+			// 	allowNull: false,
+			// },
 			email: {
 				type: DataTypes.STRING,
 				allowNull: false,
@@ -65,8 +65,8 @@ module.exports = (sequelize, DataTypes) => {
 			timestamps: true,
 			modelName: 'User',
 			tableName: 'users',
-			createdAt: 'created_at',
-			updatedAt: 'updated_at',
+			createdAt: 'createdAt',
+			updatedAt: 'updatedAt',
 		}
 	);
 	return User;
