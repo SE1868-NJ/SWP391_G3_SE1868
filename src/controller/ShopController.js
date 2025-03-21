@@ -3,6 +3,8 @@ const productService = require('../services/productService');
 const shopService = require('../services/shopService');
 const cartService = require('../services/cartService');
 const BaseController = require('./baseController');
+const path = require('path');
+const fs = require('fs');
 
 class ShopController extends BaseController {
   getCategory = async (req, res) => {
@@ -144,6 +146,54 @@ class ShopController extends BaseController {
       this.handleError(res, error);
     }
   };
+
+  updateShop = async (req, res) => {
+    try {
+      const shopId = parseInt(req.params.id);
+      let shopData = {
+        shop_name: req.body.shop_name,
+        shop_description: req.body.shop_description,
+        shop_address: req.body.shop_address,
+        shop_email: req.body.shop_email,
+        shop_phone: req.body.shop_phone
+      };
+
+      if (req.files && req.files.shop_logo) {
+        const file = req.files.shop_logo;
+
+        if (file.size > 2 * 1024 * 1024) {
+          return this.convertToJson(res, 400, {
+            message: "Kích thước file quá lớn. Vui lòng chọn file nhỏ hơn 2MB."
+          });
+        }
+
+        const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+        if (!validTypes.includes(file.mimetype)) {
+          return this.convertToJson(res, 400, {
+            message: "Định dạng file không hợp lệ. Chỉ chấp nhận JPG, JPEG, PNG."
+          });
+        }
+
+        const uploadDir = path.join(__dirname, '../uploads/shop_logos');
+        if (!fs.existsSync(uploadDir)) {
+          fs.mkdirSync(uploadDir, { recursive: true });
+        }
+
+        const fileName = `shop_${shopId}_${Date.now()}${path.extname(file.name)}`;
+        const uploadPath = path.join(uploadDir, fileName);
+
+        await file.mv(uploadPath);
+
+        shopData.shop_logo = `/uploads/shop_logos/${fileName}`;
+      }
+
+      const result = await shopService.updateShop(shopId, shopData);
+      return this.convertToJson(res, 200, result);
+    } catch (error) {
+      return this.handleError(res, error);
+    }
+  };
+
   getTopSearchedProducts = async (req, res) => {
     try {
       const limit = parseInt(req.query.limit) || 4; // Mặc định là 4 sản phẩm

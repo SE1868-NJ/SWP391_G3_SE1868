@@ -13,6 +13,14 @@ class ShopService {
         }
     }
 
+    async updateShop(shopId, shopData) {
+        try {
+            return await shopRepository.updateShop(shopId, shopData);
+        } catch (error) {
+            throw new Error(`Error updating shop: ${error.message}`);
+        }
+    }
+
     async getShopHomepage(shopId) {
         try {
             const shop = await shopRepository.getShopById(shopId);

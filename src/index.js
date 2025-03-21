@@ -30,7 +30,7 @@ const port = 4000;
 
 const uploadDir = path.join(__dirname, 'uploads'); // Đảm bảo thư mục đúng với vị trí file
 if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir);
+	fs.mkdirSync(uploadDir);
 }
 
 
@@ -60,6 +60,7 @@ app.use(passport.session());
 //file upload
 app.use(fileUpload());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads/shop_logos', express.static(path.join(__dirname, 'uploads/shop_logos')));
 
 //routes
 app.use('/api', apiRouter);
