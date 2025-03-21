@@ -158,18 +158,15 @@ class ShopController extends BaseController {
         shop_phone: req.body.shop_phone
       };
 
-      // Check if a file was uploaded
       if (req.files && req.files.shop_logo) {
         const file = req.files.shop_logo;
 
-        // Validate file size (2MB limit)
         if (file.size > 2 * 1024 * 1024) {
           return this.convertToJson(res, 400, {
             message: "Kích thước file quá lớn. Vui lòng chọn file nhỏ hơn 2MB."
           });
         }
 
-        // Validate file type
         const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
         if (!validTypes.includes(file.mimetype)) {
           return this.convertToJson(res, 400, {
@@ -177,20 +174,16 @@ class ShopController extends BaseController {
           });
         }
 
-        // Create directory if it doesn't exist
         const uploadDir = path.join(__dirname, '../uploads/shop_logos');
         if (!fs.existsSync(uploadDir)) {
           fs.mkdirSync(uploadDir, { recursive: true });
         }
 
-        // Create a unique filename
         const fileName = `shop_${shopId}_${Date.now()}${path.extname(file.name)}`;
         const uploadPath = path.join(uploadDir, fileName);
 
-        // Move the file
         await file.mv(uploadPath);
 
-        // Update the shop_logo path in the database
         shopData.shop_logo = `/uploads/shop_logos/${fileName}`;
       }
 
