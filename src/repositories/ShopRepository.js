@@ -13,6 +13,12 @@ class ShopRepository {
         });
     }
 
+    async updateShop(shopId, shopData) {
+        const shop = await db.Shop.findByPk(shopId);
+        if (!shop) throw new Error('Shop not found');
+        return await shop.update(shopData);
+    }
+
 }
 
 module.exports = new ShopRepository();
