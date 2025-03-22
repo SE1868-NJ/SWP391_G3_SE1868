@@ -242,11 +242,14 @@ class ShopController extends BaseController {
   getFeedbacksByShop = async (req, res) => {
     try {
         const shopId = req.params.id;
-        const feedbacks = await shopService.getFeedbacksByShop(shopId);
+        const { startDate, endDate } = req.query;
+
+        const feedbacks = await shopService.getFeedbacksByShop(shopId, startDate, endDate);
         return this.convertToJson(res, 200, feedbacks);
     } catch (error) {
         return this.handleError(res, error);
     }
-}
+};
+
 }
 module.exports = new ShopController();
