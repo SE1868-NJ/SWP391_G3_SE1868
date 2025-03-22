@@ -19,6 +19,22 @@ class ShopRepository {
         return await shop.update(shopData);
     }
 
+    async getFeedbacksByShop(shopId) {
+        return await db.Feedback.findAll({
+            include: [
+                {
+                    model: db.Product,
+                    as: 'product',
+                    where: { shop_id: shopId }
+                },
+                {
+                    model: db.User,
+                    as: 'user',
+                    attributes: ['user_id', 'full_name']
+                }
+            ]
+        });
+    }
 }
 
 module.exports = new ShopRepository();
