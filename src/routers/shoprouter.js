@@ -25,6 +25,9 @@ router.get('/cart/get_count_cart_by_user/:id', shopController.getCountCartByUser
 router.get('/get_shop_by_user/:id', shopController.getShopByUserId);
 router.post('/:id/update', shopController.updateShop);
 
+router.get('/feedbacks/:id', shopController.getFeedbacksByShop);
+
+
 // Shop Homepage
 router.get('/:id/homepage', shopController.getShopHomepage);
 
