@@ -49,16 +49,12 @@ class AuthController extends BaseController {
 	login = async (req, res) => {
 		try {
 			const { email, password } = req.body;
-
-			// Kiểm tra dữ liệu đầu vào
 			if (!email || !password) {
 				return res.status(400).json({
 					success: false,
 					message: 'Email và mật khẩu không được để trống'
 				});
 			}
-
-			// Sử dụng AuthService để xử lý logic đăng nhập
 			const data = await AuthService.login(email, password);
 			return this.convertToJson(res, 200, data);
 		} catch (error) {
@@ -66,14 +62,10 @@ class AuthController extends BaseController {
 		}
 	};
 
-	// API lấy thông tin người dùng hiện tại
 	getCurrentUser = async (req, res) => {
 		try {
 			const userId = req.user.userID || req.user.id;
-
-			// Sử dụng AuthService để lấy thông tin người dùng
 			const user = await AuthService.getCurrentUser(userId);
-
 			return this.convertToJson(res, 200, user);
 		} catch (error) {
 			return this.handleError(res, error);

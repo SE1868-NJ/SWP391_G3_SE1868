@@ -1,36 +1,26 @@
 const jwt = require('jsonwebtoken');
-const { User } = require('../models');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-jwt-secret-key';
-
-const authMiddleware = async (req, res, next) => {
+const verifyToken = (req, res, next) => {
     try {
-        const authHeader = req.headers.authorization;
-        if (!authHeader || !authHeader.startsWith("Bearer ")) {
-            return res.status(401).json({ message: "Unauthorized" });
+        const token = req.cookies.auth_token || req.headers.authorization?.split(' ')[1];
+        if (!token) {
+            return res.status(401).json({
+                success: false,
+                message: 'Access denied. No token provided.'
+            });
         }
-
-        const token = authHeader.split(" ")[1];
-        console.log("🔍 Token nhận được:", token);
-
-        const decoded = jwt.verify(token, JWT_SECRET);
-        console.log("🔍 Dữ liệu giải mã từ token:", decoded);
-
-        // Dùng `userID` thay vì `id`
-        const user = await User.findByPk(decoded.userID);
-
-        console.log("🔍 User tìm được trong DB:", user);
-
-        if (!user) {
-            return res.status(404).json({ message: "Không tìm thấy người dùng" });
-        }
-
-        req.user = user;
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded;
         next();
     } catch (error) {
-        console.error("❌ Lỗi xác thực:", error);
-        return res.status(401).json({ message: "Unauthorized" });
+        res.status(401).json({
+            success: false,
+            message: 'Invalid token.'
+        });
     }
-};
+}
 
-module.exports = { authMiddleware };
+// Thêm alias authMiddleware để sử dụng với các route mới
+const authMiddleware = verifyToken;
+
+module.exports = { verifyToken, authMiddleware };
