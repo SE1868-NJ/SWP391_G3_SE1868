@@ -6,6 +6,7 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const apiRouter = require('./routers/apiRouter');
 const authRoutes = require('./routers/authRouter');
+const bodyParser = require('body-parser');
 const scheduleTelegramJob = require('./jobs/telegramJob');
 const passport = require('passport');
 const chatSocket = require('./socket/chatSocket');
@@ -37,6 +38,8 @@ if (!fs.existsSync(uploadDir)) {
 //middleware
 app.use(cookieParser());
 app.use(express.json());
+app.use(cors());
+app.use(bodyParser.json());
 
 const corsOptions = {
 	origin: '*',
