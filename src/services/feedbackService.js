@@ -65,79 +65,51 @@ class FeedbackService {
             throw new Error(`Failed to get feedback data: ${error.message}`);
         }
     }
-    async createFeedback(feedbackData) {
+    async submitFeedback(feedbackData) {
         try {
-            // Validation: Kiểm tra các trường bắt buộc
-            if (!feedbackData.user_id) {
-                throw new Error('User ID là bắt buộc');
+            const { user_id, product_id, rating, comment, images } = feedbackData;
+
+            // Validate input
+            if (!user_id || !product_id || !rating) {
+                throw new Error('User ID, Product ID, and Rating are required');
             }
-            if (!feedbackData.product_id) {
-                throw new Error('Product ID là bắt buộc');
+            if (rating < 1 || rating > 5) {
+                throw new Error('Rating must be between 1 and 5');
             }
-            if (!feedbackData.rating || feedbackData.rating < 1 || feedbackData.rating > 5) {
-                throw new Error('Đánh giá phải từ 1 đến 5 sao');
+
+            // Create the feedback record
+            const newFeedback = await feedbackRepository.createFeedback({
+                user_id,
+                product_id,
+                rating,
+                comment,
+                is_update: false, // First submission, so is_update is false
+            });
+
+            // If there are images, save them to the Feedback_media table
+            if (images && images.length > 0) {
+                await feedbackRepository.createFeedbackMedia(
+                    images.map((media_url) => ({
+                        feedback_id: newFeedback.id,
+                        media_url,
+                    }))
+                );
             }
-            if (!feedbackData.comment || feedbackData.comment.trim() === '') {
-                throw new Error('Nội dung đánh giá là bắt buộc');
-            }
-    
-            // Kiểm tra media nếu có
-            const mediaArray = [];
-            if (feedbackData.media && Array.isArray(feedbackData.media)) {
-                for (const mediaItem of feedbackData.media) {
-                    if (!mediaItem.media_url || mediaItem.media_url.trim() === '') {
-                        throw new Error('URL của hình ảnh là bắt buộc cho mỗi mục media');
-                    }
-                    // Kiểm tra độ dài media_url không vượt quá 255 ký tự
-                    if (mediaItem.media_url.length > 255) {
-                        throw new Error('URL của hình ảnh không được vượt quá 255 ký tự');
-                    }
-                    mediaArray.push({
-                        media_url: mediaItem.media_url.trim()
-                    });
-                }
-            }
-    
-            // Chuẩn bị dữ liệu để gửi đến repository
-            const feedbackPayload = {
-                user_id: feedbackData.user_id,
-                product_id: feedbackData.product_id,
-                rating: feedbackData.rating,
-                comment: feedbackData.comment.trim(),
-                is_update: feedbackData.is_update || 0,
-                media: mediaArray.length > 0 ? mediaArray : null
-            };
-    
-            // Gọi repository để tạo feedback
-            const newFeedback = await feedbackRepository.createFeedback(feedbackPayload);
-    
-            // Kiểm tra nếu feedback được tạo thành công
-            if (!newFeedback) {
-                throw new Error('Không thể tạo đánh giá, vui lòng thử lại sau');
-            }
-    
-            // Format dữ liệu trả về
+
+            // Fetch the newly created feedback with associated user and media for the response
+            const feedbackWithDetails = await feedbackRepository.getFeedbackById(newFeedback.id);
+
             return {
-                success: true,
-                feedback: {
-                    id: newFeedback.id,
-                    user: {
-                        id: newFeedback.user?.id,
-                        name: newFeedback.user?.name || 'Vô danh',
-                        avatar: newFeedback.user?.avatar || null
-                    },
-                    product_id: newFeedback.product_id,
-                    rating: newFeedback.rating,
-                    comment: newFeedback.comment || '',
-                    date: formatDate(newFeedback.createdAt),
-                    images: newFeedback.media?.map(m => m.media_url) || [],
-                    created_at: newFeedback.createdAt,
-                    updated_at: newFeedback.updatedAt
-                }
+                id: feedbackWithDetails.id,
+                user: feedbackWithDetails.user?.fullName || 'Anonymous',
+                avatar: feedbackWithDetails.user?.avatar || null,
+                rating: feedbackWithDetails.rating,
+                date: new Date(feedbackWithDetails.created_at).toISOString().split('T')[0],
+                comment: feedbackWithDetails.comment || '',
+                images: feedbackWithDetails.media?.map((m) => m.media_url) || [],
             };
         } catch (error) {
-            console.error('Service error - createFeedback:', error);
-            throw new Error(`Không thể tạo đánh giá: ${error.message}`);
+            throw new Error(`Failed to get feedback data: ${error.message}`);
         }
     }
 }

@@ -1,7 +1,12 @@
-const feedbackService = require('../services/feedBackService');
+const feedbackService = require('../services/feedBBackService');
 const BaseController = require('./baseController');
+const path = require('path');
+const fs = require('fs');
 
 class FeedBackController extends BaseController {
+    constructor() {
+        super();
+    }
 
     // getFeedBacks = async (req, res) => {
     //     try {
@@ -23,112 +28,62 @@ class FeedBackController extends BaseController {
             this.handleError(res, error);
         }
     }
-    createFeedback = async (req, res) => {
+    submitFeedback = async (req, res) => {
         try {
-            // Lấy thông tin người dùng từ token JWT (nếu có authentication)
-            // const user_id = req.user?.id; // Nếu bạn đang sử dụng JWT authentication
-            
-            // Lấy dữ liệu từ body và files
-            const user_id = parseInt(req.body.user_id);
-            const product_id = parseInt(req.body.product_id);
-            const rating = parseInt(req.body.rating);
-            const comment = req.body.comment?.trim();
-            const is_update = req.body.is_update ? parseInt(req.body.is_update) : 0;
+            const { user_id, product_id, rating, comment } = req.body;
     
-            // Validation
-            if (isNaN(user_id) || user_id <= 0) {
-                return this.convertToJson(res, 400, {
-                    success: false,
-                    message: 'User ID không hợp lệ'
-                });
-            }
-            
-            if (isNaN(product_id) || product_id <= 0) {
-                return this.convertToJson(res, 400, {
-                    success: false,
-                    message: 'Product ID không hợp lệ'
-                });
-            }
-            
-            if (isNaN(rating) || rating < 1 || rating > 5) {
-                return this.convertToJson(res, 400, {
-                    success: false,
-                    message: 'Đánh giá phải từ 1 đến 5 sao'
-                });
-            }
-            
-            if (!comment || comment === '') {
-                return this.convertToJson(res, 400, {
-                    success: false,
-                    message: 'Nội dung đánh giá là bắt buộc'
-                });
+            if (!user_id) {
+                throw new Error('User ID is required');
             }
     
-            // Lấy danh sách file đã upload
-            const images = req.files?.['images'] || [];
-            const videos = req.files?.['videos'] || [];
+            // Khởi tạo mảng để lưu đường dẫn ảnh
+            let imageUrls = [];
     
-            // Kiểm tra giới hạn số lượng file (nếu cần)
-            if (images.length > 5) {
-                return this.convertToJson(res, 400, {
-                    success: false,
-                    message: 'Chỉ cho phép tối đa 5 hình ảnh'
-                });
+            // Xử lý upload nhiều file ảnh
+            if (req.files && req.files.images) {
+                // Tạo thư mục uploads nếu chưa tồn tại
+                const uploadDir = path.join(__dirname, '../uploads/feedback_images');
+                if (!fs.existsSync(uploadDir)) {
+                    fs.mkdirSync(uploadDir, { recursive: true });
+                }
+
+                // Xử lý trường hợp một file hoặc nhiều file
+                const imageFiles = Array.isArray(req.files.images) 
+                    ? req.files.images 
+                    : [req.files.images];
+                
+                // Lưu từng file và lấy đường dẫn
+                for (const imageFile of imageFiles) {
+                    const fileName = `feedback_${user_id}_${Date.now()}_${imageFile.name}`;
+                    const uploadPath = path.join(uploadDir, fileName);
+                    
+                    await imageFile.mv(uploadPath);
+                    imageUrls.push(`http://localhost:4000/uploads/feedback_images/${fileName}`);
+                }
             }
-            
-            if (videos.length > 2) {
-                return this.convertToJson(res, 400, {
-                    success: false,
-                    message: 'Chỉ cho phép tối đa 2 video'
-                });
-            }
-    
-            // Tạo mảng media từ các file đã upload
-            const media = [
-                ...images.map(file => ({
-                    media_url: `/uploads/${file.filename}`,
-                    media_type: 'image'
-                })),
-                ...videos.map(file => ({
-                    media_url: `/uploads/${file.filename}`,
-                    media_type: 'video'
-                }))
-            ];
     
             const feedbackData = {
-                user_id,
-                product_id,
-                rating,
-                comment,
-                is_update,
-                media: media.length > 0 ? media : null
+                user_id: parseInt(user_id),
+                product_id: parseInt(product_id),
+                rating: parseFloat(rating),
+                comment: comment || '',
+                images: imageUrls,
             };
     
-            // Gọi service để tạo feedback
-            const result = await feedbackService.createFeedback(feedbackData);
-    
-            // Trả về kết quả thành công
-            return this.convertToJson(res, 201, {
-                success: true,
-                message: 'Đánh giá sản phẩm đã được tạo thành công',
-                data: result
-            });
+            const result = await feedbackService.submitFeedback(feedbackData);
+            this.convertToJson(res, 201, { message: 'Gửi đánh giá thành công!', feedback: result });
         } catch (error) {
-            console.error('Controller error - createFeedback:', error);
-            
-            // Xử lý lỗi validation từ service
-            if (error.message.includes('bắt buộc') || 
-                error.message.includes('từ 1 đến 5') || 
-                error.message.includes('không hợp lệ')) {
-                return this.convertToJson(res, 400, {
-                    success: false,
-                    message: error.message
-                });
-            }
-            
-            return this.handleError(res, error);
+            this.handleError(res, error);
         }
+    };
+
+    convertToJson(res, code, data) {
+        res.status(code).json({
+            status: code >= 400 ? 'error' : 'success',
+            data: data
+        });
     }
+    
 }
 
 module.exports = new FeedBackController();
