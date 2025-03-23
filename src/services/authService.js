@@ -109,6 +109,22 @@ class AuthService {
 			throw error;
 		}
 	}
+
+	async getCurrentUser(userId) {
+		try {
+			// Sử dụng UserRepository để lấy thông tin người dùng
+			const user = await UserRepository.getUserById(userId);
+
+			if (!user) {
+				throw new Error('Không tìm thấy người dùng');
+			}
+
+			return user;
+		} catch (error) {
+			console.error('Get current user error:', error);
+			throw error;
+		}
+	}
 }
 
 module.exports = new AuthService();
