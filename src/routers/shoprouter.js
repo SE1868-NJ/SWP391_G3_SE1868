@@ -24,6 +24,10 @@ router.get('/cart/get_count_cart_by_user/:id', shopController.getCountCartByUser
 // Shop || seller
 router.get('/get_shop_by_user/:id', shopController.getShopByUserId);
 router.post('/:id/update', shopController.updateShop);
+// quản lí tất cả sản phẩm
+router.get('/all_products/:shopId', shopController.getSellerProducts);
+
+
 
 // Shop Homepage
 router.get('/:id/homepage', shopController.getShopHomepage);

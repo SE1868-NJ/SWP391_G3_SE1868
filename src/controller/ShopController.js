@@ -239,5 +239,24 @@ class ShopController extends BaseController {
     }
   };
 
+  getSellerProducts = async (req, res) => {
+    try {
+        const shopId = parseInt(req.params.shopId);
+        if (!shopId) return res.status(400).json({ message: "Missing shopId" });
+
+        const params = {
+            page: parseInt(req.query.page) || 1,
+            limit: parseInt(req.query.limit) || 10,
+            search: req.query.search || "",
+            sort: req.query.sort || "product_name",
+            order: req.query.order || "asc"
+        };
+
+        const result = await productService.getSellerProducts(shopId, params);
+        return this.convertToJson(res, 200, result);
+    } catch (error) {
+        return this.handleError(res, error);
+    }
+};
 }
 module.exports = new ShopController();

@@ -179,5 +179,13 @@ class ProductService {
       throw new Error(`Error getting products by shop and category: ${error.message}`);
     }
   }
+
+  async getSellerProducts(shopId, params) {
+    try {
+        return await shopRepository.getSellerProducts(shopId, params);
+    } catch (error) {
+        throw new Error(`Error getting seller products: ${error.message}`);
+    }
+}
 }
 module.exports = new ProductService();
