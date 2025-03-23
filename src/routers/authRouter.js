@@ -1,13 +1,22 @@
-// routers/authRoutes.js
 const express = require('express');
+const { loginLimit } = require('../middlewares/loginLimit.middleware');
+const AuthController = require('../controller/authController');
+const passport = require('passport');
+const { verifyToken } = require('../middlewares/auth.middleware');
+
 const router = express.Router();
-const authController = require('../controller/authController');
-const { authMiddleware } = require('../middlewares/auth.middleware');
 
-// Public routes
-router.post('/login', authController.login);
+router.get('/auth/google', AuthController.loginGoogle);
+router.get('/auth/google/callback', passport.authenticate('google', { session: false }), AuthController.googleCallback);
 
-// Protected routes
-router.get('/me', authMiddleware, authController.getCurrentUser);
+router.get('/auth/facebook', AuthController.loginFacebook);
+router.get('/auth/facebook/callback', passport.authenticate('facebook', { session: false }), AuthController.facebookCallback);
+
+router.post('/auth/register', AuthController.register);
+router.post('/auth/login', loginLimit, AuthController.login);
+
+// Basic login
+router.post('/auth/login', AuthController.login);
+router.get('/auth/me', verifyToken, AuthController.getCurrentUser);
 
 module.exports = router;
