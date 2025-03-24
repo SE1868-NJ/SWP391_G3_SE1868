@@ -36,7 +36,7 @@ class UserRepository {
     async update(id, user) {
         try {
             const updatedUser = await db.User.update(user, {
-                where: { user_id:id }
+                where: { user_id: id }
             });
             return updatedUser;
         } catch (error) {

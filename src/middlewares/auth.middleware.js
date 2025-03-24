@@ -20,7 +20,4 @@ const verifyToken = (req, res, next) => {
     }
 }
 
-// Thêm alias authMiddleware để sử dụng với các route mới
-const authMiddleware = verifyToken;
-
-module.exports = { verifyToken, authMiddleware };
+module.exports = { verifyToken, authMiddleware: verifyToken };

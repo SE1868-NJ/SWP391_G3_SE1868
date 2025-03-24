@@ -10,7 +10,7 @@ class AuthService {
 
 	generateToken(user) {
 		return jwt.sign(
-			{ id: user.id, email: user.email },
+			{ id: user.userID, email: user.email },
 			process.env.JWT_SECRET,
 			{ expiresIn: '24h' }
 		);

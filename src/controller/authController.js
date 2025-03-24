@@ -64,9 +64,15 @@ class AuthController extends BaseController {
 
 	getCurrentUser = async (req, res) => {
 		try {
-			const userId = req.user.userID || req.user.id;
-			const user = await AuthService.getCurrentUser(userId);
-			return this.convertToJson(res, 200, user);
+			const userId = req.user.id;
+			const userData = await AuthService.getCurrentUser(userId);
+			if (!userData) {
+				return res.status(404).json({
+					success: false,
+					message: 'Không tìm thấy người dùng'
+				});
+			}
+			return this.convertToJson(res, 200, userData);
 		} catch (error) {
 			return this.handleError(res, error);
 		}
