@@ -27,17 +27,17 @@ class ShopRepository {
                 attributes: [
                     'id',
                     'product_name',
+                    'product_description',
+                    'import_price',
                     'sale_price',
                     'stock_quantity',
                     'image_url',
-                    [
-                        db.sequelize.literal(`(
-                            SELECT COALESCE(SUM(order_details.price * order_details.quantity), 0)
-                            FROM order_details
-                            WHERE order_details.product_id = Product.id
-                        )`),
-                        'revenue'
-                    ]
+                ], include: [
+                    {
+                        model: db.Category,
+                        as: 'category',
+                        attributes: ['name'],
+                    }
                 ],
 
                 where: {
