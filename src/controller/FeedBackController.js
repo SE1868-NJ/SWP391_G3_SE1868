@@ -1,4 +1,4 @@
-const feedbackService = require('../services/feedBBackService');
+const feedbackService = require('../services/feedBackService');
 const BaseController = require('./baseController');
 const path = require('path');
 const fs = require('fs');
@@ -31,14 +31,14 @@ class FeedBackController extends BaseController {
     submitFeedback = async (req, res) => {
         try {
             const { user_id, product_id, rating, comment } = req.body;
-    
+
             if (!user_id) {
                 throw new Error('User ID is required');
             }
-    
+
             // Khởi tạo mảng để lưu đường dẫn ảnh
             let imageUrls = [];
-    
+
             // Xử lý upload nhiều file ảnh
             if (req.files && req.files.images) {
                 // Tạo thư mục uploads nếu chưa tồn tại
@@ -48,20 +48,20 @@ class FeedBackController extends BaseController {
                 }
 
                 // Xử lý trường hợp một file hoặc nhiều file
-                const imageFiles = Array.isArray(req.files.images) 
-                    ? req.files.images 
+                const imageFiles = Array.isArray(req.files.images)
+                    ? req.files.images
                     : [req.files.images];
-                
+
                 // Lưu từng file và lấy đường dẫn
                 for (const imageFile of imageFiles) {
                     const fileName = `feedback_${user_id}_${Date.now()}_${imageFile.name}`;
                     const uploadPath = path.join(uploadDir, fileName);
-                    
+
                     await imageFile.mv(uploadPath);
                     imageUrls.push(`http://localhost:4000/uploads/feedback_images/${fileName}`);
                 }
             }
-    
+
             const feedbackData = {
                 user_id: parseInt(user_id),
                 product_id: parseInt(product_id),
@@ -69,7 +69,7 @@ class FeedBackController extends BaseController {
                 comment: comment || '',
                 images: imageUrls,
             };
-    
+
             const result = await feedbackService.submitFeedback(feedbackData);
             this.convertToJson(res, 201, { message: 'Gửi đánh giá thành công!', feedback: result });
         } catch (error) {
@@ -83,7 +83,7 @@ class FeedBackController extends BaseController {
             data: data
         });
     }
-    
+
 }
 
 module.exports = new FeedBackController();
