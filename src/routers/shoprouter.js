@@ -30,4 +30,7 @@ router.get('/:id/homepage', shopController.getShopHomepage);
 // Shop Products
 router.get('/:shopId/products', shopController.getProductsByShopAndCategory);
 
+//shop order
+router.get('/order/get_new_order_by_shop/:shopId', shopController.getNewOrderByShop);
+
 module.exports = router;

@@ -2,6 +2,7 @@ const categoryService = require('../services/categoryService');
 const productService = require('../services/productService');
 const shopService = require('../services/shopService');
 const cartService = require('../services/cartService');
+const orderService = require('../services/orderService');
 const BaseController = require('./baseController');
 
 class ShopController extends BaseController {
@@ -188,6 +189,17 @@ class ShopController extends BaseController {
       return this.handleError(res, error);
     }
   };
+
+  getNewOrderByShop = async (req, res) => {
+    try {
+      const shopId = req.params.shopId;
+
+      const result = await orderService.getNewOrderByShop(shopId);
+      this.convertToJson(res, 200, result);
+    } catch (error) {
+      this.handleError(res, error);
+    }
+  }
 
 }
 module.exports = new ShopController();

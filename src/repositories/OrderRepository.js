@@ -186,5 +186,28 @@ class OrderRepository {
       ],
     });
   }
+
+  async getAllNewOrderByShop(shopId) {
+    return await db.Order.findAll({
+      where: {
+        shop_id: shopId,
+        status: 'pending'
+      },
+      order: [['created_at', 'DESC']],
+      include: [
+        {
+          model: db.OrderDetail,
+          required: false,
+          attributes: ['id', 'product_id', 'price', 'quantity', 'subtotal'],
+          include: [
+            {
+              model: db.Product,
+              attributes: ['product_name', 'image_url', 'import_price', 'sale_price'],
+            }
+          ]
+        }
+      ]
+    });
+  }
 }
 module.exports = new OrderRepository();

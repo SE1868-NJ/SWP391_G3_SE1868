@@ -1,38 +1,56 @@
 const orderService = require('../services/orderService');
+const orderDetailRepository = require('../repositories/OrderDetailRepository');
+const userRepository = require('../repositories/UserRepository');
 
 const checkoutSocket = (io) => {
     io.on('connection', (socket) => {
         console.log('A user connected', socket.id);
 
-        // Khi shop tham gia phòng WebSocket
         socket.on('join-checkout', (shopId) => {
-            socket.join(`checkout-${shopId}`);  // Shop sẽ vào phòng 'checkout-{shopId}'
+            socket.join(`checkout-${shopId}`); 
             console.log(`Shop joined checkout-${shopId}`);
         });
 
-        // Khi người dùng nhấn checkout, phát sự kiện 'checkout'
         socket.on('order_placed', async (data) => {
             try {
-                console.log('Checkout received:', data);
-
-                // Tạo đơn hàng từ dữ liệu checkout gửi tới
-                const order = {
-                    order_id: Math.floor(Math.random() * 1000),
-                    ...data,  // Nếu có thêm dữ liệu đơn hàng từ frontend
-                };
-
-                // Giả sử mỗi sản phẩm có shop_id để lọc đơn hàng cho từng shop
-                const shopsToNotify = new Set(data.items.map(item => item.shop_id));
-
-                shopsToNotify.forEach(shopId => {
-                    // Chỉ phát sự kiện tới phòng của shop trong 'checkout-{shopId}'
-                    io.to(`checkout-${shopId}`).emit('new_order', {
-                        order_id: order.order_id,
-                        shop_id: shopId,
-                        order_items: data.items.filter(item => item.shop_id === shopId),
+                const orders= await orderService.createOrder(data);
+                
+                for (let order of orders) {
+                    const orderDetails = await orderDetailRepository.getOrderDetailsByOrderId(order.order_id);
+                  
+                    const formattedOrderDetails = orderDetails.map(item => ({
+                        id: item.id,
+                        product_id: item.product_id,
+                        price: parseFloat(item.price).toFixed(2),
+                        quantity: item.quantity,
+                        subtotal: parseFloat(item.subtotal).toFixed(2), 
+                        Product: {
+                          product_name: item.Product.product_name,
+                          image_url: item.Product.image_url || null,  
+                          import_price: parseFloat(item.Product.import_price).toFixed(2), 
+                          sale_price: parseFloat(item.Product.sale_price).toFixed(2)  
+                        }
+                      }));
+                    const user = await userRepository.getUserById(order.user_id);
+                  
+                    io.to(`checkout-${order.shop_id}`).emit('new_order', {
+                      order_id: order.order_id,
+                      user_id: order.user_id,
+                      full_name: user.name,
+                      phone: user.phone,
+                      address_id: order.address_id,
+                      voucher_id: order.voucher_id,
+                      payment_method: order.payment_method,
+                      note: order.note,
+                      total: parseFloat(order.total).toFixed(2), 
+                      status: order.status,
+                      created_at: order.created_at,
+                      updated_at: order.updated_at,
+                      shop_id: order.shop_id,
+                      OrderDetails: formattedOrderDetails,
                     });
-                    console.log(`Order ${order.order_id} sent to shop ${shopId}`);
-                });
+                  
+                  }
 
             } catch (error) {
                 console.error("Error during checkout:", error);
