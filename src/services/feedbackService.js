@@ -1,4 +1,4 @@
-const feedbackRepository = require('../repositories/feedbackRepository');
+const feedbackRepository = require('../repositories/FeedbackRepository');
 
 class FeedbackService {
     constructor() {
@@ -61,6 +61,53 @@ class FeedbackService {
                 }
             };
 
+        } catch (error) {
+            throw new Error(`Failed to get feedback data: ${error.message}`);
+        }
+    }
+    async submitFeedback(feedbackData) {
+        try {
+            const { user_id, product_id, rating, comment, images } = feedbackData;
+
+            // Validate input
+            if (!user_id || !product_id || !rating) {
+                throw new Error('User ID, Product ID, and Rating are required');
+            }
+            if (rating < 1 || rating > 5) {
+                throw new Error('Rating must be between 1 and 5');
+            }
+
+            // Create the feedback record
+            const newFeedback = await feedbackRepository.createFeedback({
+                user_id,
+                product_id,
+                rating,
+                comment,
+                is_update: false, // First submission, so is_update is false
+            });
+
+            // If there are images, save them to the Feedback_media table
+            if (images && images.length > 0) {
+                await feedbackRepository.createFeedbackMedia(
+                    images.map((media_url) => ({
+                        feedback_id: newFeedback.id,
+                        media_url,
+                    }))
+                );
+            }
+
+            // Fetch the newly created feedback with associated user and media for the response
+            const feedbackWithDetails = await feedbackRepository.getFeedbackById(newFeedback.id);
+
+            return {
+                id: feedbackWithDetails.id,
+                user: feedbackWithDetails.user?.fullName || 'Anonymous',
+                avatar: feedbackWithDetails.user?.avatar || null,
+                rating: feedbackWithDetails.rating,
+                date: new Date(feedbackWithDetails.created_at).toISOString().split('T')[0],
+                comment: feedbackWithDetails.comment || '',
+                images: feedbackWithDetails.media?.map((m) => m.media_url) || [],
+            };
         } catch (error) {
             throw new Error(`Failed to get feedback data: ${error.message}`);
         }

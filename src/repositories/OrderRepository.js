@@ -62,7 +62,7 @@ class OrderRepository {
                 },
                 {
                   model: db.Shop,
-                  attributes: ["shop_name"],
+                  attributes: ["shop_name", "shop_id"],
                   as: "shop",
                 },
               ],
@@ -136,7 +136,7 @@ class OrderRepository {
                 },
                 {
                   model: db.Shop,
-                  attributes: ['shop_name'],
+                  attributes: ['shop_name', 'shop_id'],
                   as: 'shop'
                 }
               ]
