@@ -3,9 +3,9 @@ const supplierRepository = require('../repositories/SupplierRepository');
 class SupplierService {
     constructor() { }
 
-    async getAllSuppliers() {
+    async getAllSuppliers(shopId) {
         try {
-            const suppliers = await supplierRepository.getAllSuppliers();
+            const suppliers = await supplierRepository.getAllSuppliers(shopId);
             return suppliers;
         } catch (error) {
             throw new Error(`Error: ${error.message}`);
@@ -21,9 +21,9 @@ class SupplierService {
         }
     }
 
-    async getSupplierById(id) {
+    async getSupplierById(id, shopId) {
         try {
-            const supplier = await supplierRepository.getSupplierById(id);
+            const supplier = await supplierRepository.getSupplierById(id, shopId);
             if (!supplier) throw new Error('Nhà cung cấp không tồn tại!');
             return supplier;
         } catch (error) {
@@ -40,9 +40,9 @@ class SupplierService {
         }
     }
 
-    async updateSupplier(id, updateData) {
+    async updateSupplier(id, updateData, shopId) {
         try {
-            const updatedSupplier = await supplierRepository.updateSupplier(id, updateData);
+            const updatedSupplier = await supplierRepository.updateSupplier(id, updateData, shopId);
             if (!updatedSupplier) throw new Error('Nhà cung cấp không tồn tại!');
             return updatedSupplier;
         } catch (error) {
@@ -50,11 +50,11 @@ class SupplierService {
         }
     }
 
-    async deleteSupplier(id) {
+    async deleteSupplier(id, shopId) {
         try {
-            const deleted = await supplierRepository.deleteSupplier(id);
+            const deleted = await supplierRepository.deleteSupplier(id, shopId);
             if (!deleted) throw new Error('Nhà cung cấp không tồn tại!');
-            return { message: "Xóa nhà cung cấp thành công!" };
+            return { message: 'Xóa nhà cung cấp thành công!' };
         } catch (error) {
             throw new Error(`Error: ${error.message}`);
         }

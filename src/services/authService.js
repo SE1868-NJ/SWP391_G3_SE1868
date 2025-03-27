@@ -1,4 +1,5 @@
 const UserRepository = require('../repositories/userRepository');
+const ShopRepository = require('../repositories/shopRepository');
 const jwt = require('jsonwebtoken');
 const PasswordUtil = require('../utils/passwordUtil');
 
@@ -8,9 +9,9 @@ class AuthService {
 		return this.generateToken(user);
 	}
 
-	generateToken(user) {
+	generateToken(user, shopId) {
 		return jwt.sign(
-			{ id: user.userID, email: user.email },
+			{ id: user.userID, email: user.email, shop_id: shopId },
 			process.env.JWT_SECRET,
 			{ expiresIn: '24h' }
 		);
@@ -79,7 +80,12 @@ class AuthService {
 				password: passwordHash,
 			});
 
-			return newUser;
+			// Tạo shop cho user mới
+			const shop = await ShopRepository.findOrCreateShopByUserId(newUser.userID, newUser.name);
+
+			// Tạo token với shop_id
+			const token = this.generateToken(newUser, shop.shop_id);
+			return { user: newUser, token };
 		} catch (error) {
 			throw error;
 		}
@@ -99,7 +105,14 @@ class AuthService {
 			if (!isPasswordMatch) {
 				throw new Error('Incorrect password');
 			}
-			const token = this.generateToken(user);
+
+			// Sử dụng ShopRepository để tìm hoặc tạo shop
+			const shop = await ShopRepository.findOrCreateShopByUserId(user.userID, user.name);
+			if (!shop) {
+				throw new Error('Shop not found for this user');
+			}
+
+			const token = this.generateToken(user, shop.shop_id);
 			return {
 				token: token,
 				user: user,
@@ -115,7 +128,21 @@ class AuthService {
 			if (!user) {
 				throw new Error('Không tìm thấy người dùng');
 			}
-			return user;
+
+			// Chuyển user thành plain object
+			const userData = user.toJSON ? user.toJSON() : user;
+
+			// Lấy thông tin shop của user
+			const shop = await ShopRepository.findOrCreateShopByUserId(userData.user_id, userData.full_name);
+			if (!shop) {
+				throw new Error('Shop not found for this user');
+			}
+
+			// Thêm shop_id vào dữ liệu trả về
+			return {
+				...userData,
+				shop_id: shop.shop_id,
+			};
 		} catch (error) {
 			throw error;
 		}

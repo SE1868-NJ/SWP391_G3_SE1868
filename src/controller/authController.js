@@ -52,7 +52,7 @@ class AuthController extends BaseController {
 			if (!email || !password) {
 				return res.status(400).json({
 					success: false,
-					message: 'Email và mật khẩu không được để trống'
+					message: 'Email và mật khẩu không được để trống!',
 				});
 			}
 			const data = await AuthService.login(email, password);
@@ -64,12 +64,18 @@ class AuthController extends BaseController {
 
 	getCurrentUser = async (req, res) => {
 		try {
+			if (!req.user || !req.user.id) { // Kiểm tra req.user.id (ID từ token)
+				return res.status(401).json({
+					success: false,
+					message: 'Unauthorized: user_id is missing.',
+				});
+			}
 			const userId = req.user.id;
 			const userData = await AuthService.getCurrentUser(userId);
 			if (!userData) {
 				return res.status(404).json({
 					success: false,
-					message: 'Không tìm thấy người dùng'
+					message: 'Không tìm thấy người dùng!',
 				});
 			}
 			return this.convertToJson(res, 200, userData);

@@ -23,13 +23,11 @@ class ShopRepository {
         const whereClause = {
             '$product.shop_id$': shopId, // Lọc theo shopId từ bảng Product
         };
-    
         if (startDate && endDate) {
             whereClause.created_at = {
                 [db.Sequelize.Op.between]: [new Date(startDate), new Date(endDate)],
             };
         }
-    
         return await db.Feedback.findAll({
             where: whereClause,
             include: [
@@ -45,7 +43,17 @@ class ShopRepository {
             ],
         });
     }
-    
+
+    async findOrCreateShopByUserId(userId, userName) {
+        let shop = await db.Shop.findOne({ where: { user_id: userId } });
+        if (!shop) {
+            shop = await db.Shop.create({
+                user_id: userId,
+                shop_name: `${userName}'s Shop`,
+            });
+        }
+        return shop;
+    }
 }
 
 module.exports = new ShopRepository();
