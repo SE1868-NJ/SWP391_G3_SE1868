@@ -54,10 +54,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.DATE,
             allowNull: false,
             defaultValue: DataTypes.NOW
-        },
-        shop_id: {
-            type: DataTypes.INTEGER,
-            allowNull: false
         }
     }, {
         sequelize,
