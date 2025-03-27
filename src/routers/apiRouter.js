@@ -7,6 +7,7 @@ const shopRouter = require('./shopRouter');
 const supplierRouter = require('./supplierRouter');
 const orderRouter = require('./orderRouter');
 const addressRouter = require('./addressRouter');
+const paymentRouter = require('./paymentRouter');
 const apiRouter = express.Router();
 
 apiRouter.use('/user', userRouter);
@@ -17,6 +18,7 @@ apiRouter.use('/shop', shopRouter);
 apiRouter.use('/supplier', supplierRouter);
 apiRouter.use('/order', orderRouter);
 apiRouter.use('/address', addressRouter);
+apiRouter.use('/payment', paymentRouter);
 
 
 module.exports = apiRouter;
