@@ -75,24 +75,17 @@ class PaymentController extends BaseController {
         if (isValidSignature) {
             console.log("Return Signature: Valid");
             if (responseCode === '00') {
-                console.log(`Return: Transaction successful for TxnRef: ${txnRef}, VNPay TxnNo: ${transactionNo}`);
                 redirectUrl += `&success=true&amount=${amount}&message=Giao dịch thành công! Đang chờ xác nhận cuối cùng.`;
             } else {
-                console.log(`Return: Transaction failed or cancelled for TxnRef: ${txnRef}. Response Code: ${responseCode}`);
                 redirectUrl += `&success=false&message=Giao dịch thất bại hoặc bị hủy (Mã lỗi: ${responseCode})`;
             }
         } else {
-            console.warn(`Return Signature: Invalid for TxnRef: ${txnRef}`);
             redirectUrl += `&success=false&message=Lỗi xác thực kết quả giao dịch.`;
         }
-
-        console.log("Redirecting to:", redirectUrl);
         res.redirect(redirectUrl);
     }
 
     handleVnpayIPN = async (req, res) => {
-        console.log("--- VNPay IPN Received ---");
-        console.log("Query Params:", req.query);
 
         const vnp_Params = req.query;
         let RspCode = '99';
@@ -106,7 +99,6 @@ class PaymentController extends BaseController {
                 RspCode = '97';
                 Message = 'Invalid Signature';
             } else {
-                console.log("IPN Signature: Valid");
                 const txnRef = vnp_Params['vnp_TxnRef'];
                 const responseCode = vnp_Params['vnp_ResponseCode'];
                 const amount = parseInt(vnp_Params['vnp_Amount'] || '0', 10) / 100;
