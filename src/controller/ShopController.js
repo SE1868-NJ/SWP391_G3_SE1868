@@ -201,5 +201,50 @@ class ShopController extends BaseController {
     }
   }
 
+  getProcessingOrderByShop = async (req, res) => {
+    try {
+      const shopId = req.params.shopId;
+
+      const result = await orderService.getProcessingOrderByShop(shopId);
+      this.convertToJson(res, 200, result);
+    } catch (error) {
+      this.handleError(res, error);
+    }
+  }
+
+  getCompletedOrdersByShop = async (req, res) => {
+    try {
+      const shopId = req.params.shopId;
+
+      const result = await orderService.getCompletedOrdersByShop(shopId);
+      this.convertToJson(res, 200, result);
+    } catch (error) {
+      this.handleError(res, error);
+    }
+  }
+
+  getCancelledOrdersByShop = async (req, res) => {
+    try {
+      const shopId = req.params.shopId;
+
+      const result = await orderService.getCancelledOrdersByShop(shopId);
+      this.convertToJson(res, 200, result);
+    } catch (error) {
+      this.handleError(res, error);
+    }
+  }
+
+  updateStatusOrder = async (req, res) => {
+    try {
+      const orderId = req.params.orderId;
+      const { status } = req.body;
+
+      const result = await orderService.updateOrderStatus(orderId, status);
+      this.convertToJson(res, 200, result);
+    } catch (error) {
+      this.handleError(res, error);
+    }
+  }
+
 }
 module.exports = new ShopController();

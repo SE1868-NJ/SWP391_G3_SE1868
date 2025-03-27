@@ -32,5 +32,9 @@ router.get('/:shopId/products', shopController.getProductsByShopAndCategory);
 
 //shop order
 router.get('/order/get_new_order_by_shop/:shopId', shopController.getNewOrderByShop);
+router.get('/order/get_processing_order_by_shop/:shopId', shopController.getProcessingOrderByShop);
+router.get('/order/get_completed_order_by_shop/:shopId', shopController.getCompletedOrdersByShop);
+router.get('/order/get_cancelled_order_by_shop/:shopId', shopController.getCancelledOrdersByShop);
+router.post('/order/update_order_status/:orderId', shopController.updateStatusOrder);
 
 module.exports = router;

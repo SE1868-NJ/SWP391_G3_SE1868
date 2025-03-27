@@ -119,9 +119,9 @@ class OrderService {
 			if (!orders) {
 				throw new Error("No new orders found for this shop");
 			}
-			for(let order of orders) {
+			for (let order of orders) {
 				const user = await userRepository.getUserById(order.user_id);
-				order.dataValues.full_name = user?.dataValues.name 
+				order.dataValues.full_name = user?.dataValues.name
 				order.dataValues.phone = user?.dataValues.phone
 			}
 
@@ -130,6 +130,74 @@ class OrderService {
 		catch (error) {
 			throw error;
 		}
+	}
+
+	async getProcessingOrderByShop(shopId) {
+		try {
+			const orders = await orderRepository.getAllProcessingOrderByShop(shopId);
+
+			if (!orders) {
+				throw new Error("No processing orders found for this shop");
+			}
+			for (let order of orders) {
+				const user = await userRepository.getUserById(order.user_id);
+				order.dataValues.full_name = user?.dataValues.name
+				order.dataValues.phone = user?.dataValues.phone
+			}
+
+			return orders;
+		}
+		catch (error) {
+			throw error;
+		}
+	}
+
+	async getCompletedOrdersByShop(shopId) {
+		try {
+			const orders = await orderRepository.getAllCompletedOrderByShop(shopId);
+
+			if (!orders) {
+				throw new Error("No completed orders found for this shop");
+			}
+			for (let order of orders) {
+				const user = await userRepository.getUserById(order.user_id);
+				order.dataValues.full_name = user?.dataValues.name
+				order.dataValues.phone = user?.dataValues.phone
+			}
+
+			return orders;
+		}
+		catch (error) {
+			throw error;
+		}
+	}
+
+	async getCancelledOrdersByShop(orderId) {
+		try {
+			const orders = await orderRepository.getAllCancelledOrderByShop(orderId);
+
+			if (!orders) {
+				throw new Error("No cancelled orders found for this shop");
+			}
+			for (let order of orders) {
+				const user = await userRepository.getUserById(order.user_id);
+				order.dataValues.full_name = user?.dataValues.name
+				order.dataValues.phone = user?.dataValues.phone
+			}
+
+			return orders;
+		}
+		catch (error) {
+			throw error;
+		}
+	}
+
+	async updateOrderStatus(orderId, status) {
+		const order = await orderRepository.getOrderById(orderId);
+		if (!order) {
+			throw new Error('Order not found');
+		}
+		return await orderRepository.updateOrder(orderId, { status });
 	}
 }
 

@@ -50,7 +50,7 @@ const checkoutSocket = (io) => {
                       OrderDetails: formattedOrderDetails,
                     });
                   
-                  }
+                }
 
             } catch (error) {
                 console.error("Error during checkout:", error);
