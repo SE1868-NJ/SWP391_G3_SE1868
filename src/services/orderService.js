@@ -3,6 +3,7 @@ const cartRepository = require("../repositories/CartRepository");
 const productRepository = require("../repositories/ProductRepository");
 const orderDetailRepository = require("../repositories/OrderDetailRepository");
 const userRepository = require("../repositories/UserRepository");
+const c = require("config");
 
 class OrderService {
 	constructor() { }
@@ -152,6 +153,26 @@ class OrderService {
 		}
 	}
 
+	async getDeliveryOrderByShop(shopId) {
+		try {
+			const orders = await orderRepository.getAllDeliveryOrderByShop(shopId);
+
+			if (!orders) {
+				throw new Error("No delivery orders found for this shop");
+			}
+			for (let order of orders) {
+				const user = await userRepository.getUserById(order.user_id);
+				order.dataValues.full_name = user?.dataValues.name
+				order.dataValues.phone = user?.dataValues.phone
+			}
+
+			return orders;
+		}
+		catch (error) {
+			throw error;
+		}
+	}
+
 	async getCompletedOrdersByShop(shopId) {
 		try {
 			const orders = await orderRepository.getAllCompletedOrderByShop(shopId);
@@ -198,6 +219,15 @@ class OrderService {
 			throw new Error('Order not found');
 		}
 		return await orderRepository.updateOrder(orderId, { status });
+	}
+
+	async getOrders() {
+		try {
+			const orders = await orderRepository.getOrders();
+			return orders;
+		} catch (error) {
+			throw new Error(`Error getting orders: ${error.message}`);
+		}
 	}
 }
 
