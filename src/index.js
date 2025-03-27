@@ -9,6 +9,7 @@ const authRoutes = require('./routers/authRouter');
 const scheduleTelegramJob = require('./jobs/telegramJob');
 const passport = require('passport');
 const chatSocket = require('./socket/chatSocket');
+const checkoutSocket = require('./socket/checkoutSocket');
 require('./config/passport');
 
 const fileUpload = require('express-fileupload');
@@ -25,6 +26,7 @@ const io = new Server(server, {
 });
 
 chatSocket(io);
+checkoutSocket(io);
 
 const port = 4000;
 

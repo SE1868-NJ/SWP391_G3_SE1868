@@ -2,6 +2,7 @@ const categoryService = require('../services/categoryService');
 const productService = require('../services/productService');
 const shopService = require('../services/shopService');
 const cartService = require('../services/cartService');
+const orderService = require('../services/orderService');
 const BaseController = require('./baseController');
 const path = require('path');
 const fs = require('fs');
@@ -238,6 +239,62 @@ class ShopController extends BaseController {
       return this.handleError(res, error);
     }
   };
+
+  getNewOrderByShop = async (req, res) => {
+    try {
+      const shopId = req.params.shopId;
+
+      const result = await orderService.getNewOrderByShop(shopId);
+      this.convertToJson(res, 200, result);
+    } catch (error) {
+      this.handleError(res, error);
+    }
+  }
+
+  getProcessingOrderByShop = async (req, res) => {
+    try {
+      const shopId = req.params.shopId;
+
+      const result = await orderService.getProcessingOrderByShop(shopId);
+      this.convertToJson(res, 200, result);
+    } catch (error) {
+      this.handleError(res, error);
+    }
+  }
+
+  getCompletedOrdersByShop = async (req, res) => {
+    try {
+      const shopId = req.params.shopId;
+
+      const result = await orderService.getCompletedOrdersByShop(shopId);
+      this.convertToJson(res, 200, result);
+    } catch (error) {
+      this.handleError(res, error);
+    }
+  }
+
+  getCancelledOrdersByShop = async (req, res) => {
+    try {
+      const shopId = req.params.shopId;
+
+      const result = await orderService.getCancelledOrdersByShop(shopId);
+      this.convertToJson(res, 200, result);
+    } catch (error) {
+      this.handleError(res, error);
+    }
+  }
+
+  updateStatusOrder = async (req, res) => {
+    try {
+      const orderId = req.params.orderId;
+      const { status } = req.body;
+
+      const result = await orderService.updateOrderStatus(orderId, status);
+      this.convertToJson(res, 200, result);
+    } catch (error) {
+      this.handleError(res, error);
+    }
+  }
 
   getFeedbacksByShop = async (req, res) => {
     try {

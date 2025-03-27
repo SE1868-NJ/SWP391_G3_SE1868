@@ -7,6 +7,7 @@ const shopRouter = require('./shopRouter');
 const supplierRouter = require('./supplierRouter');
 const orderRouter = require('./orderRouter');
 const addressRouter = require('./addressRouter');
+const paymentRouter = require('./paymentRouter');
 const feedbackRouter = require('./feedbackRouter');
 const apiRouter = express.Router();
 
@@ -18,6 +19,7 @@ apiRouter.use('/shop', shopRouter);
 apiRouter.use('/supplier', supplierRouter);
 apiRouter.use('/order', orderRouter);
 apiRouter.use('/address', addressRouter);
+apiRouter.use('/payment', paymentRouter);
 apiRouter.use('/feedback', feedbackRouter)
 
 

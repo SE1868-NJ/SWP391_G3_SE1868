@@ -186,5 +186,105 @@ class OrderRepository {
       ],
     });
   }
+
+  async getAllNewOrderByShop(shopId) {
+    return await db.Order.findAll({
+      where: {
+        shop_id: shopId,
+        status: 'pending'
+      },
+      order: [['created_at', 'DESC']],
+      include: [
+        {
+          model: db.OrderDetail,
+          required: false,
+          attributes: ['id', 'product_id', 'price', 'quantity', 'subtotal'],
+          include: [
+            {
+              model: db.Product,
+              attributes: ['product_name', 'image_url', 'import_price', 'sale_price'],
+            }
+          ]
+        }
+      ]
+    });
+  }
+
+  async getAllProcessingOrderByShop(shopId) {
+    return await db.Order.findAll({
+      where: {
+        shop_id: shopId,
+        status: 'PROCESSING'
+      },
+      order: [['created_at', 'DESC']],
+      include: [
+        {
+          model: db.OrderDetail,
+          required: false,
+          attributes: ['id', 'product_id', 'price', 'quantity', 'subtotal'],
+          include: [
+            {
+              model: db.Product,
+              attributes: ['product_name', 'image_url', 'import_price', 'sale_price'],
+            }
+          ]
+        }
+      ]
+    });
+  }
+
+  async getAllCompletedOrderByShop(shopId) {
+    return await db.Order.findAll({
+      where: {
+        shop_id: shopId,
+        status: 'COMPLETED'
+      },
+      order: [['created_at', 'DESC']],
+      include: [
+        {
+          model: db.OrderDetail,
+          required: false,
+          attributes: ['id', 'product_id', 'price', 'quantity', 'subtotal'],
+          include: [
+            {
+              model: db.Product,
+              attributes: ['product_name', 'image_url', 'import_price', 'sale_price'],
+            }
+          ]
+        }
+      ]
+    });
+  }
+
+  async getAllCancelledOrderByShop(shopId) {
+    return await db.Order.findAll({
+      where: {
+        shop_id: shopId,
+        status: 'CANCELLED'
+      },
+      order: [['created_at', 'DESC']],
+      include: [
+        {
+          model: db.OrderDetail,
+          required: false,
+          attributes: ['id', 'product_id', 'price', 'quantity', 'subtotal'],
+          include: [
+            {
+              model: db.Product,
+              attributes: ['product_name', 'image_url', 'import_price', 'sale_price'],
+            }
+          ]
+        }
+      ]
+    });
+  }
+
+  async updateStatusOrder(orderId, status) {
+    return await db.Order.update({ status: status }, {
+      where: {
+        order_id: orderId
+      }
+    });
+  }
 }
 module.exports = new OrderRepository();
