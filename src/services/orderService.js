@@ -4,7 +4,7 @@ const productRepository = require("../repositories/ProductRepository");
 const orderDetailRepository = require("../repositories/OrderDetailRepository");
 
 class OrderService {
-  constructor() {}
+	constructor() { }
 
 	async createOrder(data) {
 		try {
@@ -71,17 +71,27 @@ class OrderService {
 		return await orderRepository.getPendingPaymentOrders(userId, 'pending');
 	}
 
-  async getAllOrders(userId) {
-    try {
-      const order = await orderRepository.getAllOrders(userId);
-      if (!order) {
-        throw new Error("No orders found for this user");
-      }
-      return order;
-    } catch (error) {
-      throw error;
-    }
-  }
+	async getAllOrders(userId) {
+		try {
+			const order = await orderRepository.getAllOrders(userId);
+			if (!order) {
+				throw new Error("No orders found for this user");
+			}
+			return order;
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async getOrderCountByShopId(shopId) {
+		try {
+			const count = await orderRepository.countOrdersByShopId(shopId);
+			return { count };
+		} catch (error) {
+			console.error("Lỗi khi đếm đơn hàng của shop:", error.message);
+			throw error;
+		}
+	}
 }
 
 module.exports = new OrderService();
