@@ -10,6 +10,16 @@ module.exports = {
         primaryKey: true,
         allowNull: false
       },
+      shop_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Shops',
+          key: 'shop_id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'RESTRICT',
+      },
       supplier_code: {
         type: Sequelize.STRING,
         allowNull: false,

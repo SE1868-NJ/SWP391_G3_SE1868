@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
 		static associate(models) {
 			Shop.belongsTo(models.User, { foreignKey: 'user_id', onDelete: 'CASCADE', });
 			Shop.hasMany(models.Product, { foreignKey: 'shop_id', as: 'products' });
+			Shop.hasMany(models.Supplier, { foreignKey: 'shop_id', as: 'suppliers' });
 		}
 	}
 	Shop.init(
@@ -54,6 +55,7 @@ module.exports = (sequelize, DataTypes) => {
 		{
 			sequelize,
 			modelName: 'Shop',
+			tableName: 'Shops',
 			timestamps: false,
 		}
 	);
