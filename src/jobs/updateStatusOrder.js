@@ -6,10 +6,10 @@ const updateStatusOrder = async (status) => {
         console.log(`Update status order to ${status}`);
         const orders = await orderService.getOrders();
         for (let order of orders) {
-            if (order.status === status) {
+            if (order.status === "PROCESSING") {
                 await orderService.updateOrderStatus(order.order_id, status);
             }
-            if (order.status === status) {
+            if (order.status === "DELIVERY") {
                 await orderService.updateOrderStatus(order.order_id, status);
             }
         }
