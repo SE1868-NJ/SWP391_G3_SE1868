@@ -7,8 +7,10 @@ const cookieParser = require('cookie-parser');
 const apiRouter = require('./routers/apiRouter');
 const authRoutes = require('./routers/authRouter');
 const scheduleTelegramJob = require('./jobs/telegramJob');
+const scheduleUpdateStatusOrder = require('./jobs/updateStatusOrder');
 const passport = require('passport');
 const chatSocket = require('./socket/chatSocket');
+const checkoutSocket = require('./socket/checkoutSocket');
 require('./config/passport');
 
 const fileUpload = require('express-fileupload');
@@ -25,6 +27,7 @@ const io = new Server(server, {
 });
 
 chatSocket(io);
+checkoutSocket(io);
 
 const port = 4000;
 
@@ -66,7 +69,8 @@ app.use('/uploads/shop_logos', express.static(path.join(__dirname, 'uploads/shop
 app.use('/api', apiRouter);
 app.use('/', authRoutes);
 
-scheduleTelegramJob();
+// scheduleTelegramJob();
+scheduleUpdateStatusOrder();
 
 app.listen(port, () => {
 	console.log(`Server is running on http://localhost:${port}`);
