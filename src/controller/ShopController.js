@@ -3,6 +3,7 @@ const productService = require('../services/productService');
 const shopService = require('../services/shopService');
 const cartService = require('../services/cartService');
 const orderService = require('../services/orderService');
+const fileService = require('../services/fileService');
 const BaseController = require('./baseController');
 const path = require('path');
 const fs = require('fs');
@@ -159,33 +160,18 @@ class ShopController extends BaseController {
         shop_phone: req.body.shop_phone
       };
 
-      if (req.files && req.files.shop_logo) {
-        const file = req.files.shop_logo;
-
-        if (file.size > 2 * 1024 * 1024) {
-          return this.convertToJson(res, 400, {
-            message: "Kích thước file quá lớn. Vui lòng chọn file nhỏ hơn 2MB."
-          });
-        }
-
+      if (req.file) {
+        const file = req.file;
         const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+
         if (!validTypes.includes(file.mimetype)) {
           return this.convertToJson(res, 400, {
             message: "Định dạng file không hợp lệ. Chỉ chấp nhận JPG, JPEG, PNG."
           });
         }
 
-        const uploadDir = path.join(__dirname, '../uploads/shop_logos');
-        if (!fs.existsSync(uploadDir)) {
-          fs.mkdirSync(uploadDir, { recursive: true });
-        }
-
-        const fileName = `shop_${shopId}_${Date.now()}${path.extname(file.name)}`;
-        const uploadPath = path.join(uploadDir, fileName);
-
-        await file.mv(uploadPath);
-
-        shopData.shop_logo = `/uploads/shop_logos/${fileName}`;
+        const uploadResult = await fileService.uploadFile(file, 'shop_logos');
+        shopData.shop_logo = uploadResult.url;
       }
 
       const result = await shopService.updateShop(shopId, shopData);
