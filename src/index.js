@@ -60,8 +60,17 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-//file upload
-app.use(fileUpload());
+app.use((req, res, next) => {
+	// Bỏ qua express-fileupload cho các route sử dụng multer
+	if (req.originalUrl.includes('/api/file/upload') || req.originalUrl.includes('/api/shop') && req.method === 'POST') {
+		return next();
+	}
+
+	// Sử dụng express-fileupload cho các route khác
+	return fileUpload({
+		limits: { fileSize: 5 * 1024 * 1024 }
+	})(req, res, next);
+});
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/uploads/shop_logos', express.static(path.join(__dirname, 'uploads/shop_logos')));
 

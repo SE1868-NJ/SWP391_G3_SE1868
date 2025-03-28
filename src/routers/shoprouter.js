@@ -1,7 +1,16 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
 const shopController = require('../controller/ShopController');
 const feedBackController = require('../controller/FeedBackController');
+
+// Cấu hình multer cho upload shop logo
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 2 * 1024 * 1024 // 2MB limit
+  }
+});
 
 //category
 router.get('/category/get_list_category', shopController.getCategory);
@@ -22,9 +31,10 @@ router.post('/cart/remove_multiple', shopController.removeMultipleCartItems);
 
 router.get('/cart/get_count_cart_by_user/:id', shopController.getCountCartByUserId);
 
-// Shop || seller
+// Shop || Seller
 router.get('/get_shop_by_user/:id', shopController.getShopByUserId);
-router.post('/:id/update', shopController.updateShop);
+// Thêm middleware multer vào route updateShop
+router.post('/:id/update', upload.single('shop_logo'), shopController.updateShop);
 
 router.get('/feedbacks/:id', shopController.getFeedbacksByShop);
 
