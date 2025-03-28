@@ -7,6 +7,7 @@ const feedBackController = require('../controller/FeedBackController');
 router.get('/category/get_list_category', shopController.getCategory);
 
 //product
+router.get('/product', shopController.getAllProduct);
 router.post('/product/get_list_product', shopController.getProducts);
 router.get('/product/get_feedbacks_by_product/:id', feedBackController.getFeedBacksByProductId);
 router.get('/product/get_product_by_id/:id', shopController.getProductById);
