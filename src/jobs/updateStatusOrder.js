@@ -19,19 +19,19 @@ const updateStatusOrder = async (status) => {
 }
 
 const scheduleUpdateStatusOrder = () => {
-    // cron.schedule('*/2 * * * *', () => {
-    //     updateStatusOrder("DELIVERY");
-    // }, {
-    //     scheduled: true,
-    //     timezone: "Asia/Ho_Chi_Minh"
-    // });
+    cron.schedule('*/2 * * * *', () => {
+        updateStatusOrder("DELIVERY");
+    }, {
+        scheduled: true,
+        timezone: "Asia/Ho_Chi_Minh"
+    });
 
-    // cron.schedule('*/5 * * * *', () => {
-    //     updateStatusOrder("COMPLETED");
-    // }, {
-    //     scheduled: true,
-    //     timezone: "Asia/Ho_Chi_Minh"
-    // });
+    cron.schedule('*/5 * * * *', () => {
+        updateStatusOrder("COMPLETED");
+    }, {
+        scheduled: true,
+        timezone: "Asia/Ho_Chi_Minh"
+    });
 };
 
 
