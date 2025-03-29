@@ -1,12 +1,11 @@
-const UserRepository = require('../repositories/userRepository');
+const userRepository = require('../repositories/userRepository');
 
 class UserService {
-    constructor() {
-    }
+    constructor() { }
 
     async getAllUsers() {
         try {
-            const users = await UserRepository.getAll();
+            const users = await userRepository.getAll();
             if (!users) {
                 throw new Error('No users found');
             }
@@ -18,7 +17,7 @@ class UserService {
 
     async getUserById(id) {
         try {
-            const user = await UserRepository.getUserById(id);
+            const user = await userRepository.getUserById(id);
             if (!user) {
                 throw new Error('User not found');
             }
@@ -30,15 +29,21 @@ class UserService {
 
     async updateUser(id, userData) {
         try {
-          const updatedUser = await UserRepository.update(id, userData);
-          if (!updatedUser) {
-            throw new Error('User not found or could not be updated');
-          }
-          return updatedUser;
-        } catch (error) {
-          throw new Error(`Error: ${error.message}`);
-        }
-      }
+            // Update the user first
+            await userRepository.update(id, userData);
 
+            // Then get the updated user to return
+            const updatedUser = await userRepository.getUserById(id);
+
+            if (!updatedUser) {
+                throw new Error('User not found or could not be updated');
+            }
+
+            return updatedUser;
+        } catch (error) {
+            throw new Error(`Error updating user: ${error.message}`);
+        }
+    }
 }
+
 module.exports = new UserService();
