@@ -10,7 +10,7 @@ router.post(
 );
 
 router.get('/vnpay_return', paymentController.handleVnpayReturn); // Sử dụng handleVnpayReturn cho /vnpay_return
-router.get('/vnpay_ipn', paymentController.handleVnpayIPN);
+router.post('/vnpay_ipn', paymentController.handleVnpayIPN);
 
 // Xóa route /result nếu /vnpay_return đã xử lý việc đó
 // router.get('/result', paymentController.handleVnpayReturn);

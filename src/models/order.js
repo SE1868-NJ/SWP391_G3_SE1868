@@ -9,6 +9,14 @@ module.exports = (sequelize, DataTypes) => {
             Order.hasMany(models.OrderDetail, { foreignKey: 'order_id', onDelete: 'CASCADE' });
         }
     }
+    Order.ORDER_PAID = 1;
+    Order.ORDER_UNPAID = 0;
+    Order.ORDER_PENDING = 'PENDING',
+    Order.ORDER_COMPLETED = 'COMPLETED',
+    Order.ORDER_CANCELLED = 'CANCELLED',
+    Order.ORDER_SHIPPING = 'SHIPPING',
+    Order.ORDER_DELIVERED = 'DELIVERED',
+
     Order.init({
         id: {
             type: DataTypes.INTEGER,
@@ -64,7 +72,12 @@ module.exports = (sequelize, DataTypes) => {
         shop_id: {
             type: DataTypes.INTEGER,
             allowNull: false
-        }
+        },
+        payment_status: {
+            type: DataTypes.STRING,
+            allowNull: true,
+            defaultValue: 0
+        },  
     }, {
         sequelize,
         modelName: 'Order',
