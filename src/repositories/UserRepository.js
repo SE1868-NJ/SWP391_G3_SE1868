@@ -1,44 +1,45 @@
 const db = require('../models');
 
 class UserRepository {
-    constructor() {
-    }
+    constructor() { }
 
     async getAll() {
         try {
             const users = await db.User.findAll({
-                attributes: ['user_id', 'full_name', 'email'],
+                attributes: ['user_id', 'full_name', 'email', 'phone', 'gender', 'avatar'],
             });
             return users;
         } catch (error) {
             throw error;
         }
     }
+
     async getUserById(id) {
         try {
             return await db.User.findByPk(id, {
-                attributes: ['id', 'name', 'email', 'avatar', 'phone'],
+                attributes: ['user_id', 'full_name', 'email', 'phone', 'gender', 'avatar'],
             });
         } catch (error) {
             throw error;
         }
     }
 
-    async create(user) {
+    async update(id, userData) {
         try {
-            const newUser = await db.User.create(user);
-            return newUser;
+            const user = await db.User.findByPk(id);
+            if (!user) throw new Error('User not found');
+
+            return await user.update(userData);
         } catch (error) {
             throw error;
         }
     }
 
-    async update(id, user) {
+    async findByEmail(email) {
         try {
-            const updatedUser = await db.User.update(user, {
-                where: { user_id: id }
+            return await db.User.findOne({
+                where: { email: email }
             });
-            return updatedUser;
         } catch (error) {
             throw error;
         }
@@ -54,49 +55,13 @@ class UserRepository {
         }
     }
 
-    async createWithGoogle(profile) {
+    async findByFacebookId(facebookId) {
         try {
-            return await db.User.create({
-                google_id: profile.id,
-                email: profile.emails?.[0]?.value || null,
-                name: profile.displayName,
-            });
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    findByFacebookId(facebookId) {
-        try {
-            return db.User.findOne({
+            return await db.User.findOne({
                 where: { facebook_id: facebookId }
             });
         } catch (error) {
             throw error;
-        }
-    }
-
-    findByEmail(email) {
-        try {
-            return db.User.findOne({
-                where: { email: email }
-            });
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async findOrCreateGoogleUser(profile) {
-        try {
-            let user = await this.findByGoogleId(profile.id);
-
-            if (!user) {
-                user = await this.createWithGoogle(profile);
-            }
-
-            return user;
-        } catch (error) {
-            throw new Error('Error handling Google user: ' + error.message);
         }
     }
 }

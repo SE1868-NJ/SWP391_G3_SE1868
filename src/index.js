@@ -62,7 +62,9 @@ app.use(passport.session());
 
 app.use((req, res, next) => {
 	// Bỏ qua express-fileupload cho các route sử dụng multer
-	if (req.originalUrl.includes('/api/file/upload') || req.originalUrl.includes('/api/shop') && req.method === 'POST') {
+	if (req.originalUrl.includes('/api/file/upload') ||
+		(req.originalUrl.includes('/api/shop') && req.method === 'POST') ||
+		(req.originalUrl.includes('/api/user') && req.method === 'POST')) {
 		return next();
 	}
 
@@ -71,7 +73,9 @@ app.use((req, res, next) => {
 		limits: { fileSize: 5 * 1024 * 1024 }
 	})(req, res, next);
 });
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Add this line to serve avatar directories
+app.use('/uploads/avatars', express.static(path.join(__dirname, 'uploads/avatars')));
 app.use('/uploads/shop_logos', express.static(path.join(__dirname, 'uploads/shop_logos')));
 
 //routes
