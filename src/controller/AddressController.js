@@ -33,6 +33,28 @@ class AddressController extends BaseController {
             this.handleError(res, error);
         }
     };
+
+    createAddress = async (req, res) => {
+        try {
+            const data = req.body;
+
+            const result = await addressService.createAddress(data);
+            this.convertToJson(res, 200, result);
+        } catch (error) {
+            this.handleError(res, error);
+        }
+    }
+
+    getAddressesByUserId = async (req, res) => {
+        try {
+            const userId = parseInt(req.params.userId);
+
+            const result = await addressService.getAddressesByUserId(userId);
+            this.convertToJson(res, 200, result);
+        } catch (error) {
+            this.handleError(res, error);
+        }
+    }
 }
 
 module.exports = new AddressController();
