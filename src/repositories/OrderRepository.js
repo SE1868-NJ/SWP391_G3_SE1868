@@ -79,36 +79,6 @@ class OrderRepository {
         status: "COMPLETED",
       },
       order: [["created_at", "DESC"]],
-      include: [
-        {
-          model: db.OrderDetail,
-          required: false,
-          attributes: ["id", "product_id", "price", "quantity", "subtotal"],
-          include: [
-            {
-              model: db.Product,
-              attributes: [
-                "product_name",
-                "image_url",
-                "import_price",
-                "sale_price",
-              ],
-              include: [
-                {
-                  model: db.Category,
-                  attributes: ["name"],
-                  as: "category",
-                },
-                {
-                  model: db.Shop,
-                  attributes: ["shop_name", "shop_id"],
-                  as: "shop",
-                },
-              ],
-            },
-          ],
-        },
-      ],
     });
   }
 
@@ -116,6 +86,30 @@ class OrderRepository {
     return await db.Order.findAll({
       where: {
         user_id: userId,
+        status: 'PENDING'
+      },
+      order: [['created_at', 'DESC']],
+    }
+    );
+  }
+
+  async getAllOrders(userId) {
+    return await db.Order.findAll({
+      where: {
+        user_id: userId,
+      },
+      order: [["created_at", "DESC"]],
+    });
+  }
+
+  async getOrders() {
+    return await db.Order.findAll();
+  }
+
+  async getAllNewOrderByShop(shopId) {
+    return await db.Order.findAll({
+      where: {
+        shop_id: shopId,
         status: 'pending'
       },
       order: [['created_at', 'DESC']],
@@ -128,62 +122,110 @@ class OrderRepository {
             {
               model: db.Product,
               attributes: ['product_name', 'image_url', 'import_price', 'sale_price'],
-              include: [
-                {
-                  model: db.Category,
-                  attributes: ['name'],
-                  as: 'category'
-                },
-                {
-                  model: db.Shop,
-                  attributes: ['shop_name', 'shop_id'],
-                  as: 'shop'
-                }
-              ]
             }
           ]
         }
       ]
-    }
-    );
+    });
   }
 
-  async getAllOrders(userId) {
+  async getAllDeliveryOrderByShop(shopId) {
     return await db.Order.findAll({
       where: {
-        user_id: userId,
+        shop_id: shopId,
+        status: 'DELIVERY'
       },
-      order: [["created_at", "DESC"]],
+      order: [['created_at', 'DESC']],
       include: [
         {
           model: db.OrderDetail,
           required: false,
-          attributes: ["id", "product_id", "price", "quantity", "subtotal"],
+          attributes: ['id', 'product_id', 'price', 'quantity', 'subtotal'],
           include: [
             {
               model: db.Product,
-              attributes: [
-                "product_name",
-                "image_url",
-                "import_price",
-                "sale_price",
-              ],
-              include: [
-                {
-                  model: db.Category,
-                  attributes: ["name"],
-                  as: "category",
-                },
-                {
-                  model: db.Shop,
-                  attributes: ["shop_name", "shop_id"],
-                  as: "shop",
-                },
-              ],
-            },
-          ],
-        },
-      ],
+              attributes: ['product_name', 'image_url', 'import_price', 'sale_price'],
+            }
+          ]
+        }
+      ]
+    });
+  }
+
+  async getAllProcessingOrderByShop(shopId) {
+    return await db.Order.findAll({
+      where: {
+        shop_id: shopId,
+        status: 'PROCESSING'
+      },
+      order: [['created_at', 'DESC']],
+      include: [
+        {
+          model: db.OrderDetail,
+          required: false,
+          attributes: ['id', 'product_id', 'price', 'quantity', 'subtotal'],
+          include: [
+            {
+              model: db.Product,
+              attributes: ['product_name', 'image_url', 'import_price', 'sale_price'],
+            }
+          ]
+        }
+      ]
+    });
+  }
+
+  async getAllCompletedOrderByShop(shopId) {
+    return await db.Order.findAll({
+      where: {
+        shop_id: shopId,
+        status: 'COMPLETED'
+      },
+      order: [['created_at', 'DESC']],
+      include: [
+        {
+          model: db.OrderDetail,
+          required: false,
+          attributes: ['id', 'product_id', 'price', 'quantity', 'subtotal'],
+          include: [
+            {
+              model: db.Product,
+              attributes: ['product_name', 'image_url', 'import_price', 'sale_price'],
+            }
+          ]
+        }
+      ]
+    });
+  }
+
+  async getAllCancelledOrderByShop(shopId) {
+    return await db.Order.findAll({
+      where: {
+        shop_id: shopId,
+        status: 'CANCELLED'
+      },
+      order: [['created_at', 'DESC']],
+      include: [
+        {
+          model: db.OrderDetail,
+          required: false,
+          attributes: ['id', 'product_id', 'price', 'quantity', 'subtotal'],
+          include: [
+            {
+              model: db.Product,
+              attributes: ['product_name', 'image_url', 'import_price', 'sale_price'],
+            }
+          ]
+        }
+      ]
+    });
+  }
+
+  async updateStatusOrder(orderId, status) {
+    return await db.Order.update({ status: status }, {
+      where: {
+        order_id: orderId
+      }
     });
   }
 

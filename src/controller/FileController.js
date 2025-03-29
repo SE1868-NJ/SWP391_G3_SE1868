@@ -2,35 +2,34 @@ const fileService = require('../services/fileService');
 const BaseController = require('./baseController');
 
 class FileController extends BaseController {
-
     constructor() {
         super();
     }
 
     uploadFile = async (req, res) => {
-        const {prefix_name} = req.body;
         try {
-            if (!req.file || !prefix_name) {
+            if (!req.file) {
                 return this.convertToJson(res, 400, { message: 'No file uploaded' });
             }
-            
+
+            const prefix_name = req.body.prefix_name || 'default';
             const result = await fileService.uploadFile(req.file, prefix_name);
+
             return this.convertToJson(res, 200, result);
         } catch (error) {
             return this.handleError(res, error);
         }
     };
-    
+
     getFileUrl = async (req, res) => {
         try {
             const { bucket, fileName } = req.params;
-            const fileUrl = await fileService.getFileUrl(bucket, fileName);
-            return this.convertToJson(res, 200, fileUrl);
+            const url = await fileService.getFileUrl(bucket, fileName);
+            return res.redirect(url);
         } catch (error) {
             return this.handleError(res, error.message);
         }
     };
-    
     // listFiles = async (req, res) => {
     //     try {
     //         const files = await fileService.listFiles();
@@ -39,7 +38,6 @@ class FileController extends BaseController {
     //         return this.handleError(res, error);
     //     }
     // };
-    
 }
 
 module.exports = new FileController();

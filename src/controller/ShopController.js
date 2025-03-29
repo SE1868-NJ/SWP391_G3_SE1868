@@ -2,6 +2,8 @@ const categoryService = require('../services/categoryService');
 const productService = require('../services/productService');
 const shopService = require('../services/shopService');
 const cartService = require('../services/cartService');
+const orderService = require('../services/orderService');
+const fileService = require('../services/fileService');
 const BaseController = require('./baseController');
 const path = require('path');
 const fs = require('fs');
@@ -158,34 +160,34 @@ class ShopController extends BaseController {
 				shop_phone: req.body.shop_phone
 			};
 
-			if (req.files && req.files.shop_logo) {
-				const file = req.files.shop_logo;
+      if (req.files && req.files.shop_logo) {
+        const file = req.files.shop_logo;
 
-				if (file.size > 2 * 1024 * 1024) {
-					return this.convertToJson(res, 400, {
-						message: "Kích thước file quá lớn. Vui lòng chọn file nhỏ hơn 2MB."
-					});
-				}
+        if (file.size > 2 * 1024 * 1024) {
+          return this.convertToJson(res, 400, {
+            message: "Kích thước file quá lớn. Vui lòng chọn file nhỏ hơn 2MB."
+          });
+        }
 
-				const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-				if (!validTypes.includes(file.mimetype)) {
-					return this.convertToJson(res, 400, {
-						message: "Định dạng file không hợp lệ. Chỉ chấp nhận JPG, JPEG, PNG."
-					});
-				}
+        const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+        if (!validTypes.includes(file.mimetype)) {
+          return this.convertToJson(res, 400, {
+            message: "Định dạng file không hợp lệ. Chỉ chấp nhận JPG, JPEG, PNG."
+          });
+        }
 
-				const uploadDir = path.join(__dirname, '../uploads/shop_logos');
-				if (!fs.existsSync(uploadDir)) {
-					fs.mkdirSync(uploadDir, { recursive: true });
-				}
+        const uploadDir = path.join(__dirname, '../uploads/shop_logos');
+        if (!fs.existsSync(uploadDir)) {
+          fs.mkdirSync(uploadDir, { recursive: true });
+        }
 
-				const fileName = `shop_${shopId}_${Date.now()}${path.extname(file.name)}`;
-				const uploadPath = path.join(uploadDir, fileName);
+        const fileName = `shop_${shopId}_${Date.now()}${path.extname(file.name)}`;
+        const uploadPath = path.join(uploadDir, fileName);
 
-				await file.mv(uploadPath);
+        await file.mv(uploadPath);
 
-				shopData.shop_logo = `/uploads/shop_logos/${fileName}`;
-			}
+        shopData.shop_logo = `/uploads/shop_logos/${fileName}`;
+      }
 
 			const result = await shopService.updateShop(shopId, shopData);
 			return this.convertToJson(res, 200, result);
@@ -225,31 +227,42 @@ class ShopController extends BaseController {
 		}
 	};
 
-	getProductsByShopAndCategory = async (req, res) => {
-		try {
-			const params = {
-				shopId: parseInt(req.params.shopId),
-				categoryId: req.query.categoryId ? parseInt(req.query.categoryId) : null,
-				sort: req.query.sort || 'newest'
-			};
-			const result = await productService.getProductsByShopAndCategory(params);
-			return this.convertToJson(res, 200, result);
-		} catch (error) {
-			return this.handleError(res, error);
-		}
-	};
+  getProductsByShopAndCategory = async (req, res) => {
+    try {
+      const params = {
+        shopId: parseInt(req.params.shopId),
+        categoryId: req.query.categoryId ? parseInt(req.query.categoryId) : null,
+        sort: req.query.sort || 'newest'
+      };
+      const result = await productService.getProductsByShopAndCategory(params);
+      return this.convertToJson(res, 200, result);
+    } catch (error) {
+      return this.handleError(res, error);
+    }
+  };
 
-	getFeedbacksByShop = async (req, res) => {
-		try {
-			const shopId = req.params.id;
-			const { startDate, endDate } = req.query;
+  getFeedbacksByShop = async (req, res) => {
+    try {
+        const shopId = req.params.id;
+        const { startDate, endDate } = req.query;
 
-			const feedbacks = await shopService.getFeedbacksByShop(shopId, startDate, endDate);
-			return this.convertToJson(res, 200, feedbacks);
-		} catch (error) {
-			return this.handleError(res, error);
-		}
-	};
+        const feedbacks = await shopService.getFeedbacksByShop(shopId, startDate, endDate);
+        return this.convertToJson(res, 200, feedbacks);
+    } catch (error) {
+        return this.handleError(res, error);
+    }
+};
+
+  getDeliveryOrdersByShop = async (req, res) => {
+    try {
+      const shopId = req.params.shopId;
+
+      const result = await orderService.getDeliveryOrderByShop(shopId);
+      this.convertToJson(res, 200, result);
+    } catch (error) {
+      this.handleError(res, error);
+    }
+  }
 
 }
 module.exports = new ShopController();

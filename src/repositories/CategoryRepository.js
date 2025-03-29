@@ -32,6 +32,30 @@ class CategoryRepository {
             having: db.sequelize.literal('product_count > 0')
         });
     }
+
+    async getCategoriesByShopId(shopId) {
+        try {
+            const query = `
+        SELECT 
+          c.id, 
+          c.name, 
+          COUNT(p.id) as product_count 
+        FROM Categories c
+        LEFT JOIN Products p ON c.id = p.category_id AND p.shop_id = :shopId
+        GROUP BY c.id
+        ORDER BY product_count DESC
+      `;
+
+            const categories = await db.sequelize.query(query, {
+                replacements: { shopId },
+                type: db.sequelize.QueryTypes.SELECT
+            });
+
+            return categories;
+        } catch (error) {
+            throw new Error(`Error getting categories by shop: ${error.message}`);
+        }
+    }
 }
 
 module.exports = new CategoryRepository();

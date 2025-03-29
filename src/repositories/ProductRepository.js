@@ -186,6 +186,26 @@ class ProductRepository {
       throw error;
     }
   }
+
+  async getProductSoldCount(productId) {
+    try {
+      const result = await db.sequelize.query(`
+      SELECT 
+        COALESCE(SUM(od.quantity), 0) as sold_count
+      FROM order_details od
+      JOIN orders o ON od.order_id = o.order_id
+      WHERE od.product_id = :productId
+      AND o.status IN ('completed', 'delivered', 'processing')
+    `, {
+        replacements: { productId },
+        type: db.sequelize.QueryTypes.SELECT
+      });
+
+      return parseInt(result[0]?.sold_count || 0);
+    } catch (error) {
+      throw new Error(`Error getting product sold count: ${error.message}`);
+    }
+  }
 }
 
 module.exports = new ProductRepository();

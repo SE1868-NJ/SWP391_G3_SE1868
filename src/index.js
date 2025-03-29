@@ -7,8 +7,10 @@ const cookieParser = require('cookie-parser');
 const apiRouter = require('./routers/apiRouter');
 const authRoutes = require('./routers/authRouter');
 const scheduleTelegramJob = require('./jobs/telegramJob');
+const scheduleUpdateStatusOrder = require('./jobs/updateStatusOrder');
 const passport = require('passport');
 const chatSocket = require('./socket/chatSocket');
+const checkoutSocket = require('./socket/checkoutSocket');
 require('./config/passport');
 
 const fileUpload = require('express-fileupload');
@@ -25,6 +27,7 @@ const io = new Server(server, {
 });
 
 chatSocket(io);
+checkoutSocket(io);
 
 const port = 4000;
 
@@ -57,8 +60,17 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-//file upload
-app.use(fileUpload());
+app.use((req, res, next) => {
+	// Bỏ qua express-fileupload cho các route sử dụng multer
+	if (req.originalUrl.includes('/api/file/upload') || req.originalUrl.includes('/api/shop') && req.method === 'POST') {
+		return next();
+	}
+
+	// Sử dụng express-fileupload cho các route khác
+	return fileUpload({
+		limits: { fileSize: 5 * 1024 * 1024 }
+	})(req, res, next);
+});
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/uploads/shop_logos', express.static(path.join(__dirname, 'uploads/shop_logos')));
 
@@ -66,7 +78,8 @@ app.use('/uploads/shop_logos', express.static(path.join(__dirname, 'uploads/shop
 app.use('/api', apiRouter);
 app.use('/', authRoutes);
 
-scheduleTelegramJob();
+// scheduleTelegramJob();
+scheduleUpdateStatusOrder();
 
 app.listen(port, () => {
 	console.log(`Server is running on http://localhost:${port}`);

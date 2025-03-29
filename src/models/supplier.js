@@ -3,8 +3,7 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Supplier extends Model {
     static associate(models) {
-      // Nếu có quan hệ với Category, có thể thêm tại đây
-      // Example: this.belongsTo(models.Category);
+      this.belongsTo(models.Shop, { foreignKey: 'shop_id', as: 'shop' });
     }
   }
 
@@ -15,6 +14,16 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
         primaryKey: true,
         allowNull: false,
+      },
+      shop_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Shops',
+          key: 'shop_id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'RESTRICT',
       },
       supplier_code: {
         type: DataTypes.STRING,

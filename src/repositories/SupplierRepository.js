@@ -3,13 +3,16 @@ const db = require('../models');
 class SupplierRepository {
     constructor() { }
 
-    async getAllSuppliers() {
-        return await db.Supplier.findAll();
+    async getAllSuppliers(shopId) {
+        return await db.Supplier.findAll({
+            where: { shop_id: shopId },
+            include: [{ model: db.Shop, as: 'shop' }],
+        });
     }
 
     async getSuppliers(params) {
-        const { page = 1, limit = 10, status } = params;
-        const whereClause = {};
+        const { page = 1, limit = 10, status, shopId } = params;
+        const whereClause = { shop_id: shopId };
         if (status) {
             whereClause.status = status;
         }
@@ -17,6 +20,7 @@ class SupplierRepository {
             where: whereClause,
             limit: parseInt(limit),
             offset: (page - 1) * limit,
+            include: [{ model: db.Shop, as: 'shop' }],
         });
         return {
             items: rows,
@@ -29,14 +33,16 @@ class SupplierRepository {
         };
     }
 
-    async getSupplierById(id) {
-        return await db.Supplier.findByPk(id);
+    async getSupplierById(id, shopId) {
+        return await db.Supplier.findOne({
+            where: { supplier_id: id, shop_id: shopId },
+            include: [{ model: db.Shop, as: 'shop' }],
+        });
     }
 
     async createSupplier(data) {
         try {
             return await db.Supplier.create({
-                supplier_id: data.supplier_id,
                 supplier_code: data.supplier_code,
                 supplier_name: data.supplier_name,
                 delivery_time: data.delivery_time,
@@ -49,22 +55,27 @@ class SupplierRepository {
                 facebook: data.facebook,
                 note: data.note,
                 status: data.status === 'Hoạt động' ? 'Hoạt động' : 'Không hoạt động',
+                shop_id: data.shop_id,
             });
         } catch (error) {
             throw error;
         }
     }
 
-    async updateSupplier(id, data) {
-        const supplier = await db.Supplier.findByPk(id);
+    async updateSupplier(id, data, shopId) {
+        const supplier = await db.Supplier.findOne({
+            where: { supplier_id: id, shop_id: shopId },
+        });
         if (!supplier) return null;
 
         await supplier.update(data);
         return supplier;
     }
 
-    async deleteSupplier(id) {
-        const supplier = await db.Supplier.findByPk(id);
+    async deleteSupplier(id, shopId) {
+        const supplier = await db.Supplier.findOne({
+            where: { supplier_id: id, shop_id: shopId },
+        });
         if (!supplier) return null;
 
         await supplier.destroy();

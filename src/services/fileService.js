@@ -1,27 +1,37 @@
 const minioClient = require('../config/minio');
-// const File = require('../models/File');
-// const crypto = require('crypto');
-// const path = require('path');
 
 class FileService {
     constructor() {
         this.bucketName = 'data';
+        this.minioEndpoint = 'http://127.0.0.1:9000';
     }
 
     async uploadFile(file, prefix_name) {
         try {
-            const objectName = prefix_name + "/" + Date.now() + "_" + file.originalname;
+            const originalName = file.originalname || file.name;
+            const objectName = `${prefix_name}/${Date.now()}_${originalName}`;
+            const fileBuffer = file.buffer || file.data;
 
-            // Upload to MinIO
-            await minioClient.putObject(this.bucketName, objectName, file.buffer);
+            const bucketExists = await minioClient.bucketExists(this.bucketName);
+            if (!bucketExists) {
+                await minioClient.makeBucket(this.bucketName);
+            }
 
-            // Get file URL
-            const fileUrl = await this.getFileUrl(this.bucketName, objectName);
+            await minioClient.putObject(
+                this.bucketName,
+                objectName,
+                fileBuffer,
+                file.size
+            );
+
+            const fileUrl = `${this.minioEndpoint}/${this.bucketName}/${objectName}`;
 
             return {
+                success: true,
                 filename: objectName,
                 url: fileUrl,
-                size: file.size
+                size: file.size,
+                mimetype: file.mimetype
             };
         } catch (error) {
             throw new Error(`Upload failed: ${error.message}`);
@@ -30,11 +40,10 @@ class FileService {
 
     async getFileUrl(bucket, filename) {
         try {
-            const fileUrl = await minioClient.presignedGetObject(bucket, filename, 1 * 60);
-            
-            return fileUrl.replace('minio', 'localhost').split('?')[0];
+            const directUrl = `${this.minioEndpoint}/${bucket}/${filename}`;
+            return directUrl;
         } catch (error) {
-            throw new Error(`Get file URL failed: ${error.message}`);
+            throw new Error(`Failed to get file: ${error.message}`);
         }
     }
 }
