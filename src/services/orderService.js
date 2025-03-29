@@ -172,6 +172,9 @@ class OrderService {
 				const user = await userRepository.getUserById(order.user_id);
 				order.dataValues.full_name = user?.dataValues.name
 				order.dataValues.phone = user?.dataValues.phone
+
+				const orderDetails = await orderDetailRepository.getOrderDetailsByOrderId(order.order_id);
+				order.dataValues.OrderDetails = orderDetails;
 			}
 
 			return orders;
@@ -192,6 +195,9 @@ class OrderService {
 				const user = await userRepository.getUserById(order.user_id);
 				order.dataValues.full_name = user?.dataValues.name
 				order.dataValues.phone = user?.dataValues.phone
+
+				const orderDetails = await orderDetailRepository.getOrderDetailsByOrderId(order.order_id);
+				order.dataValues.OrderDetails = orderDetails;
 			}
 
 			return orders;
@@ -212,6 +218,9 @@ class OrderService {
 				const user = await userRepository.getUserById(order.user_id);
 				order.dataValues.full_name = user?.dataValues.name
 				order.dataValues.phone = user?.dataValues.phone
+
+				const orderDetails = await orderDetailRepository.getOrderDetailsByOrderId(order.order_id);
+				order.dataValues.OrderDetails = orderDetails;
 			}
 
 			return orders;
@@ -232,6 +241,9 @@ class OrderService {
 				const user = await userRepository.getUserById(order.user_id);
 				order.dataValues.full_name = user?.dataValues.name
 				order.dataValues.phone = user?.dataValues.phone
+
+				const orderDetails = await orderDetailRepository.getOrderDetailsByOrderId(order.order_id);
+				order.dataValues.OrderDetails = orderDetails;
 			}
 
 			return orders;
@@ -252,6 +264,9 @@ class OrderService {
 				const user = await userRepository.getUserById(order.user_id);
 				order.dataValues.full_name = user?.dataValues.name
 				order.dataValues.phone = user?.dataValues.phone
+
+				const orderDetails = await orderDetailRepository.getOrderDetailsByOrderId(order.order_id);
+				order.dataValues.OrderDetails = orderDetails;
 			}
 
 			return orders;

@@ -91,19 +91,19 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: false
     },
     created_at: {
-      allowNull: false,
+      allowNull: true,
       type: DataTypes.DATE
     },
     updated_at: {
-      allowNull: false,
+      allowNull: true,
       type: DataTypes.DATE
     }
   }, {
     sequelize,
     modelName: 'Address',
     tableName: 'addresses',
-    timestamps: true,
-    underscored: true
+    timestamps: false,
+    // underscored: true
   });
   
   return Address;

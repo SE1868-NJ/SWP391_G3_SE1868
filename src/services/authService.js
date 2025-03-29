@@ -13,7 +13,7 @@ class AuthService {
 		return jwt.sign(
 			{ id: user.userID, email: user.email, shop_id: shopId },
 			process.env.JWT_SECRET,
-			{ expiresIn: '24h' }
+			{ expiresIn: '30m' }
 		);
 	}
 
@@ -98,6 +98,7 @@ class AuthService {
 			if (!user) {
 				throw new Error('User not found');
 			}
+
 			const isPasswordMatch = await PasswordUtil.comparePassword(
 				password,
 				user.password

@@ -1,10 +1,10 @@
 const provinceRepository = require('../repositories/ProvinceRepository');
 const districtRepository = require('../repositories/DistrictRepository');
 const wardRepository = require('../repositories/WardRepository');
+const addressRepository = require('../repositories/AddressRepository');
 
 class AddressService {
-    constructor()
-    {
+    constructor() {
 
     }
     async getAllProvinces() {
@@ -38,6 +38,30 @@ class AddressService {
                 throw new Error('Wards not found');
             }
             return wards;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async createAddress(data) {
+        try {
+            const address = await addressRepository.createAddress(data);
+            if (!address) {
+                throw new Error('Address not created');
+            }
+            return address;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async getAddressesByUserId(userId) {
+        try {
+            const addresses = await addressRepository.getAddressesByUserId(userId);
+            if (!addresses) {
+                throw new Error('Addresses not found');
+            }
+            return addresses;
         } catch (error) {
             console.log(error);
         }
