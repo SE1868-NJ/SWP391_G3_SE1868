@@ -19,7 +19,7 @@ class OrderRepository {
   }
 
   async getOrderById(orderId) {
-    return await db.Order.findOne({
+    return await db.Order.findAll({
       where: { order_id: orderId },
     });
   }
@@ -228,5 +228,14 @@ class OrderRepository {
       }
     });
   }
+
+  async updatePaymentStatusByOrderId(orderId, paymentStatus) {
+    return await db.Order.update({ payment_status: paymentStatus }, {
+      where: {
+        order_id: orderId
+      }
+    });
+  }
+
 }
 module.exports = new OrderRepository();

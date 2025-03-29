@@ -5,6 +5,7 @@ const orderService = require("../services/orderService");
 const orderRepository = require("../repositories/OrderRepository"); // Cần cho findByTxnRef
 const config = require('../config/default'); // Sử dụng thư viện node-config
 const { validationResult, body } = require('express-validator');
+const db = require('../models');
 
 const validateCreatePaymentRequest = [
     body('amount').isNumeric().toFloat().isFloat({ gt: 0 }),
@@ -34,6 +35,7 @@ class PaymentController extends BaseController {
             ...req.body,
             ipAddr: ipAddr?.replace('::ffff:', ''),
         };
+        console.log("Payment Data:", paymentData);
 
         try {
             // const order = await orderService.getOrderWithDetails(paymentData.orderId); // Sử dụng orderService
@@ -68,10 +70,10 @@ class PaymentController extends BaseController {
         const txnRef = vnp_Params['vnp_TxnRef'];
         const responseCode = vnp_Params['vnp_ResponseCode'];
         const transactionNo = vnp_Params['vnp_TransactionNo'];
+        const vnp_SecureHash = vnp_Params['vnp_SecureHash'];
         const amount = parseInt(vnp_Params['vnp_Amount'] || '0', 10) / 100;
 
-        let redirectUrl = `${frontendReturnUrl}?orderId=${txnRef || 'unknown'}`;
-
+        let redirectUrl = `${frontendReturnUrl}?orderId=${txnRef || 'unknown'}&responseCode=${responseCode}`;
         if (isValidSignature) {
             console.log("Return Signature: Valid");
             if (responseCode === '00') {
@@ -87,57 +89,38 @@ class PaymentController extends BaseController {
 
     handleVnpayIPN = async (req, res) => {
 
-        const vnp_Params = req.query;
+        const vnp_Params = req.body;
         let RspCode = '99';
         let Message = 'Unknown error';
 
         try {
-            const isValidSignature = paymentService.verifySignature(vnp_Params);
+            const orderId = vnp_Params.orderId;
+            const responseCode = vnp_Params.responseCode;
 
-            if (!isValidSignature) {
-                console.warn("IPN Signature: Invalid");
-                RspCode = '97';
-                Message = 'Invalid Signature';
+            const orders = await orderService.getOrderById(orderId);
+
+            if (!orders) {
+                RspCode = '01';
+                Message = 'Order not found';
             } else {
-                const txnRef = vnp_Params['vnp_TxnRef'];
-                const responseCode = vnp_Params['vnp_ResponseCode'];
-                const amount = parseInt(vnp_Params['vnp_Amount'] || '0', 10) / 100;
-                const transactionNo = vnp_Params['vnp_TransactionNo'];
-
-                const order = await orderRepository.findByTxnRef(txnRef); // Dùng repo để tìm
-
-                if (!order) {
-                    console.warn(`IPN: Order not found for TxnRef: ${txnRef}`);
-                    RspCode = '01';
-                    Message = 'Order not found';
-                } else {
-                    console.log(`IPN: Found order ${order.order_id} for TxnRef: ${txnRef}`);
-
-                    if (order.total !== amount) {
-                        console.warn(`IPN: Amount mismatch for order ${order.order_id}. Expected: ${order.total}, Received: ${amount}`);
-                        RspCode = '04';
-                        Message = 'Invalid Amount';
-                    } else if (order.status !== 'pending_payment') {
-                        console.log(`IPN: Order ${order.order_id} status is already '${order.status}'. TxnRef: ${txnRef}`);
-                        if (order.status === 'paid') {
-                            RspCode = '00';
-                            Message = 'Order already confirmed successfully';
-                        } else {
-                            RspCode = '02';
-                            Message = 'Order status is not pending payment';
-                        }
-                    } else {
+                for (let order of orders) {
+                    if (order.payment_status === db.Order.ORDER_UNPAID) {
+                        console.log(order.payment_status);
                         if (responseCode === '00') {
-                            console.log(`IPN: Transaction successful for order ${order.order_id}. Updating status to 'paid'.`);
-                            await orderService.updateOrderStatusByTxnRef(txnRef, 'paid', { vnpTransactionNo: transactionNo }); // Dùng service để cập nhật
+                            const status = await orderService.updatePaymentStatusByOrderId(orderId, db.Order.ORDER_PAID);
                             RspCode = '00';
                             Message = 'Confirm Success';
                         } else {
-                            console.log(`IPN: Transaction failed for order ${order.order_id}. Response Code: ${responseCode}. Updating status to 'payment_failed'.`);
-                            await orderService.updateOrderStatusByTxnRef(txnRef, 'payment_failed', { vnpResponseCode: responseCode }); // Dùng service để cập nhật
+                            console.log(`IPN: Transaction failed for order ${order.order_id}. Response Code: ${responseCode}. Keeping status as 'pending_payment'.`);
                             RspCode = '00';
                             Message = 'Confirm Success (but transaction failed)';
                         }
+                    } else if (order.payment_status === 1) {
+                        RspCode = '00';
+                        Message = 'Order already confirmed successfully';
+                    } else {
+                        RspCode = '02';
+                        Message = 'Order status is not pending payment';
                     }
                 }
             }
@@ -146,7 +129,6 @@ class PaymentController extends BaseController {
             RspCode = '99';
             Message = 'Internal Server Error';
         } finally {
-            console.log(`IPN Response to VNPay: RspCode=${RspCode}, Message=${Message}`);
             res.status(200).json({ RspCode: RspCode, Message: Message });
         }
     }
@@ -154,5 +136,5 @@ class PaymentController extends BaseController {
 
 module.exports = {
     paymentController: new PaymentController(),
-    validateCreatePaymentRequest 
+    validateCreatePaymentRequest
 };

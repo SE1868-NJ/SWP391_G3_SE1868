@@ -266,6 +266,22 @@ class OrderService {
 			throw new Error(`Error getting orders: ${error.message}`);
 		}
 	}
+
+	async getOrderById(orderId) {
+		try {
+			const orders = await orderRepository.getOrderById(orderId);
+			if (!orders) {
+				throw new Error("Order not found");
+			}
+			return orders;
+		} catch (error) {
+			throw new Error(`Error getting order: ${error.message}`);
+		}
+	}
+
+	async updatePaymentStatusByOrderId(orderId, paymentStatus) {
+		return await orderRepository.updatePaymentStatusByOrderId(orderId, paymentStatus);
+	}
 }
 
 module.exports = new OrderService();
