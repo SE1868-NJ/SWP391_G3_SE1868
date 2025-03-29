@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const shopController = require('../controller/ShopController');
+const productController = require('../controller/ProductController');
 const feedBackController = require('../controller/FeedBackController');
 
 // Cấu hình multer cho upload shop logo
@@ -21,7 +22,8 @@ router.post('/product/get_list_product', shopController.getProducts);
 router.get('/product/get_feedbacks_by_product/:id', feedBackController.getFeedBacksByProductId);
 router.get('/product/get_product_by_id/:id', shopController.getProductById);
 router.get('/product/get_product_by_name/:name', shopController.getProductByName);
-router.get('/product/get_top_searched_products', shopController.getTopSearchedProducts);
+router.get('/product/get_top_searched_products', productController.getTopSearchedProducts);
+router.get('/product/top-products', productController.getTopProducts);
 // cart
 router.get('/cart/get_cart_by_user/:id', shopController.getCartsByUserId);
 router.post('/cart/add_to_cart', shopController.createCart);

@@ -150,6 +150,17 @@ class OrderService {
 		}
 	}
 
+
+	async getOrderCountByShopId(shopId) {
+		try {
+			const count = await orderRepository.countOrdersByShopId(shopId);
+			return { count };
+		} catch (error) {
+			console.error("Lỗi khi đếm đơn hàng của shop:", error.message);
+			throw error;
+		}
+	}
+
 	async getNewOrderByShop(shopId) {
 		try {
 			const orders = await orderRepository.getAllNewOrderByShop(shopId);

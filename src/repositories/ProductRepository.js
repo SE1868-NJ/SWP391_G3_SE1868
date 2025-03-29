@@ -71,30 +71,26 @@ class ProductRepository {
       }]
     });
   }
+
   async updateSearchCount(productId) {
     try {
-      // Sửa lỗi: Thay thế Product bằng db.Product
       const product = await db.Product.findByPk(productId);
       if (!product) {
         throw new Error("Product not found");
       }
-
-      // Cập nhật search_count một cách rõ ràng với giá trị cụ thể
       product.search_count = product.search_count + 1;
       await product.save();
-
       return product;
     } catch (error) {
       throw new Error(`Error updating search count: ${error.message}`);
     }
   }
 
-  async getMostSearchedProducts(limit = 4) {
+  async getMostSearchedProducts(limit) {
     try {
-      // Sửa lỗi: Thay thế Product bằng db.Product
       return await db.Product.findAll({
         where: {
-          status: "active", // Thêm điều kiện nếu cần
+          status: "active",
         },
         order: [["search_count", "DESC"]],
         limit: parseInt(limit),
@@ -148,6 +144,67 @@ class ProductRepository {
       ],
       order
     });
+  }
+
+  async getTopProductsByQuantity(limit = 5) {
+    try {
+      return await db.OrderDetail.findAll({
+        attributes: [
+          'product_id',
+          [db.Sequelize.fn('SUM', db.Sequelize.col('quantity')), 'total_quantity'],
+          [db.Sequelize.fn('SUM', db.Sequelize.literal('price * quantity')), 'revenue'],
+        ],
+        include: [{
+          model: db.Product,
+          attributes: ['id', 'product_name'],
+        }],
+        group: ['product_id'],
+        order: [[db.Sequelize.fn('SUM', db.Sequelize.col('quantity')), 'DESC']],
+        limit: parseInt(limit),
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getTopProductsByRevenue(limit = 5) {
+    try {
+      return await db.OrderDetail.findAll({
+        attributes: [
+          'product_id',
+          [db.Sequelize.fn('SUM', db.Sequelize.literal('price * quantity')), 'revenue'],
+        ],
+        include: [{
+          model: db.Product,
+          attributes: ['id', 'product_name'],
+        }],
+        group: ['product_id'],
+        order: [[db.Sequelize.fn('SUM', db.Sequelize.literal('price * quantity')), 'DESC']],
+        limit: parseInt(limit),
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getProductSoldCount(productId) {
+    try {
+      const result = await db.sequelize.query(`
+      SELECT 
+        COALESCE(SUM(od.quantity), 0) as sold_count
+      FROM order_details od
+      JOIN orders o ON od.order_id = o.order_id
+      WHERE od.product_id = :productId
+      AND o.status IN ('completed', 'delivered', 'processing')
+    `, {
+        replacements: { productId },
+        type: db.sequelize.QueryTypes.SELECT
+      });
+
+      return parseInt(result[0]?.sold_count || 0);
+    } catch (error) {
+      throw new Error(`Error getting product sold count: ${error.message}`);
+    }
   }
 }
 

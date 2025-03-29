@@ -79,5 +79,15 @@ class OrderController extends BaseController {
       this.handleError(res, error);
     }
   };
+
+  getOrderCountByShopId = async (req, res) => {
+    try {
+      const shopId = req.params.shopId;
+      const result = await orderService.getOrderCountByShopId(shopId);
+      this.convertToJson(res, 200, result);
+    } catch (error) {
+      this.handleError(res, error);
+    }
+  };
 }
 module.exports = new OrderController();
