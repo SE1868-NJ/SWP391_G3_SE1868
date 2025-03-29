@@ -10,10 +10,16 @@ module.exports = (sequelize, DataTypes) => {
         }
     }
     Order.init({
-        order_id: {
+        id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true
+        },
+        order_id: {
+            type: DataTypes.BIGINT,
+            allowNull: false,
+            // primaryKey: true,
+            // autoIncrement: true
         },
         user_id: {
             type: DataTypes.INTEGER,

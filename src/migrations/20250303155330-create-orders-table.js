@@ -6,9 +6,8 @@ module.exports = {
     await queryInterface.createTable('orders', {
       order_id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.BIGINT,
       },
       user_id: {
         type: Sequelize.INTEGER,

@@ -20,11 +20,13 @@ class OrderService {
 				acc[item.shop_id].push(item);
 				return acc;
 			}, {});
+			console.log(1);
 
 			for (let shopId in groupedByShop) {
 				const shopItems = groupedByShop[shopId];
 
 				const orderData = {
+					order_id: data.order_id,
 					user_id: data.user_id,
 					address_id: data.address_id,
 					total: shopItems.reduce((total, item) => total + (item.price * item.quantity), 0),
@@ -33,8 +35,10 @@ class OrderService {
 					voucher_id: data.voucher_id,
 					shop_id: shopId,
 				};
+				console.log(orderData);
 
 				const order = await orderRepository.createOrder(orderData);
+				console.log(3);
 				orders.push(order);
 
 				for (let i = 0; i < shopItems.length; i++) {
@@ -55,6 +59,7 @@ class OrderService {
 						subtotal: shopItems[i].price * shopItems[i].quantity,
 					};
 					await orderDetailRepository.createOrderDetail(orderDetail);
+					console.log(2);
 				}
 			}
 
@@ -69,21 +74,37 @@ class OrderService {
 	async getOrdersByUserId(userId, limit, offset) {
 		return await orderRepository.getOrdersByUserId(userId, limit, offset);
 	}
+
 	async getCompletedOrders(userId) {
 		try {
-			const order = await orderRepository.getCompletedOrders(userId);
-			if (!order) {
+			const orders = await orderRepository.getCompletedOrders(userId);
+			if (!orders) {
 				throw new Error("No completed orders found for this user");
 			}
-			return order;
+			for (let order of orders) {
+				const orderDetails = await orderDetailRepository.getOrderDetailsByOrderId(order.order_id);
+				order.dataValues.orderDetails = orderDetails;
+			}
+			return orders;
 		} catch (error) {
-			console.error("Error fetching completed orders:", error.message);
 			throw error;
 		}
 	}
 
 	async getCancelledOrders(userId) {
-		return await orderRepository.getCancelledOrders(userId);
+		try {
+			const orders = await orderRepository.getCancelledOrders(userId);
+			if (!orders) {
+				throw new Error("No cancelled orders found for this user");
+			}
+			for (let order of orders) {
+				const orderDetails = await orderDetailRepository.getOrderDetailsByOrderId(order.order_id);
+				order.dataValues.orderDetails = orderDetails;
+			}
+			return orders;
+		} catch (error) {
+			throw error;
+		}
 	}
 
 	async cancelOrder(orderId) {
@@ -98,16 +119,32 @@ class OrderService {
 	}
 
 	async getPendingPaymentOrders(userId) {
-		return await orderRepository.getPendingPaymentOrders(userId, 'pending');
+		try {
+			const orders = await orderRepository.getPendingPaymentOrders(userId);
+			if (!orders) {
+				throw new Error("No pending payment orders found for this user");
+			}
+			for (let order of orders) {
+				const orderDetails = await orderDetailRepository.getOrderDetailsByOrderId(order.order_id);
+				order.dataValues.orderDetails = orderDetails;
+			}
+			return orders;
+		} catch (error) {
+			throw error;
+		}
 	}
 
 	async getAllOrders(userId) {
 		try {
-			const order = await orderRepository.getAllOrders(userId);
-			if (!order) {
+			const orders = await orderRepository.getAllOrders(userId);
+			if (!orders) {
 				throw new Error("No orders found for this user");
 			}
-			return order;
+			for (let order of orders) {
+				const orderDetails = await orderDetailRepository.getOrderDetailsByOrderId(order.order_id);
+				order.dataValues.orderDetails = orderDetails;
+			}
+			return orders;
 		} catch (error) {
 			throw error;
 		}

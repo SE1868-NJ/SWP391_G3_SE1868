@@ -116,6 +116,7 @@ class AuthService {
 			return {
 				token: token,
 				user: user,
+				shop_id: shop.shop_id,
 			};
 		} catch (error) {
 			throw error;
