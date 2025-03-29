@@ -195,7 +195,7 @@ class ProductRepository {
       FROM order_details od
       JOIN orders o ON od.order_id = o.order_id
       WHERE od.product_id = :productId
-      AND o.status IN ('completed', 'delivered', 'processing')
+      AND o.status IN ('COMPLETED', 'DELIVERED', 'processing')
     `, {
         replacements: { productId },
         type: db.sequelize.QueryTypes.SELECT
@@ -204,6 +204,24 @@ class ProductRepository {
       return parseInt(result[0]?.sold_count || 0);
     } catch (error) {
       throw new Error(`Error getting product sold count: ${error.message}`);
+    }
+  }
+  async getProductsByCategory(categoryName) {
+    try {
+      return await db.Product.findAll({
+        where: {
+          status: 'active'
+        },
+        include: [{
+          model: db.Category,
+          as: 'category',
+          where: {
+            category_name: categoryName
+          }
+        }]
+      });
+    } catch (error) {
+      throw new Error(`Error getting products by category: ${error.message}`);
     }
   }
 }

@@ -20,7 +20,7 @@ class OrderRepository {
 
   async getOrderById(orderId) {
     return await db.Order.findAll({
-      where: { order_id: orderId },
+      where: { id: orderId },
     });
   }
 

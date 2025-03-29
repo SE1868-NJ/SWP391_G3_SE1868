@@ -24,6 +24,7 @@ router.get('/product/get_product_by_id/:id', shopController.getProductById);
 router.get('/product/get_product_by_name/:name', shopController.getProductByName);
 router.get('/product/get_top_searched_products', productController.getTopSearchedProducts);
 router.get('/product/top-products', productController.getTopProducts);
+router.get('/product/category/:categoryName', shopController.getProductsByCategory);
 // cart
 router.get('/cart/get_cart_by_user/:id', shopController.getCartsByUserId);
 router.post('/cart/add_to_cart', shopController.createCart);
