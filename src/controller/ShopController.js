@@ -214,13 +214,29 @@ class ShopController extends BaseController {
 
   getProductsByShopAndCategory = async (req, res) => {
     try {
-      const params = {
-        shopId: parseInt(req.params.shopId),
-        categoryId: req.query.categoryId ? parseInt(req.query.categoryId) : null,
-        sort: req.query.sort || 'newest'
-      };
-      const result = await productService.getProductsByShopAndCategory(params);
-      return this.convertToJson(res, 200, result);
+      const shopId = parseInt(req.params.shopId);
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const category = req.query.category || null;
+      const sort = req.query.sort || 'newest';
+
+      const result = await productService.getProductsByShopAndCategory({
+        shopId,
+        categoryId: category ? await categoryRepository.getCategoryIdByName(category) : null,
+        sort,
+        page,
+        limit
+      });
+
+      return this.convertToJson(res, 200, {
+        products: result.products,
+        pagination: {
+          currentPage: page,
+          totalPages: Math.ceil(result.total / limit),
+          total: result.total,
+          limit
+        }
+      });
     } catch (error) {
       return this.handleError(res, error);
     }
