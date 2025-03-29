@@ -237,6 +237,15 @@ class ProductService {
     }
   }
 
+  async getProductsByCategory(categoryName) {
+    try {
+      const result = await productRepository.getProductsByCategory(categoryName);
+      return result;
+    } catch (error) {
+      throw new Error(`Error getting products by category: ${error.message}`);
+    }
+  }
+
 
 }
 module.exports = new ProductService();

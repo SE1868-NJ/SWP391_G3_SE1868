@@ -318,5 +318,20 @@ class ShopController extends BaseController {
     }
   };
 
+  getProductsByCategory = async (req, res) => {
+    try {
+      const categoryName = req.params.categoryName;
+
+      if (!categoryName) {
+        return this.convertToJson(res, 400, { message: "Category name is required" });
+      }
+
+      const products = await productService.getProductsByCategory(categoryName);
+      return this.convertToJson(res, 200, products);
+    } catch (error) {
+      return this.handleError(res, error);
+    }
+  };
+
 }
 module.exports = new ShopController();
