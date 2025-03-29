@@ -228,5 +228,12 @@ class OrderRepository {
       }
     });
   }
+
+  async countOrdersByShopId(shopId) {
+    return await db.Order.count({
+      where: { shop_id: shopId }
+    });
+  }
+
 }
 module.exports = new OrderRepository();

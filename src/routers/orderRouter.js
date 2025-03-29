@@ -13,5 +13,8 @@ router.get("/all_orders/:id", orderController.getAllOrders);
 
 router.get('/pending/:id', orderController.getPendingPaymentOrders);
 
+
+router.get("/shop/count/:shopId", orderController.getOrderCountByShopId);
+
 module.exports = router;
 

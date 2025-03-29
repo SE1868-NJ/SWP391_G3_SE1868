@@ -24,7 +24,6 @@ class ProductService {
   async getProducts(params) {
     try {
       const { page, limit, search, sortPrice, categories, minPrice, maxPrice } = params;
-
       // Truyền đầy đủ các tham số xuống Repository
       const result = await productRepository.getProducts({
         page,
@@ -151,6 +150,39 @@ class ProductService {
     }
   }
 
+
+  async getCountCartByUserId(userId) {
+    try {
+      const result = await cartRepository.getCountCartByUserId(userId);
+      return result;
+    } catch (error) {
+      throw new Error(`Error: ${error.message}`);
+    }
+  }
+  async getProductByName(productName) {
+    try {
+      const result = await productRepository.getProductByName(productName);
+      return result;
+    } catch (error) {
+      throw new Error(`Error: ${error.message}`);
+    }
+  }
+  async increaseSearchCount(productId) {
+    try {
+      await productRepository.updateSearchCount(productId);
+    } catch (error) {
+      throw new Error(`Error: ${error.message}`);
+    }
+  }
+
+  async getMostSearchedProducts(limit = 4) {
+    try {
+      return await productRepository.getMostSearchedProducts(limit);
+    } catch (error) {
+      throw new Error(`Error: ${error.message}`);
+    }
+  }
+
   async getProductsByShopAndCategory(params) {
     try {
       const { shopId, categoryId, sort } = params;
@@ -186,5 +218,25 @@ class ProductService {
       throw new Error(`Error getting products by shop and category: ${error.message}`);
     }
   }
+
+  async getTopProductsByQuantity(limit = 5) {
+    try {
+      const topProducts = await productRepository.getTopProductsByQuantity(limit);
+      return topProducts;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getTopProductsByRevenue(limit = 5) {
+    try {
+      const topProducts = await productRepository.getTopProductsByRevenue(limit);
+      return topProducts;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+
 }
 module.exports = new ProductService();
