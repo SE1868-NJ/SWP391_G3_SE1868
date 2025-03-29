@@ -9,7 +9,7 @@ class FeedbackRepository {
         const page = 1;
         const limit = 4;
         const product_id = params;
-    
+
         const { count, rows } = await db.Feedback.findAndCountAll({
             where: {
                 product_id: product_id
@@ -27,7 +27,7 @@ class FeedbackRepository {
             limit: parseInt(limit),
             offset: (page - 1) * limit,
         });
-    
+
         return {
             items: rows,
             metadata: {
@@ -76,11 +76,32 @@ class FeedbackRepository {
                     },
                     include: {
                         model: db.Shop,
-                        as:'shop',
+                        as: 'shop',
                     },
                 },
             ],
         });
+    }
+    async getProductFeedbackStats(productId) {
+        try {
+            const result = await db.sequelize.query(`
+        SELECT 
+          AVG(rating) as average_rating,
+          COUNT(id) as rating_count
+        FROM Feedbacks
+        WHERE product_id = :productId
+      `, {
+                replacements: { productId },
+                type: db.sequelize.QueryTypes.SELECT
+            });
+
+            return {
+                average_rating: parseFloat(result[0]?.average_rating || 0).toFixed(1),
+                rating_count: parseInt(result[0]?.rating_count || 0)
+            };
+        } catch (error) {
+            throw new Error(`Error getting product feedback stats: ${error.message}`);
+        }
     }
 }
 
