@@ -3,7 +3,7 @@ const cartRepository = require("../repositories/CartRepository");
 const productRepository = require("../repositories/ProductRepository");
 const orderDetailRepository = require("../repositories/OrderDetailRepository");
 const userRepository = require("../repositories/UserRepository");
-const c = require("config");
+const addressRepository = require("../repositories/AddressRepository");
 
 class OrderService {
 	constructor() { }
@@ -175,6 +175,9 @@ class OrderService {
 
 				const orderDetails = await orderDetailRepository.getOrderDetailsByOrderId(order.order_id);
 				order.dataValues.OrderDetails = orderDetails;
+
+				const address = await addressRepository.getAddressById(order.address_id);
+				order.dataValues.Address = address;
 			}
 
 			return orders;
@@ -198,6 +201,9 @@ class OrderService {
 
 				const orderDetails = await orderDetailRepository.getOrderDetailsByOrderId(order.order_id);
 				order.dataValues.OrderDetails = orderDetails;
+
+				const address = await addressRepository.getAddressById(order.address_id);
+				order.dataValues.Address = address;
 			}
 
 			return orders;
@@ -221,6 +227,9 @@ class OrderService {
 
 				const orderDetails = await orderDetailRepository.getOrderDetailsByOrderId(order.order_id);
 				order.dataValues.OrderDetails = orderDetails;
+
+				const address = await addressRepository.getAddressById(order.address_id);
+				order.dataValues.Address = address;
 			}
 
 			return orders;
@@ -244,6 +253,9 @@ class OrderService {
 
 				const orderDetails = await orderDetailRepository.getOrderDetailsByOrderId(order.order_id);
 				order.dataValues.OrderDetails = orderDetails;
+
+				const address = await addressRepository.getAddressById(order.address_id);
+				order.dataValues.Address = address;
 			}
 
 			return orders;
@@ -267,6 +279,9 @@ class OrderService {
 
 				const orderDetails = await orderDetailRepository.getOrderDetailsByOrderId(order.order_id);
 				order.dataValues.OrderDetails = orderDetails;
+
+				const address = await addressRepository.getAddressById(order.address_id);
+				order.dataValues.Address = address
 			}
 
 			return orders;

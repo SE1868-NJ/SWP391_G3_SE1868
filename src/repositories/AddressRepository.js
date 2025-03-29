@@ -58,6 +58,14 @@ class AddressRepository {
             ]
         });
     }
+
+    async getAddressById(addressId) {
+        return db.Address.findOne({
+            where: {
+                id: addressId
+            },
+        });
+    }
 }
 
 module.exports = new AddressRepository();
