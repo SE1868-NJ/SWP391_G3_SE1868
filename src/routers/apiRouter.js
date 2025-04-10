@@ -9,6 +9,7 @@ const orderRouter = require('./orderRouter');
 const addressRouter = require('./addressRouter');
 const paymentRouter = require('./paymentRouter');
 const feedbackRouter = require('./feedbackRouter');
+const emailRouter = require('./emailRouter');
 const apiRouter = express.Router();
 
 apiRouter.use('/user', userRouter);
@@ -20,7 +21,8 @@ apiRouter.use('/supplier', supplierRouter);
 apiRouter.use('/order', orderRouter);
 apiRouter.use('/address', addressRouter);
 apiRouter.use('/payment', paymentRouter);
-apiRouter.use('/feedback', feedbackRouter)
+apiRouter.use('/feedback', feedbackRouter);
+apiRouter.use('/email', emailRouter);
 
 
 module.exports = apiRouter;
