@@ -24,19 +24,26 @@ class ShopService {
     async getShopHomepage(shopId) {
         try {
             const shop = await shopRepository.getShopById(shopId);
-            if (!shop) return null;
-            const [productCount, categories] = await Promise.all([
-                productRepository.countShopProducts(shopId),
-                categoryRepository.getCategoriesWithProductCount(shopId)
-            ]);
+            if (!shop) {
+                throw new Error('Shop not found');
+            }
+            // Lấy số lượng sản phẩm
+            const productCount = await productRepository.countShopProducts(shopId);
+
+            // Lấy thông tin đánh giá từ DB
+            const ratings = await shopRepository.getShopRatings(shopId);
+
+            // Lấy danh mục sản phẩm của shop
+            const categories = await categoryRepository.getCategoriesByShopId(shopId);
+
             return {
                 shopInfo: {
                     ...shop.toJSON(),
                     product_count: productCount,
-                    average_rating: 4.4,
-                    rating_count: 52700
+                    average_rating: ratings.average_rating,
+                    rating_count: ratings.rating_count
                 },
-                categories
+                categories: categories
             };
         } catch (error) {
             throw new Error(`Error getting shop homepage: ${error.message}`);
@@ -48,6 +55,14 @@ class ShopService {
             return await productRepository.getProductsByShopAndCategory(params);
         } catch (error) {
             throw new Error(`Error getting products: ${error.message}`);
+        }
+    }
+
+    async getFeedbacksByShop(shopId, startDate, endDate) {
+        try {
+            return await shopRepository.getFeedbacksByShop(shopId, startDate, endDate);
+        } catch (error) {
+            throw new Error(`Lỗi khi lấy danh sách đánh giá: ${error.message}`);
         }
     }
 

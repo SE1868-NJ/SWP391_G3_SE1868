@@ -40,116 +40,116 @@ class ProductService {
       throw new Error(`Error: ${error.message}`);
     }
   }
-  
-    async getProductById(id) {
-        try {
-            const result = await productRepository.getProductById(id);
-            return result;
-        } catch (error) {
-            throw new Error(`Error: ${error.message}`);
-        }
+
+  async getProductById(id) {
+    try {
+      const result = await productRepository.getProductById(id);
+      return result;
+    } catch (error) {
+      throw new Error(`Error: ${error.message}`);
     }
+  }
 
-    async getCartsByUserId(userId) {
-        try {
-            const result = await cartRepository.getCartsByUserId(userId);
+  async getCartsByUserId(userId) {
+    try {
+      const result = await cartRepository.getCartsByUserId(userId);
 
-            const shopGroupedCarts = result.reduce((acc, cartItem) => {
-                const shopId = cartItem.product.shop_id;
+      const shopGroupedCarts = result.reduce((acc, cartItem) => {
+        const shopId = cartItem.product.shop_id;
 
-                if (!acc[shopId]) {
-                    acc[shopId] = {
-                        shop_info: null,
-                        items: [],
-                    };
-                }
-
-                acc[shopId].items.push({
-                    cart_id: cartItem.id,
-                    product_id: cartItem.product_id,
-                    quantity: cartItem.quantity,
-                    product: {
-                        id: cartItem.product.id,
-                        product_name: cartItem.product.product_name,
-                        product_description: cartItem.product.product_description,
-                        image_url: cartItem.product.image_url,
-                        sale_price: cartItem.product.sale_price,
-                        stock_quantity: cartItem.product.stock_quantity,
-                        category: cartItem.product.category,
-                    },
-                });
-
-                return acc;
-            }, {});
-
-            for (const shopId in shopGroupedCarts) {
-                const shop = await shopRepository.getShopById(parseInt(shopId));
-                shopGroupedCarts[shopId].shop_info = {
-                    shop_id: shop.shop_id,
-                    shop_name: shop.shop_name,
-                    shop_logo: shop.shop_logo,
-                    shop_address: shop.shop_address,
-                };
-            }
-
-            const formattedResult = Object.values(shopGroupedCarts);
-
-            return formattedResult;
-        } catch (error) {
-            throw new Error(`Error: ${error.message}`);
+        if (!acc[shopId]) {
+          acc[shopId] = {
+            shop_info: null,
+            items: [],
+          };
         }
-    }
-  
-    async createCart(cart) {
-        try {
-            const cartExist = await cartRepository.getCartByUserAndProduct(
-                cart.user_id,
-                cart.product_id
-            );
-            if (cartExist) {
-                cartExist.quantity += 1;
-                const result = await cartRepository.updateCart(cartExist);
-                return result;
-            }
-            const result = await cartRepository.createCart(cart);
-            return result;
-        } catch (error) {
-            throw new Error(`Error: ${error.message}`);
-        }
-    }
 
-    async getCountCartByUserId(userId) {
-        try {
-            const result = await cartRepository.getCountCartByUserId(userId);
-            return result;
-        } catch (error) {
-            throw new Error(`Error: ${error.message}`);
-        }
-    }
-    async getProductByName(productName) {
-        try {
-            const result = await productRepository.getProductByName(productName);
-            return result;
-        } catch (error) {
-            throw new Error(`Error: ${error.message}`);
-        }
-    }
-    async increaseSearchCount(productId) {
-        try {
-            await productRepository.updateSearchCount(productId);
-        } catch (error) {
-            throw new Error(`Error: ${error.message}`);
-        }
-    }
+        acc[shopId].items.push({
+          cart_id: cartItem.id,
+          product_id: cartItem.product_id,
+          quantity: cartItem.quantity,
+          product: {
+            id: cartItem.product.id,
+            product_name: cartItem.product.product_name,
+            product_description: cartItem.product.product_description,
+            image_url: cartItem.product.image_url,
+            sale_price: cartItem.product.sale_price,
+            stock_quantity: cartItem.product.stock_quantity,
+            category: cartItem.product.category,
+          },
+        });
 
-    async getMostSearchedProducts(limit = 4) {
-        try {
-            // Loại bỏ tham số searchCount không cần thiết
-            return await productRepository.getMostSearchedProducts(limit);
-        } catch (error) {
-            throw new Error(`Error: ${error.message}`);
-        }
+        return acc;
+      }, {});
+
+      for (const shopId in shopGroupedCarts) {
+        const shop = await shopRepository.getShopById(parseInt(shopId));
+        shopGroupedCarts[shopId].shop_info = {
+          shop_id: shop.shop_id,
+          shop_name: shop.shop_name,
+          shop_logo: shop.shop_logo,
+          shop_address: shop.shop_address,
+        };
+      }
+
+      const formattedResult = Object.values(shopGroupedCarts);
+
+      return formattedResult;
+    } catch (error) {
+      throw new Error(`Error: ${error.message}`);
     }
+  }
+
+  async createCart(cart) {
+    try {
+      const cartExist = await cartRepository.getCartByUserAndProduct(
+        cart.user_id,
+        cart.product_id
+      );
+      if (cartExist) {
+        cartExist.quantity += 1;
+        const result = await cartRepository.updateCart(cartExist);
+        return result;
+      }
+      const result = await cartRepository.createCart(cart);
+      return result;
+    } catch (error) {
+      throw new Error(`Error: ${error.message}`);
+    }
+  }
+
+  async getCountCartByUserId(userId) {
+    try {
+      const result = await cartRepository.getCountCartByUserId(userId);
+      return result;
+    } catch (error) {
+      throw new Error(`Error: ${error.message}`);
+    }
+  }
+  async getProductByName(productName) {
+    try {
+      const result = await productRepository.getProductByName(productName);
+      return result;
+    } catch (error) {
+      throw new Error(`Error: ${error.message}`);
+    }
+  }
+  async increaseSearchCount(productId) {
+    try {
+      await productRepository.updateSearchCount(productId);
+    } catch (error) {
+      throw new Error(`Error: ${error.message}`);
+    }
+  }
+
+  async getMostSearchedProducts(limit = 4) {
+    try {
+      // Loại bỏ tham số searchCount không cần thiết
+      return await productRepository.getMostSearchedProducts(limit);
+    } catch (error) {
+      throw new Error(`Error: ${error.message}`);
+    }
+  }
 
   async getProductsByShopAndCategory(params) {
     try {
@@ -182,10 +182,83 @@ class ProductService {
 
   async getSellerProducts(shopId, params) {
     try {
-        return await shopRepository.getSellerProducts(shopId, params);
+      return await shopRepository.getSellerProducts(shopId, params);
     } catch (error) {
-        throw new Error(`Error getting seller products: ${error.message}`);
+      throw new Error(`Error getting seller products: ${error.message}`);
     }
-}
+  }
+
+  // Thêm vào ProductService.js
+  async createProduct(productData) {
+    try {
+      const { supplier_id, category_id, shop_id } = productData;
+  
+      // Kiểm tra khóa ngoại
+      const { supplierExists, categoryExists, shopExists } =
+        await productRepository.checkForeignKeys({ supplier_id, category_id, shop_id });
+  
+      if (!supplierExists || !categoryExists || !shopExists) {
+        let missing = [];
+        if (!supplierExists) missing.push("supplier_id");
+        if (!categoryExists) missing.push("category_id");
+        if (!shopExists) missing.push("shop_id");
+        throw new Error(`Giá trị khóa ngoại không hợp lệ: ${missing.join(", ")}`);
+      }
+  
+      const result = await productRepository.createProduct(productData);
+      return result;
+    } catch (error) {
+      throw new Error(`Error creating product: ${error.message}`);
+    }
+  }
+  
+
+  async updateProduct(productId, productData) {
+    try {
+      const { supplier_id, category_id, shop_id } = productData;
+  
+      // Tạo object chỉ chứa các khóa ngoại được truyền vào
+      const checkData = {
+        ...(supplier_id ? { supplier_id } : {}),
+        ...(category_id ? { category_id } : {}),
+        ...(shop_id ? { shop_id } : {}),
+      };
+  
+      // Nếu có ít nhất một FK được sửa thì kiểm tra
+      if (Object.keys(checkData).length > 0) {
+        const checkResults = await productRepository.checkForeignKeys(checkData);
+  
+        if (supplier_id && !checkResults.supplierExists)
+          throw new Error("supplier_id không hợp lệ");
+        if (category_id && !checkResults.categoryExists)
+          throw new Error("category_id không hợp lệ");
+        if (shop_id && !checkResults.shopExists)
+          throw new Error("shop_id không hợp lệ");
+      }
+  
+      await productRepository.updateProduct(productId, productData);
+      const updatedProduct = await productRepository.getProductDetail(productId);
+      return updatedProduct;
+    } catch (error) {
+      throw new Error(`Error updating product: ${error.message}`);
+    }
+  }
+  
+  
+
+  async deleteProduct(id) {
+    try {
+      console.log(`Attempting to hide product with ID: ${id}`);
+      const hidden = await productRepository.hideProduct(id);
+  
+      if (!hidden) throw new Error('Sản phẩm không tồn tại hoặc đã bị ẩn.');
+  
+      return { message: "Ẩn sản phẩm thành công!" };
+    } catch (error) {
+      throw new Error(`Không thể ẩn sản phẩm: ${error.message}`);
+    }
+  }
+  
+
 }
 module.exports = new ProductService();

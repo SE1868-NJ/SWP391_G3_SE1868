@@ -22,7 +22,7 @@ class ShopRepository {
     async getSellerProducts(shop_id, { page = 1, limit = 10, search = '', sort = 'product_name', order = 'asc' }) {
         try {
             const offset = (page - 1) * limit;
-
+    
             const result = await db.Product.findAndCountAll({
                 attributes: [
                     'id',
@@ -32,23 +32,24 @@ class ShopRepository {
                     'sale_price',
                     'stock_quantity',
                     'image_url',
-                ], include: [
+                ],
+                include: [
                     {
                         model: db.Category,
                         as: 'category',
                         attributes: ['name'],
                     }
                 ],
-
                 where: {
                     shop_id,
+                    status: 'active', 
                     product_name: { [Op.like]: `%${search}%` }
                 },
                 order: [[sort, order]],
                 limit,
                 offset
             });
-
+    
             return {
                 total: result.count,
                 products: result.rows
@@ -57,6 +58,7 @@ class ShopRepository {
             throw new Error(`Error fetching seller products: ${error.message}`);
         }
     }
+    
 }
 
 module.exports = new ShopRepository();
