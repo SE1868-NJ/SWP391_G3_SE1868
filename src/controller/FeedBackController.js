@@ -1,4 +1,4 @@
-const feedbackService = require('../services/feedBackService');
+const feedbackService = require('../services/feedbackService');
 const BaseController = require('./baseController');
 const path = require('path');
 const fs = require('fs');
