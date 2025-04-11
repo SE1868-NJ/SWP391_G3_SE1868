@@ -67,8 +67,18 @@ class FeedbackService {
     }
     async submitFeedback(feedbackData) {
         try {
+            if (!feedbackData.user_id) {
+                throw new Error('User ID là bắt buộc');
+            }
+            if (!feedbackData.product_id) {
+                throw new Error('Product ID là bắt buộc');
+            }
+            if (!feedbackData.rating || feedbackData.rating < 1 || feedbackData.rating > 5) {
+                throw new Error('Đánh giá phải từ 1 đến 5 sao');
+            }
+            
             const { user_id, product_id, rating, comment, images } = feedbackData;
-
+    
             // Validate input
             if (!user_id || !product_id || !rating) {
                 throw new Error('User ID, Product ID, and Rating are required');
@@ -76,7 +86,7 @@ class FeedbackService {
             if (rating < 1 || rating > 5) {
                 throw new Error('Rating must be between 1 and 5');
             }
-
+    
             // Create the feedback record
             const newFeedback = await feedbackRepository.createFeedback({
                 user_id,
@@ -85,7 +95,7 @@ class FeedbackService {
                 comment,
                 is_update: false, // First submission, so is_update is false
             });
-
+    
             // If there are images, save them to the Feedback_media table
             if (images && images.length > 0) {
                 await feedbackRepository.createFeedbackMedia(
@@ -95,10 +105,10 @@ class FeedbackService {
                     }))
                 );
             }
-
+    
             // Fetch the newly created feedback with associated user and media for the response
             const feedbackWithDetails = await feedbackRepository.getFeedbackById(newFeedback.id);
-
+    
             return {
                 id: feedbackWithDetails.id,
                 user: feedbackWithDetails.user?.fullName || 'Anonymous',
@@ -109,9 +119,11 @@ class FeedbackService {
                 images: feedbackWithDetails.media?.map((m) => m.media_url) || [],
             };
         } catch (error) {
-            throw new Error(`Failed to get feedback data: ${error.message}`);
+            console.error("Service error:", error);
+            throw new Error(`Failed to submit feedback: ${error.message}`);
         }
     }
+    
 }
 
 module.exports = new FeedbackService();
