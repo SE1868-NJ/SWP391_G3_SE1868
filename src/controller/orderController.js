@@ -1,5 +1,6 @@
 const orderService = require("../services/orderService");
 const BaseController = require("./baseController");
+const emailService = require("../services/emailService");
 
 class OrderController extends BaseController {
   createOrder = async (req, res) => {
@@ -7,6 +8,12 @@ class OrderController extends BaseController {
       const order = req.body;
 
       const result = await orderService.createOrder(order);
+      try {
+        await emailService.sendOrderSuccessEmail(order.order_id);
+      } catch (emailError) {
+        console.error('Gửi email thất bại:', emailError.message);
+        // Không cần throw, tránh làm fail cả order
+      }
       this.convertToJson(res, 200, result);
     } catch (error) {
       this.handleError(res, error);
