@@ -4,6 +4,7 @@ const multer = require('multer');
 const shopController = require('../controller/ShopController');
 const productController = require('../controller/ProductController');
 const feedBackController = require('../controller/FeedBackController');
+const shopFollowerController = require('../controller/ShopFollowerController');
 
 // Cấu hình multer cho upload shop logo
 const upload = multer({
@@ -61,5 +62,11 @@ router.get('/order/get_completed_order_by_shop/:shopId', shopController.getCompl
 router.get('/order/get_cancelled_order_by_shop/:shopId', shopController.getCancelledOrdersByShop);
 router.get('/order/get_delivery_order_by_shop/:shopId', shopController.getDeliveryOrdersByShop);
 router.post('/order/update_order_status/:orderId', shopController.updateStatusOrder);
+
+// shop follower
+router.post('/followers/toggle', shopFollowerController.toggleFollow);
+router.get('/followers/check', shopFollowerController.checkFollow);
+router.get('/followers/count/:shop_id', shopFollowerController.getFollowerCount);
+router.get('/:shopId/followers', shopFollowerController.getFollowersByShop);
 
 module.exports = router;

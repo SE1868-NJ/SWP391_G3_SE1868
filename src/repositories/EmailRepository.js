@@ -28,6 +28,30 @@ class EmailRepository {
 
     return this.transporter.sendMail(mailOptions);
   }
+  // Hàm gửi email tổng quát theo nội dung HTML
+  async sendTemplateEmail(toEmail, subject, htmlContent) {
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: toEmail,
+      subject: subject,
+      html: htmlContent,
+    };
+
+    return this.transporter.sendMail(mailOptions);
+  }
+   // Hàm dựng nội dung và gửi email khuyến mãi
+   async sendPromotion(toEmail, shopName, promoTitle, promoContent) {
+    const subject = `Ưu đãi mới từ shop ${shopName}`;
+    const html = `
+      <h3>Shop ${shopName} có khuyến mãi mới!</h3>
+      <h4>${promoTitle}</h4>
+      <p>${promoContent}</p>
+      <br>
+      <p>Trân trọng,<br>Đội ngũ hỗ trợ khách hàng</p>
+    `;
+    return this.sendTemplateEmail(toEmail, subject, html);
+  }
+
 }
 
 module.exports = new EmailRepository();
