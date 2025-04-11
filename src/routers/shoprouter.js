@@ -41,6 +41,12 @@ router.post('/:id/update', upload.single('shop_logo'), shopController.updateShop
 
 router.get('/feedbacks/:id', shopController.getFeedbacksByShop);
 
+// quản lí tất cả sản phẩm
+router.get('/all_products/:shopId', shopController.getSellerProducts);
+router.post('/product/create', upload.single('product_image'), shopController.createProduct);
+router.put('/product/update/:id', shopController.updateProduct);
+router.post('/product/delete/:id', shopController.deleteProduct);
+
 
 // Shop Homepage
 router.get('/:id/homepage', shopController.getShopHomepage);

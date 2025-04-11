@@ -246,6 +246,83 @@ class ProductService {
     }
   }
 
+  async getSellerProducts(shopId, params) {
+    try {
+      return await shopRepository.getSellerProducts(shopId, params);
+    } catch (error) {
+      throw new Error(`Error getting seller products: ${error.message}`);
+    }
+  }
+
+
+  async createProduct(productData) {
+    try {
+      const { supplier_id, category_id, shop_id } = productData;
+  
+
+      const { supplierExists, categoryExists, shopExists } =
+        await productRepository.checkForeignKeys({ supplier_id, category_id, shop_id });
+  
+      if (!supplierExists || !categoryExists || !shopExists) {
+        let missing = [];
+        if (!supplierExists) missing.push("supplier_id");
+        if (!categoryExists) missing.push("category_id");
+        if (!shopExists) missing.push("shop_id");
+        throw new Error(`Giá trị khóa ngoại không hợp lệ: ${missing.join(", ")}`);
+      }
+  
+      const result = await productRepository.createProduct(productData);
+      return result;
+    } catch (error) {
+      throw new Error(`Error creating product: ${error.message}`);
+    }
+  }
+  
+
+  async updateProduct(productId, productData) {
+    try {
+      const { supplier_id, category_id, shop_id } = productData;
+  
+
+      const checkData = {
+        ...(supplier_id ? { supplier_id } : {}),
+        ...(category_id ? { category_id } : {}),
+        ...(shop_id ? { shop_id } : {}),
+      };
+  
+
+      if (Object.keys(checkData).length > 0) {
+        const checkResults = await productRepository.checkForeignKeys(checkData);
+  
+        if (supplier_id && !checkResults.supplierExists)
+          throw new Error("supplier_id không hợp lệ");
+        if (category_id && !checkResults.categoryExists)
+          throw new Error("category_id không hợp lệ");
+        if (shop_id && !checkResults.shopExists)
+          throw new Error("shop_id không hợp lệ");
+      }
+  
+      await productRepository.updateProduct(productId, productData);
+      const updatedProduct = await productRepository.getProductDetail(productId);
+      return updatedProduct;
+    } catch (error) {
+      throw new Error(`Error updating product: ${error.message}`);
+    }
+  }
+  
+  
+
+  async deleteProduct(id) {
+    try {
+      const hidden = await productRepository.hideProduct(id);
+  
+      if (!hidden) throw new Error('Sản phẩm không tồn tại hoặc đã bị ẩn.');
+  
+      return { message: "Ẩn sản phẩm thành công!" };
+    } catch (error) {
+      throw new Error(`Không thể ẩn sản phẩm: ${error.message}`);
+    }
+  }
 
 }
 module.exports = new ProductService();

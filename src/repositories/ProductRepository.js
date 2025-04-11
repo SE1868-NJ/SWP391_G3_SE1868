@@ -224,6 +224,54 @@ class ProductRepository {
       throw new Error(`Error getting products by category: ${error.message}`);
     }
   }
+  
+  async checkForeignKeys({ supplier_id, category_id, shop_id }) {
+    const [supplier, category, shop] = await Promise.all([
+      db.Supplier.findByPk(supplier_id),
+      db.Category.findByPk(category_id),
+      db.Shop.findByPk(shop_id),
+    ]);
+
+    return {
+      supplierExists: !!supplier,
+      categoryExists: !!category,
+      shopExists: !!shop,
+    };
+  }
+
+  async getProductDetail(productId) {
+    return await db.Product.findByPk(productId, {
+      include: [
+        { model: db.Category, as: 'category' }
+      ]
+    });
+  }
+
+  async createProduct(productData) {
+    return await db.Product.create(productData);
+  }
+
+  async updateProduct(productId, productData) {
+    return await db.Product.update(productData, {
+      where: { id: productId }
+    });
+  }
+
+  async hideProduct(id) {
+    console.log(`Finding product with ID: ${id}`);
+    const product = await db.Product.findByPk(id);
+  
+    if (!product) return false;
+    if (product.status === 'inactive') return false;
+  
+    await db.Product.update(
+      { status: 'inactive' },
+      { where: { id: id } }
+    );
+  
+    return true;
+  }
+  
 }
 
 module.exports = new ProductRepository();
