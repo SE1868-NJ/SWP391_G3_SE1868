@@ -43,7 +43,7 @@ router.get('/feedbacks/:id', shopController.getFeedbacksByShop);
 
 // quản lí tất cả sản phẩm
 router.get('/all_products/:shopId', shopController.getSellerProducts);
-router.post('/product/create', shopController.createProduct);
+router.post('/product/create', upload.single('product_image'), shopController.createProduct);
 router.put('/product/update/:id', shopController.updateProduct);
 router.post('/product/delete/:id', shopController.deleteProduct);
 

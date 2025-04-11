@@ -357,31 +357,29 @@ class ShopController extends BaseController {
   createProduct = async (req, res) => {
     try {
       let productData = {
-        supplier_id: (req.body.supplier_id),
+        supplier_id: parseInt(req.body.supplier_id),
         product_name: req.body.product_name,
         product_description: req.body.product_description,
-        stock_quantity: (req.body.stock_quantity),
-        import_price: (req.body.import_price),
-        sale_price: (req.body.sale_price),
-        category_id: (req.body.category_id),
-        shop_id: (req.body.shop_id),
+        stock_quantity: parseInt(req.body.stock_quantity),
+        import_price: parseFloat(req.body.import_price),
+        sale_price: parseFloat(req.body.sale_price),
+        category_id: parseInt(req.body.category_id),
+        shop_id: parseInt(req.body.shop_id),
         SKU: req.body.SKU,
-        status: 'active'
+        status: 'active',
       };
 
-
-      // Xử lý upload hình ảnh sản phẩm
       if (req.files && req.files.product_image) {
-        const file = req.files.product_image;
+        const productImage = req.files.product_image;
 
-        if (file.size > 2 * 1024 * 1024) {
+        if (productImage.size > 2 * 1024 * 1024) {
           return this.convertToJson(res, 400, {
             message: "Kích thước file quá lớn. Vui lòng chọn file nhỏ hơn 2MB."
           });
         }
 
         const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-        if (!validTypes.includes(file.mimetype)) {
+        if (!validTypes.includes(productImage.mimetype)) {
           return this.convertToJson(res, 400, {
             message: "Định dạng file không hợp lệ. Chỉ chấp nhận JPG, JPEG, PNG."
           });
@@ -392,13 +390,15 @@ class ShopController extends BaseController {
           fs.mkdirSync(uploadDir, { recursive: true });
         }
 
-        const fileName = `product_${Date.now()}${path.extname(file.name)}`;
+        const fileName = `product_${Date.now()}${path.extname(productImage.name)}`;
         const uploadPath = path.join(uploadDir, fileName);
 
-        await file.mv(uploadPath);
+        await productImage.mv(uploadPath);
 
         productData.image_url = `/uploads/products/${fileName}`;
       }
+
+
 
       const result = await productService.createProduct(productData);
       return this.convertToJson(res, 201, result);
@@ -420,7 +420,7 @@ class ShopController extends BaseController {
         supplier_id: req.body.supplier_id,
         shop_id: req.body.shop_id
       };
-      
+
 
       // Xử lý upload hình ảnh sản phẩm nếu có
       if (req.files && req.files.product_image) {
@@ -468,7 +468,7 @@ class ShopController extends BaseController {
       return this.convertToJson(res, 400, { message: error.message });
     }
   };
-  
+
 
 }
 module.exports = new ShopController();

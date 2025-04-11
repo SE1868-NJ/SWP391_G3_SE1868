@@ -254,12 +254,12 @@ class ProductService {
     }
   }
 
-  // Thêm vào ProductService.js
+
   async createProduct(productData) {
     try {
       const { supplier_id, category_id, shop_id } = productData;
   
-      // Kiểm tra khóa ngoại
+
       const { supplierExists, categoryExists, shopExists } =
         await productRepository.checkForeignKeys({ supplier_id, category_id, shop_id });
   
@@ -283,14 +283,14 @@ class ProductService {
     try {
       const { supplier_id, category_id, shop_id } = productData;
   
-      // Tạo object chỉ chứa các khóa ngoại được truyền vào
+
       const checkData = {
         ...(supplier_id ? { supplier_id } : {}),
         ...(category_id ? { category_id } : {}),
         ...(shop_id ? { shop_id } : {}),
       };
   
-      // Nếu có ít nhất một FK được sửa thì kiểm tra
+
       if (Object.keys(checkData).length > 0) {
         const checkResults = await productRepository.checkForeignKeys(checkData);
   
@@ -314,7 +314,6 @@ class ProductService {
 
   async deleteProduct(id) {
     try {
-      console.log(`Attempting to hide product with ID: ${id}`);
       const hidden = await productRepository.hideProduct(id);
   
       if (!hidden) throw new Error('Sản phẩm không tồn tại hoặc đã bị ẩn.');

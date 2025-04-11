@@ -31,7 +31,7 @@ checkoutSocket(io);
 
 const port = 4000;
 
-const uploadDir = path.join(__dirname, 'uploads'); // Đảm bảo thư mục đúng với vị trí file
+const uploadDir = path.join(__dirname, 'uploads'); 
 if (!fs.existsSync(uploadDir)) {
 	fs.mkdirSync(uploadDir);
 }
@@ -77,6 +77,7 @@ app.use((req, res, next) => {
 // Add this line to serve avatar directories
 app.use('/uploads/avatars', express.static(path.join(__dirname, 'uploads/avatars')));
 app.use('/uploads/shop_logos', express.static(path.join(__dirname, 'uploads/shop_logos')));
+app.use('/uploads/products', express.static(path.join(__dirname, 'uploads/products')));
 
 //routes
 app.use('/api', apiRouter);
