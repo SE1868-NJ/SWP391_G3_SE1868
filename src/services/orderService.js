@@ -323,6 +323,139 @@ class OrderService {
 	async updatePaymentStatusByOrderId(orderId, paymentStatus) {
 		return await orderRepository.updatePaymentStatusByOrderId(orderId, paymentStatus);
 	}
+
+	async getRecentOrdersByShop(shopId, limit) {
+		const orders = await orderRepository.getRecentOrdersByShop(shopId, limit);
+
+		return orders.map(order => ({
+			orderCode: `ORD-${order.id}`,
+			customerName: order.User.full_name,
+			totalAmount: order.total,
+			status: order.status
+		}));
+	}
+
+//dashboard
+async getDashboardStats(shopId, timeRange) {
+    try {
+      let startDate, endDate = new Date();
+      
+      switch(timeRange) {
+        case 'today':
+          startDate = new Date();
+          startDate.setHours(0, 0, 0, 0);
+          break;
+        case 'week':
+          startDate = new Date();
+          startDate.setDate(startDate.getDate() - 7);
+          break;
+        case 'month':
+          startDate = new Date();
+          startDate.setMonth(startDate.getMonth() - 1);
+          break;
+        case 'year':
+          startDate = new Date();
+          startDate.setFullYear(startDate.getFullYear() - 1);
+          break;
+        default:
+          startDate = new Date();
+          startDate.setHours(0, 0, 0, 0);
+      }
+      
+      const stats = await orderRepository.getDashboardStats(shopId, startDate, endDate);
+
+      return {
+        totalRevenue: stats.totalRevenue || 0,
+        totalOrders: stats.totalOrders || 0,
+        averageOrderValue: stats.totalOrders > 0 ? stats.totalRevenue / stats.totalOrders : 0,
+        orderStatusCounts: stats.orderStatusCounts || {}
+      };
+    } catch (error) {
+      throw new Error(`Error getting dashboard stats: ${error.message}`);
+    }
+  }
+
+  async getDailyStatsInMonth(shopId, dateStr) {
+	try {
+	  const date = new Date(dateStr);
+	  const year = date.getFullYear();
+	  const month = date.getMonth();
+	  
+	  // Tìm số ngày trong tháng
+	  const daysInMonth = new Date(year, month + 1, 0).getDate();
+	  
+	  // Lấy dữ liệu theo ngày từ database
+	  const dailyData = await orderRepository.getDailyStatsInMonth(shopId, date);
+	  
+	  // Tạo mảng chứa dữ liệu cho tất cả các ngày trong tháng
+	  const result = Array(daysInMonth).fill().map((_, index) => {
+		const day = index + 1;
+		const formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+		
+		return {
+		  date: formattedDate,
+		  revenue: 0,
+		  orders: 0
+		};
+	  });
+	  
+	  // Điền dữ liệu vào các ngày tương ứng
+	  dailyData.forEach(item => {
+		const day = new Date(item.orderDate).getDate() - 1; // Chuyển về index 0-based
+		result[day].revenue = parseFloat(item.revenue);
+		result[day].orders = parseInt(item.orderCount);
+	  });
+	  
+	  return result;
+	} catch (error) {
+	  throw new Error(`Error getting daily stats in month: ${error.message}`);
+	}
+  }
+  
+
+  async getRevenueSummary(shopId, period) {
+    try {
+      let startDate, endDate = new Date();
+      
+      switch(period) {
+        case 'today':
+          startDate = new Date();
+          startDate.setHours(0, 0, 0, 0);
+          break;
+        case 'yesterday':
+          startDate = new Date();
+          startDate.setDate(startDate.getDate() - 1);
+          startDate.setHours(0, 0, 0, 0);
+          endDate = new Date(startDate);
+          endDate.setHours(23, 59, 59, 999);
+          break;
+        case 'week':
+          startDate = new Date();
+          startDate.setDate(startDate.getDate() - 7);
+          break;
+        case 'month':
+          startDate = new Date();
+          startDate.setMonth(startDate.getMonth() - 1);
+          break;
+        default:
+          startDate = new Date();
+          startDate.setHours(0, 0, 0, 0);
+      }
+      
+      const summary = await orderRepository.getRevenueSummary(shopId, startDate, endDate);
+      
+      return {
+        period,
+        revenue: summary.totalRevenue || 0,
+        orderCount: summary.totalOrders || 0,
+        completedOrders: summary.completedOrders || 0,
+        cancelledOrders: summary.cancelledOrders || 0,
+        pendingOrders: summary.pendingOrders || 0
+      };
+    } catch (error) {
+      throw new Error(`Error getting revenue summary: ${error.message}`);
+    }
+  }
 }
 
 module.exports = new OrderService();
