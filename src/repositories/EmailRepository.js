@@ -64,24 +64,6 @@ class EmailRepository {
       throw new Error(error.message);
     }
   }
-  async sendTemplateEmail(toEmail, type, replacements) {
-    const template = await this.getTemplateByType(type);
-  
-    // Thực hiện thay thế các giá trị trong nội dung mẫu
-    let htmlContent = template.content;
-    for (const [key, value] of Object.entries(replacements)) {
-      htmlContent = htmlContent.replace(new RegExp(`{{${key}}}`, 'g'), value);
-    }
-  
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: toEmail,
-      subject: template.subject,
-      html: htmlContent,
-    };
-  
-    return this.transporter.sendMail(mailOptions);
-  }
   // Gửi email template đến nhiều người
 async sendTemplateEmailToMultipleUsers(type, replacements, users) {
   const template = await this.getTemplateByType(type);
