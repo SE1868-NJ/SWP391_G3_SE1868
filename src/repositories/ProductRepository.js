@@ -258,7 +258,6 @@ class ProductRepository {
   }
 
   async hideProduct(id) {
-    console.log(`Finding product with ID: ${id}`);
     const product = await db.Product.findByPk(id);
   
     if (!product) return false;

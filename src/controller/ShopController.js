@@ -369,36 +369,35 @@ class ShopController extends BaseController {
         status: 'active',
       };
 
-      if (req.files && req.files.product_image) {
-        const productImage = req.files.product_image;
-
+      if (req.file) {
+        const productImage = req.file;
+      
+        // Kiểm tra kích thước
         if (productImage.size > 2 * 1024 * 1024) {
           return this.convertToJson(res, 400, {
             message: "Kích thước file quá lớn. Vui lòng chọn file nhỏ hơn 2MB."
           });
         }
-
+      
+        // Kiểm tra định dạng
         const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
         if (!validTypes.includes(productImage.mimetype)) {
           return this.convertToJson(res, 400, {
             message: "Định dạng file không hợp lệ. Chỉ chấp nhận JPG, JPEG, PNG."
           });
         }
-
+      
         const uploadDir = path.join(__dirname, '../uploads/products');
         if (!fs.existsSync(uploadDir)) {
           fs.mkdirSync(uploadDir, { recursive: true });
         }
-
-        const fileName = `product_${Date.now()}${path.extname(productImage.name)}`;
+      
+        const fileName = `product_${Date.now()}${path.extname(productImage.originalname)}`;
         const uploadPath = path.join(uploadDir, fileName);
-
-        await productImage.mv(uploadPath);
-
+      
+        fs.writeFileSync(uploadPath, productImage.buffer); 
         productData.image_url = `/uploads/products/${fileName}`;
       }
-
-
 
       const result = await productService.createProduct(productData);
       return this.convertToJson(res, 201, result);

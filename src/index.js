@@ -64,7 +64,9 @@ app.use((req, res, next) => {
 	// Bỏ qua express-fileupload cho các route sử dụng multer
 	if (req.originalUrl.includes('/api/file/upload') ||
 		(req.originalUrl.includes('/api/shop') && req.method === 'POST') ||
-		(req.originalUrl.includes('/api/user') && req.method === 'POST')) {
+		(req.originalUrl.includes('/api/user') && req.method === 'POST') ||
+		(req.originalUrl.includes('/api/product') && req.method === 'POST')) {
+
 		return next();
 	}
 
