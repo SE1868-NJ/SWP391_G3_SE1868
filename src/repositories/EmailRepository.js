@@ -1,5 +1,7 @@
 // services/EmailRepository.js
 const nodemailer = require("nodemailer");
+const db = require('../models');
+const EmailTemplate = db.EmailTemplate;
 
 class EmailRepository {
   constructor() {
@@ -51,6 +53,118 @@ class EmailRepository {
     `;
     return this.sendTemplateEmail(toEmail, subject, html);
   }
+  async getTemplateByType(type) {
+    try {
+      const template = await EmailTemplate.findOne({ where: { type } });
+      if (!template) {
+        throw new Error(`Không tìm thấy mẫu email cho loại ${type}.`);
+      }
+      return template;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+  async sendTemplateEmail(toEmail, type, replacements) {
+    const template = await this.getTemplateByType(type);
+  
+    // Thực hiện thay thế các giá trị trong nội dung mẫu
+    let htmlContent = template.content;
+    for (const [key, value] of Object.entries(replacements)) {
+      htmlContent = htmlContent.replace(new RegExp(`{{${key}}}`, 'g'), value);
+    }
+  
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: toEmail,
+      subject: template.subject,
+      html: htmlContent,
+    };
+  
+    return this.transporter.sendMail(mailOptions);
+  }
+  // Gửi email template đến nhiều người
+async sendTemplateEmailToMultipleUsers(type, replacements, users) {
+  const template = await this.getTemplateByType(type);
+  if (!template) throw new Error(`Không tìm thấy mẫu email cho loại ${type}.`);
+
+  let htmlContent = template.content;
+  for (const [key, value] of Object.entries(replacements)) {
+    htmlContent = htmlContent.replace(new RegExp(`{{${key}}}`, 'g'), value);
+  }
+
+  const results = await Promise.allSettled(
+    users.map(user => {
+      if (!user.email) return Promise.resolve(); // bỏ qua user không có email
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: user.email,
+        subject: template.subject,
+        html: htmlContent,
+      };
+      return this.transporter.sendMail(mailOptions);
+    })
+  );
+  return results;
+}
+async getAllTemplates() {
+  try {
+    const templates = await EmailTemplate.findAll({
+      attributes: ['id', 'type', 'subject', 'content'],
+      order: [['type', 'ASC']],
+    });
+    return templates;
+  } catch (error) {
+    throw new Error("Lỗi khi lấy danh sách mẫu email.");
+  }
+}
+ // === CRUD templates ===
+ async getAllTemplates() {
+  return await EmailTemplate.findAll({
+    attributes: ['id', 'type', 'subject', 'content'],
+    order: [['type', 'ASC']],
+  });
+}
+
+async getTemplateById(id) {
+  const template = await EmailTemplate.findByPk(id);
+  if (!template) {
+    throw new Error("Không tìm thấy mẫu email.");
+  }
+  return template;
+}
+
+async createTemplate({ type, subject, content }) {
+  const existing = await EmailTemplate.findOne({ where: { type } });
+  if (existing) {
+    throw new Error(`Mẫu email với type '${type}' đã tồn tại.`);
+  }
+
+  return await EmailTemplate.create({
+    type,
+    subject,
+    content,
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+}
+
+async updateTemplate(id, { subject, content }) {
+  const template = await this.getTemplateById(id);
+  template.subject = subject;
+  template.content = content;
+  template.updated_at = new Date();
+  await template.save();
+  return template;
+}
+
+async deleteTemplate(id) {
+  const template = await this.getTemplateById(id);
+  await template.destroy();
+  return true;
+}
+
+  
+  
 
 }
 
